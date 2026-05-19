@@ -83,7 +83,8 @@ export async function searchNameInPDF(arrayBuffer, searchName, headerName='Nama'
           if(cellText.toLowerCase().includes(searchName.toLowerCase())){
             // capture some context: join line items
             const context = line.items.map(i=>i.str).join(' ')
-            const match = {page:p, matchText:cellText, context}
+            const contextItems = line.items.map(i=>i.str)
+            const match = {page:p, matchText:cellText, context, contextItems}
             results.push(match)
             onMatch(match)
             pageFound = true
@@ -98,7 +99,7 @@ export async function searchNameInPDF(arrayBuffer, searchName, headerName='Nama'
       if(idx!==-1){
         const start = Math.max(0, idx-60)
         const excerpt = pageText.slice(start, idx+searchName.length+60)
-        const match = {page:p, matchText:searchName, context:excerpt}
+        const match = {page:p, matchText:searchName, context:excerpt, contextItems:[excerpt]}
         results.push(match)
         onMatch(match)
       }

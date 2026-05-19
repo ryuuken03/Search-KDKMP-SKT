@@ -64,7 +64,23 @@ export default function App(){
                   <div><strong>Match:</strong> {r.matchText || r.text || r.error}</div>
                   <button onClick={()=>showPage(r.page)}>Show</button>
                 </div>
-                {r.context && <div><strong>Context:</strong> {r.context}</div>}
+                {r.contextItems && (
+                  <div style={{marginTop:6}}>
+                    <strong>Context:</strong>
+                    <div style={{overflowX:'auto',marginTop:6}}>
+                      <table style={{borderCollapse:'collapse',width:'100%'}}>
+                        <tbody>
+                          <tr>
+                            {r.contextItems.map((c,ci)=> (
+                              <td key={ci} style={{border:'1px solid #ddd',padding:'6px',whiteSpace:'nowrap'}}>{c}</td>
+                            ))}
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                )}
+                {r.context && !r.contextItems && <div><strong>Context:</strong> {r.context}</div>}
               </li>
             ))}
         </ul>
