@@ -1,1 +1,30 @@
-{"jumlahFormasi":"30000","jumlahPeserta":"411516","kehadiran":{"hadir":"327974","tidakHadir":"83542"},"kelulusan":{"jumlah":"82701","persen":"20.1"},"nilaiKognitif":{"tertinggi":"160","terendah":"65"},"nilaiSubstansi":{"tertinggi":"100","terendah":"0"}}
+{
+  "jumlahFormasi": "30000",
+  "jumlahPeserta": "411516",
+  "kehadiran": {
+    "hadir": "327974",
+    "tidakHadir": "83542"
+  },
+  "kelulusan": {
+    "jumlah": "82701",
+    "persen": "20.1"
+  },
+  "nilaiKognitif": {
+    "tertinggi": "160",
+    "terendah": "65"
+  },
+  "nilaiSubstansi": {
+    "tertinggi": "100",
+    "terendah": "0"
+  },
+  "statusCounts": {
+    "50": 1,
+    "55": 1,
+    "70": 1,
+    "P/L": 29576,
+    "P1/L": 40551,
+    "P2/L": 12573,
+    "TL": 245271,
+    "TH": 83542
+  }
+}

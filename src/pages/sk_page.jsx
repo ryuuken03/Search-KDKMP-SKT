@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
-import SummaryCat from '../components/summary_cat'
+import SummarySK from '../components/summary_sk'
 
-export default function CatPage() {
+export default function SKPage() {
   const [name, setName] = useState('')
   const [results, setResults] = useState([])
   const [loading, setLoading] = useState(false)
@@ -116,22 +116,22 @@ export default function CatPage() {
 
   React.useEffect(() => {
     let mounted = true
-    ;(async () => {
-      try {
-        const res = await fetch('/assets/summary.json')
-        if (!res.ok) return
-        const data = await res.json()
-        if (mounted) {
-          setPage1Info({
-            title: 'Hasil Seleksi KDKMP',
-            subtitle: 'Laporan Rekapitulasi Nilai Seleksi',
-            summary: data
-          })
+      ; (async () => {
+        try {
+          const res = await fetch('/assets/summary.json')
+          if (!res.ok) return
+          const data = await res.json()
+          if (mounted) {
+            setPage1Info({
+              title: 'Hasil Seleksi KDKMP',
+              subtitle: 'Laporan Rekapitulasi Nilai Seleksi',
+              summary: data
+            })
+          }
+        } catch (e) {
+          console.error('Gagal mengambil ringkasan:', e)
         }
-      } catch (e) {
-        console.error('Gagal mengambil ringkasan:', e)
-      }
-    })()
+      })()
     return () => {
       mounted = false
     }
@@ -191,7 +191,7 @@ export default function CatPage() {
   }
 
   return (
-    <div className="cat-page">
+    <div className="sk-page">
       {page1Info && (
         <section className="page1-info" aria-label="Rekapitulasi halaman 1 PDF">
           <div className="page1-info__content">
@@ -200,7 +200,7 @@ export default function CatPage() {
             {page1Info.subtitle && (
               <p className="page1-info__subtitle">{page1Info.subtitle}</p>
             )}
-            <SummaryCat summary={page1Info.summary} />
+            <SummarySK summary={page1Info.summary} />
           </div>
         </section>
       )}

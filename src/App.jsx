@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { useTheme } from './useTheme'
-import CatPage from './pages/cat_page'
+import SKPage from './pages/sk_page'
 import SktPage from './pages/skt_page'
 import './styles.css'
 
@@ -28,7 +28,7 @@ function ThemeToggle({ isDark, onToggle }) {
 }
 
 export default function App() {
-  const [activeTab, setActiveTab] = useState('cat')
+  const [activeTab, setActiveTab] = useState('sk')
   const { isDark, toggleTheme } = useTheme()
 
   return (
@@ -42,13 +42,13 @@ export default function App() {
         <button
           type="button"
           role="tab"
-          id="tab-cat"
-          aria-selected={activeTab === 'cat'}
-          aria-controls="panel-cat"
-          className={`app-tabs__btn${activeTab === 'cat' ? ' app-tabs__btn--active' : ''}`}
-          onClick={() => setActiveTab('cat')}
+          id="tab-sk"
+          aria-selected={activeTab === 'sk'}
+          aria-controls="panel-sk"
+          className={`app-tabs__btn${activeTab === 'sk' ? ' app-tabs__btn--active' : ''}`}
+          onClick={() => setActiveTab('sk')}
         >
-          Hasil CAT
+          Hasil SK
         </button>
         <button
           type="button"
@@ -65,11 +65,11 @@ export default function App() {
 
       <div
         role="tabpanel"
-        id={activeTab === 'cat' ? 'panel-cat' : 'panel-skt'}
-        aria-labelledby={activeTab === 'cat' ? 'tab-cat' : 'tab-skt'}
+        id={activeTab === 'sk' ? 'panel-sk' : 'panel-skt'}
+        aria-labelledby={activeTab === 'sk' ? 'tab-sk' : 'tab-skt'}
         className="app-tab-panel"
       >
-        {activeTab === 'cat' ? <CatPage /> : <SktPage />}
+        {activeTab === 'sk' ? <SKPage /> : <SktPage />}
       </div>
     </div>
   )
