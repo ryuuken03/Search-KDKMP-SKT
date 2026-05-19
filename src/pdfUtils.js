@@ -65,10 +65,10 @@ export async function searchNameInPDF(arrayBuffer, searchName, headerName='Nama'
   const results = []
   for(let p=1;p<=num;p++){
     if(signal && signal.aborted){
-      progressCb('Search cancelled')
+      progressCb('Pencarian dibatalkan')
       return results
     }
-    progressCb(`Processing page ${p}/${num}`)
+    progressCb(`Memproses halaman ${p}/${num}`)
     const page = await pdf.getPage(p)
     const textContent = await page.getTextContent({normalizeWhitespace:true})
     const items = getItemsWithPos(textContent)
@@ -130,7 +130,7 @@ export async function searchNameInPDF(arrayBuffer, searchName, headerName='Nama'
       }
     }
   }
-  progressCb(`Found ${results.length} matches`)
+  progressCb(`Ditemukan ${results.length} hasil`)
   return results
 }
 
@@ -154,4 +154,84 @@ export async function renderPageAsImage(arrayBuffer, pageNumber, scale=1.5){
   await page.render(renderContext).promise
   // return a data URL for display
   return canvas.toDataURL('image/png')
+}
+
+export async function getPDFInfo(arrayBuffer){
+  const loadingTask = pdfjsLib.getDocument({data:arrayBuffer})
+  const pdf = await loadingTask.promise
+  return { numPages: pdf.numPages }
+}
+
+function lineText(line){
+  return line.items.map(i => i.str).join(' ').replace(/\s+/g, ' ').trim()
+}
+
+function isTableHeaderLine(line){
+  const lower = line.toLowerCase()
+  const hasNama = /\bnama\b/.test(lower)
+  const hasTableHint = /\b(no|nomor|peserta|kognitif|substansi|status)\b/.test(lower)
+  return hasNama && hasTableHint
+}
+
+function parseSummaryNumbers(line){
+  const nums = line.match(/\d+(?:[.,]\d+)?/g)
+  if(!nums || nums.length < 10) return null
+  return nums.slice(0, 10).map(n => n.replace(',', '.'))
+}
+
+/** Rekap statistik halaman 1 (tabel ringkasan sebelum daftar peserta). */
+export function parsePage1Summary(textLines){
+  const colIdx = textLines.findIndex(
+    l => /\(1\)/.test(l) && /\(10\)/.test(l)
+  )
+  if(colIdx < 0) return null
+
+  const dataLine = textLines[colIdx + 1]
+  if(!dataLine) return null
+
+  const nums = parseSummaryNumbers(dataLine)
+  if(!nums) return null
+
+  const [jumlahFormasi, jumlahPeserta, hadir, tidakHadir, lulusJumlah, lulusPersen, kogTinggi, kogRendah, subTinggi, subRendah] = nums
+
+  return {
+    jumlahFormasi,
+    jumlahPeserta,
+    kehadiran: { hadir, tidakHadir },
+    kelulusan: { jumlah: lulusJumlah, persen: lulusPersen },
+    nilaiKognitif: { tertinggi: kogTinggi, terendah: kogRendah },
+    nilaiSubstansi: { tertinggi: subTinggi, terendah: subRendah },
+  }
+}
+
+/** Informasi halaman 1: judul + tabel rekap statistik. */
+export async function getPage1Info(arrayBuffer){
+  const loadingTask = pdfjsLib.getDocument({data:arrayBuffer})
+  const pdf = await loadingTask.promise
+  const page = await pdf.getPage(1)
+  const textContent = await page.getTextContent({normalizeWhitespace: true})
+  const items = getItemsWithPos(textContent)
+  const groupedLines = groupLines(items, 4)
+
+  const textLines = groupedLines
+    .map(lineText)
+    .filter(t => t.length > 0)
+
+  const headerIdx = textLines.findIndex(isTableHeaderLine)
+  const introLines = (headerIdx > 0 ? textLines.slice(0, headerIdx) : textLines.slice(0, 12))
+    .filter(t => t.length > 1 && !/^\(\d+\)$/.test(t.trim()))
+
+  const title = introLines[0] || ''
+  const subtitle = introLines[1] || ''
+  const metaLines = introLines.slice(2).filter(l => !/^\d+$/.test(l.replace(/\s/g, '')))
+
+  const summary = parsePage1Summary(textLines)
+
+  return {
+    numPages: pdf.numPages,
+    title,
+    subtitle: subtitle !== title ? subtitle : '',
+    metaLines,
+    summary,
+  }
 }

@@ -1,116 +1,76 @@
-import React, {useState} from 'react'
-import { searchNameInPDF, renderPageAsImage } from './pdfUtils'
+import React, { useState } from 'react'
+import { useTheme } from './useTheme'
+import CatPage from './pages/cat_page'
+import SktPage from './pages/skt_page'
+import './styles.css'
 
-export default function App(){
-  const [file, setFile] = useState(null)
-  const [name, setName] = useState('')
-  const [results, setResults] = useState([])
-  const [loading, setLoading] = useState(false)
-  const [progress, setProgress] = useState('')
-  const [pdfBuffer, setPdfBuffer] = useState(null)
-  const [preview, setPreview] = useState(null)
-  const [abortController, setAbortController] = useState(null)
+function ThemeToggle({ isDark, onToggle }) {
+  return (
+    <button
+      type="button"
+      className="theme-toggle"
+      onClick={onToggle}
+      aria-label={isDark ? 'Mode terang' : 'Mode gelap'}
+      title={isDark ? 'Mode terang' : 'Mode gelap'}
+    >
+      {isDark ? (
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+          <circle cx="12" cy="12" r="4" />
+          <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41" />
+        </svg>
+      ) : (
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+        </svg>
+      )}
+    </button>
+  )
+}
 
-  async function handleSearch(){
-    if(!file || !name) return
-    setLoading(true)
-    setResults([])
-    setProgress('Reading PDF...')
-    const arr = await file.arrayBuffer()
-    setPdfBuffer(arr)
-    setProgress('Searching...')
-    try{
-      const controller = new AbortController()
-      setAbortController(controller)
-      await searchNameInPDF(arr, name, 'Nama', p=>setProgress(p), match=>{
-        setResults(prev=>[...prev, match])
-      }, controller.signal)
-    }catch(e){
-      console.error(e)
-      setResults([{error: String(e)}])
-    }finally{
-      setLoading(false)
-      setProgress('Done')
-      setAbortController(null)
-    }
-  }
-
-  function cancelSearch(){
-    if(abortController){
-      abortController.abort()
-      setProgress('Cancelled')
-      setLoading(false)
-      setAbortController(null)
-    }
-  }
-
-  async function showPage(page){
-    if(!pdfBuffer) return
-    setProgress('Rendering page...')
-    try{
-      const img = await renderPageAsImage(pdfBuffer, page, 1.5)
-      setPreview({page, img})
-      setProgress('Rendered')
-    }catch(e){
-      console.error(e)
-      setProgress('Render failed')
-    }
-  }
+export default function App() {
+  const [activeTab, setActiveTab] = useState('cat')
+  const { isDark, toggleTheme } = useTheme()
 
   return (
-    <div style={{fontFamily:'sans-serif',padding:20}}>
-      <h2>PDF Column Search</h2>
-      <div style={{display:'flex',gap:10,alignItems:'center',marginBottom:10}}>
-        <input type="file" accept="application/pdf" onChange={e=>setFile(e.target.files?.[0]||null)} />
-        <input placeholder="Search name" value={name} onChange={e=>setName(e.target.value)} />
-        <button onClick={handleSearch} disabled={loading}>Search</button>
-        {loading && <button onClick={cancelSearch}>Cancel</button>}
-      </div>
-      <div style={{marginBottom:8}}><strong>Progress:</strong> {progress}</div>
-      <div>
-        {loading && <div>Working…</div>}
-        {results.length===0 && !loading && <div>No results yet.</div>}
-        <ul>
-            {results.map((r,i)=> (
-              <li key={i} style={{marginBottom:8}}>
-                <div style={{display:'flex',gap:10,alignItems:'center'}}>
-                  <div><strong>Page:</strong> {r.page}</div>
-                  <div><strong>Match:</strong> {r.matchText || r.text || r.error}</div>
-                  <button onClick={()=>showPage(r.page)}>Show</button>
-                </div>
-                {(r.firstCol || r.lastCol) && (
-                  <div style={{marginTop:6}}>
-                    <strong>No:</strong> {r.firstCol} &nbsp;&nbsp; <strong>Status:</strong> {r.lastCol}
-                  </div>
-                )}
+    <div className="app">
+      <header className="app-header">
+        <h1>Hasil Seleksi KDKMP-SKT</h1>
+        <ThemeToggle isDark={isDark} onToggle={toggleTheme} />
+      </header>
 
-                {r.contextItems && (
-                  <div style={{marginTop:6}}>
-                    <strong>Context:</strong>
-                    <div style={{overflowX:'auto',marginTop:6}}>
-                      <table style={{borderCollapse:'collapse',width:'100%'}}>
-                        <tbody>
-                          <tr>
-                            {r.contextItems.map((c,ci)=> (
-                              <td key={ci} style={{border:'1px solid #ddd',padding:'6px',whiteSpace:'nowrap'}}>{c}</td>
-                            ))}
-                          </tr>
-                        </tbody>
-                      </table>
-                    </div>
-                  </div>
-                )}
-                {r.context && !r.contextItems && <div><strong>Context:</strong> {r.context}</div>}
-              </li>
-            ))}
-        </ul>
+      <nav className="app-tabs" role="tablist" aria-label="Jenis hasil seleksi">
+        <button
+          type="button"
+          role="tab"
+          id="tab-cat"
+          aria-selected={activeTab === 'cat'}
+          aria-controls="panel-cat"
+          className={`app-tabs__btn${activeTab === 'cat' ? ' app-tabs__btn--active' : ''}`}
+          onClick={() => setActiveTab('cat')}
+        >
+          Hasil CAT
+        </button>
+        <button
+          type="button"
+          role="tab"
+          id="tab-skt"
+          aria-selected={activeTab === 'skt'}
+          aria-controls="panel-skt"
+          className={`app-tabs__btn${activeTab === 'skt' ? ' app-tabs__btn--active' : ''}`}
+          onClick={() => setActiveTab('skt')}
+        >
+          Hasil SKT
+        </button>
+      </nav>
+
+      <div
+        role="tabpanel"
+        id={activeTab === 'cat' ? 'panel-cat' : 'panel-skt'}
+        aria-labelledby={activeTab === 'cat' ? 'tab-cat' : 'tab-skt'}
+        className="app-tab-panel"
+      >
+        {activeTab === 'cat' ? <CatPage /> : <SktPage />}
       </div>
-        {preview && (
-          <div style={{marginTop:12}}>
-            <h4>Preview - page {preview.page}</h4>
-            <img src={preview.img} alt={`page ${preview.page}`} style={{maxWidth:'100%',border:'1px solid #ccc'}} />
-          </div>
-        )}
     </div>
   )
 }

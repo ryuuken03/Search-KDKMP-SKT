@@ -1,9 +1,20 @@
 <!doctype html>
-<html>
+<html lang="id">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>PDF Column Search</title>
+    <title>Hasil Seleksi KDKMP-SKT</title>
+    <script>
+      (function () {
+        try {
+          var theme = localStorage.getItem('kdkmp-theme') === 'light' ? 'light' : 'dark';
+          var root = document.documentElement;
+          root.setAttribute('data-theme', theme);
+          root.classList.toggle('dark', theme === 'dark');
+          root.style.colorScheme = theme === 'dark' ? 'dark' : 'light';
+        } catch (e) {}
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>
