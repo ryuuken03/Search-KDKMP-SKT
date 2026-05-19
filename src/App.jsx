@@ -9,6 +9,7 @@ export default function App(){
   const [progress, setProgress] = useState('')
   const [pdfBuffer, setPdfBuffer] = useState(null)
   const [preview, setPreview] = useState(null)
+  const [abortController, setAbortController] = useState(null)
 
   async function handleSearch(){
     if(!file || !name) return
@@ -19,15 +20,27 @@ export default function App(){
     setPdfBuffer(arr)
     setProgress('Searching...')
     try{
+      const controller = new AbortController()
+      setAbortController(controller)
       await searchNameInPDF(arr, name, 'Nama', p=>setProgress(p), match=>{
         setResults(prev=>[...prev, match])
-      })
+      }, controller.signal)
     }catch(e){
       console.error(e)
       setResults([{error: String(e)}])
     }finally{
       setLoading(false)
       setProgress('Done')
+      setAbortController(null)
+    }
+  }
+
+  function cancelSearch(){
+    if(abortController){
+      abortController.abort()
+      setProgress('Cancelled')
+      setLoading(false)
+      setAbortController(null)
     }
   }
 
@@ -51,6 +64,7 @@ export default function App(){
         <input type="file" accept="application/pdf" onChange={e=>setFile(e.target.files?.[0]||null)} />
         <input placeholder="Search name" value={name} onChange={e=>setName(e.target.value)} />
         <button onClick={handleSearch} disabled={loading}>Search</button>
+        {loading && <button onClick={cancelSearch}>Cancel</button>}
       </div>
       <div style={{marginBottom:8}}><strong>Progress:</strong> {progress}</div>
       <div>
@@ -64,6 +78,12 @@ export default function App(){
                   <div><strong>Match:</strong> {r.matchText || r.text || r.error}</div>
                   <button onClick={()=>showPage(r.page)}>Show</button>
                 </div>
+                {(r.firstCol || r.lastCol) && (
+                  <div style={{marginTop:6}}>
+                    <strong>No:</strong> {r.firstCol} &nbsp;&nbsp; <strong>Status:</strong> {r.lastCol}
+                  </div>
+                )}
+
                 {r.contextItems && (
                   <div style={{marginTop:6}}>
                     <strong>Context:</strong>

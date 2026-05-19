@@ -55,14 +55,19 @@ function textForColumn(line, colX, xTol=20){
   return nearest ? nearest.str : ''
 }
 
-export async function searchNameInPDF(arrayBuffer, searchName, headerName='Nama', progressCb, onMatch){
+export async function searchNameInPDF(arrayBuffer, searchName, headerName='Nama', progressCb, onMatch, signal){
   progressCb = progressCb || (()=>{})
   onMatch = onMatch || (()=>{})
+  signal = signal || null
   const loadingTask = pdfjsLib.getDocument({data:arrayBuffer})
   const pdf = await loadingTask.promise
   const num = pdf.numPages
   const results = []
   for(let p=1;p<=num;p++){
+    if(signal && signal.aborted){
+      progressCb('Search cancelled')
+      return results
+    }
     progressCb(`Processing page ${p}/${num}`)
     const page = await pdf.getPage(p)
     const textContent = await page.getTextContent({normalizeWhitespace:true})
@@ -84,7 +89,9 @@ export async function searchNameInPDF(arrayBuffer, searchName, headerName='Nama'
             // capture some context: join line items
             const context = line.items.map(i=>i.str).join(' ')
             const contextItems = line.items.map(i=>i.str)
-            const match = {page:p, matchText:cellText, context, contextItems}
+            const firstCol = contextItems.length>0 ? contextItems[0] : ''
+            const lastCol = contextItems.length>0 ? contextItems[contextItems.length-1] : ''
+            const match = {page:p, matchText:cellText, context, contextItems, firstCol, lastCol}
             results.push(match)
             onMatch(match)
             pageFound = true
@@ -94,14 +101,32 @@ export async function searchNameInPDF(arrayBuffer, searchName, headerName='Nama'
     }
     // fallback: if no structured table match found on this page, do a full-page text search
     if(!pageFound){
-      const pageText = items.map(i=>i.str).join(' ')
-      const idx = pageText.toLowerCase().indexOf(searchName.toLowerCase())
-      if(idx!==-1){
-        const start = Math.max(0, idx-60)
-        const excerpt = pageText.slice(start, idx+searchName.length+60)
-        const match = {page:p, matchText:searchName, context:excerpt, contextItems:[excerpt]}
+      // try to find the specific line containing the match
+      let foundLine = null
+      for(const line of lines){
+        const lineText = line.items.map(i=>i.str).join(' ')
+        if(lineText.toLowerCase().includes(searchName.toLowerCase())){ foundLine = line; break }
+      }
+      if(foundLine){
+        const context = foundLine.items.map(i=>i.str).join(' ')
+        const contextItems = foundLine.items.map(i=>i.str)
+        const firstCol = contextItems.length>0 ? contextItems[0] : ''
+        const lastCol = contextItems.length>0 ? contextItems[contextItems.length-1] : ''
+        const match = {page:p, matchText:searchName, context, contextItems, firstCol, lastCol}
         results.push(match)
         onMatch(match)
+      }else{
+        const pageText = items.map(i=>i.str).join(' ')
+        const idx = pageText.toLowerCase().indexOf(searchName.toLowerCase())
+        if(idx!==-1){
+          const start = Math.max(0, idx-60)
+          const excerpt = pageText.slice(start, idx+searchName.length+60)
+          const firstCol = items.length>0 ? items[0].str : ''
+          const lastCol = items.length>0 ? items[items.length-1].str : ''
+          const match = {page:p, matchText:searchName, context:excerpt, contextItems:[excerpt], firstCol, lastCol}
+          results.push(match)
+          onMatch(match)
+        }
       }
     }
   }
