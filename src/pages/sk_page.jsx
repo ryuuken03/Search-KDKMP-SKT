@@ -123,7 +123,7 @@ export default function SKPage() {
           const data = await res.json()
           if (mounted) {
             setPage1Info({
-              title: 'Hasil Seleksi KDKMP',
+              title: 'Hasil Seleksi KDKMP Seleksi Kompetensi',
               subtitle: 'Laporan Rekapitulasi Nilai Seleksi',
               summary: data
             })
