@@ -1,7 +1,7 @@
 import React from 'react';
-import { 
+import {
   PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer,
-  BarChart, Bar, XAxis, YAxis 
+  BarChart, Bar, XAxis, YAxis
 } from 'recharts';
 
 function fmtNum(value) {
@@ -25,8 +25,8 @@ export default function SummarySK({ summary }) {
   // Section 1: Kelulusan dan Tidak Lulus
   const lulus = Number(summary.kelulusan?.jumlah) || 0;
   const tidakLulus = Math.max(0, totalPeserta - lulus);
-  const lulusPersen = summary.kelulusan?.persen != null 
-    ? Number(summary.kelulusan.persen) 
+  const lulusPersen = summary.kelulusan?.persen != null
+    ? Number(summary.kelulusan.persen)
     : totalPeserta > 0 ? (lulus / totalPeserta) * 100 : 0;
   const tidakLulusPersen = Math.max(0, 100 - lulusPersen);
 
@@ -69,7 +69,7 @@ export default function SummarySK({ summary }) {
   const p1lCount = Number(summary.statusCounts?.['P1/L']) || 0;
   const p2lCount = Number(summary.statusCounts?.['P2/L']) || 0;
   const tlCount = Number(summary.statusCounts?.['TL']) || 0;
-  const thCount = Number(summary.statusCounts?.['TH']) || Number(summary.statusCounts?.['HT']) || 0;
+  const thCount = Number(summary.statusCounts?.['TH']) || 0;
   const tmsCount = Number(summary.statusCounts?.['TMS']) || 0;
   const apsCount = Number(summary.statusCounts?.['APS']) || 0;
 
@@ -96,7 +96,7 @@ export default function SummarySK({ summary }) {
   return (
     <div className="summary-dashboard">
       {/* Mobile Toggle Button */}
-      <button 
+      <button
         type="button"
         className={`summary-dashboard__toggle-btn ${isExpanded ? 'summary-dashboard__toggle-btn--expanded' : ''}`}
         onClick={() => setIsExpanded(!isExpanded)}
@@ -104,14 +104,14 @@ export default function SummarySK({ summary }) {
         aria-controls="summary-dashboard-content"
       >
         <span>{isExpanded ? 'Sembunyikan Ringkasan Seleksi' : 'Tampilkan Ringkasan Seleksi'}</span>
-        <svg 
-          xmlns="http://www.w3.org/2000/svg" 
-          viewBox="0 0 24 24" 
-          fill="none" 
-          stroke="currentColor" 
-          strokeWidth="2.5" 
-          strokeLinecap="round" 
-          strokeLinejoin="round" 
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
           className="summary-dashboard__toggle-icon"
         >
           <polyline points="6 9 12 15 18 9"></polyline>
@@ -119,7 +119,7 @@ export default function SummarySK({ summary }) {
       </button>
 
       {/* Main Content Area */}
-      <div 
+      <div
         id="summary-dashboard-content"
         className={`summary-dashboard__content ${isExpanded ? 'summary-dashboard__content--expanded' : ''}`}
       >
@@ -173,7 +173,7 @@ export default function SummarySK({ summary }) {
                     <Pie
                       data={kelulusanData}
                       cx="50%"
-                      cy="50%"
+                      cy="43%"
                       innerRadius={50}
                       outerRadius={80}
                       paddingAngle={5}
@@ -185,10 +185,10 @@ export default function SummarySK({ summary }) {
                     </Pie>
                     <Tooltip
                       formatter={(value) => fmtNum(value)}
-                      contentStyle={{ backgroundColor: 'hsl(var(--card))', borderColor: 'hsl(var(--border))', color: 'hsl(var(--foreground))', borderRadius: '8px' }}
+                      contentStyle={{backgroundColor: 'hsl(var(--card))', borderColor: 'hsl(var(--border))', color: 'hsl(var(--foreground))', borderRadius: '8px' }}
                       itemStyle={{ color: 'hsl(var(--foreground))' }}
                     />
-                    <Legend />
+                    <Legend wrapperStyle={{ marginTop: '40px' }} />
                   </PieChart>
                 </ResponsiveContainer>
               )}
@@ -221,7 +221,7 @@ export default function SummarySK({ summary }) {
                     <Pie
                       data={kehadiranData}
                       cx="50%"
-                      cy="50%"
+                      cy="43%"
                       innerRadius={50}
                       outerRadius={80}
                       paddingAngle={5}
@@ -236,7 +236,7 @@ export default function SummarySK({ summary }) {
                       contentStyle={{ backgroundColor: 'hsl(var(--card))', borderColor: 'hsl(var(--border))', color: 'hsl(var(--foreground))', borderRadius: '8px' }}
                       itemStyle={{ color: 'hsl(var(--foreground))' }}
                     />
-                    <Legend />
+                    <Legend wrapperStyle={{ marginTop: '40px' }} />
                   </PieChart>
                 </ResponsiveContainer>
               )}
@@ -261,7 +261,7 @@ export default function SummarySK({ summary }) {
           <div className="summary-dashboard__card">
             <h3 className="summary-dashboard__card-title">3. Statistik Nilai</h3>
             <div className="summary-dashboard__nilai-container">
-              
+
               {/* Nilai Kognitif */}
               <div className="summary-dashboard__range-container">
                 <div className="summary-dashboard__range-header">
@@ -271,8 +271,8 @@ export default function SummarySK({ summary }) {
                 <div className="summary-dashboard__range-track-wrapper">
                   <span className="summary-dashboard__range-min-val">0</span>
                   <div className="summary-dashboard__range-track">
-                    <div 
-                      className="summary-dashboard__range-fill" 
+                    <div
+                      className="summary-dashboard__range-fill"
                       style={{ left: `${kognitifStartPct}%`, width: `${kognitifWidthPct}%` }}
                     />
                   </div>
@@ -299,8 +299,8 @@ export default function SummarySK({ summary }) {
                 <div className="summary-dashboard__range-track-wrapper">
                   <span className="summary-dashboard__range-min-val">0</span>
                   <div className="summary-dashboard__range-track">
-                    <div 
-                      className="summary-dashboard__range-fill summary-dashboard__range-fill--substansi" 
+                    <div
+                      className="summary-dashboard__range-fill summary-dashboard__range-fill--substansi"
                       style={{ left: `${substansiStartPct}%`, width: `${substansiWidthPct}%` }}
                     />
                   </div>
@@ -329,8 +329,8 @@ export default function SummarySK({ summary }) {
                 <ResponsiveContainer width="100%" height={260}>
                   <BarChart data={statusData} margin={{ top: 20, right: 10, left: 10, bottom: 5 }}>
                     <XAxis dataKey="name" stroke="currentColor" fontSize={11} tickLine={false} />
-                    <YAxis stroke="currentColor" fontSize={11} tickLine={false} tickFormatter={(val) => val >= 1000 ? `${(val/1000).toFixed(0)}k` : val} />
-                    <Tooltip 
+                    <YAxis stroke="currentColor" fontSize={11} tickLine={false} tickFormatter={(val) => val >= 1000 ? `${(val / 1000).toFixed(0)}k` : val} />
+                    <Tooltip
                       formatter={(value) => fmtNum(value)}
                       contentStyle={{ backgroundColor: 'hsl(var(--card))', borderColor: 'hsl(var(--border))', color: 'hsl(var(--foreground))', borderRadius: '8px' }}
                       itemStyle={{ color: 'hsl(var(--foreground))' }}
@@ -343,8 +343,8 @@ export default function SummarySK({ summary }) {
                   </BarChart>
                 </ResponsiveContainer>
               </div>
-              
-              <div className="summary-dashboard__section4-legend">
+
+              <div className="summary-dashboard__section4-legend" style={{ marginTop: '40px' }}>
                 <div className="summary-dashboard__legend-grid">
                   {statusData.map((item, idx) => (
                     <div key={idx} className="summary-dashboard__legend-item">
