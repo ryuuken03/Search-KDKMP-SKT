@@ -1,5 +1,5 @@
 import React, {useState} from 'react'
-import { searchNameInPDF } from './pdfUtils'
+import { searchNameInPDF, renderPageAsImage } from './pdfUtils'
 
 export default function App(){
   const [file, setFile] = useState(null)
@@ -7,6 +7,8 @@ export default function App(){
   const [results, setResults] = useState([])
   const [loading, setLoading] = useState(false)
   const [progress, setProgress] = useState('')
+  const [pdfBuffer, setPdfBuffer] = useState(null)
+  const [preview, setPreview] = useState(null)
 
   async function handleSearch(){
     if(!file || !name) return
@@ -14,16 +16,31 @@ export default function App(){
     setResults([])
     setProgress('Reading PDF...')
     const arr = await file.arrayBuffer()
+    setPdfBuffer(arr)
     setProgress('Searching...')
     try{
-      const res = await searchNameInPDF(arr, name, 'Nama', p=>setProgress(p))
-      setResults(res)
+      await searchNameInPDF(arr, name, 'Nama', p=>setProgress(p), match=>{
+        setResults(prev=>[...prev, match])
+      })
     }catch(e){
       console.error(e)
       setResults([{error: String(e)}])
     }finally{
       setLoading(false)
       setProgress('Done')
+    }
+  }
+
+  async function showPage(page){
+    if(!pdfBuffer) return
+    setProgress('Rendering page...')
+    try{
+      const img = await renderPageAsImage(pdfBuffer, page, 1.5)
+      setPreview({page, img})
+      setProgress('Rendered')
+    }catch(e){
+      console.error(e)
+      setProgress('Render failed')
     }
   }
 
@@ -40,15 +57,24 @@ export default function App(){
         {loading && <div>Working…</div>}
         {results.length===0 && !loading && <div>No results yet.</div>}
         <ul>
-          {results.map((r,i)=> (
-            <li key={i} style={{marginBottom:8}}>
-              <div><strong>Page:</strong> {r.page}</div>
-              <div><strong>Match:</strong> {r.matchText || r.text || r.error}</div>
-              {r.context && <div><strong>Context:</strong> {r.context}</div>}
-            </li>
-          ))}
+            {results.map((r,i)=> (
+              <li key={i} style={{marginBottom:8}}>
+                <div style={{display:'flex',gap:10,alignItems:'center'}}>
+                  <div><strong>Page:</strong> {r.page}</div>
+                  <div><strong>Match:</strong> {r.matchText || r.text || r.error}</div>
+                  <button onClick={()=>showPage(r.page)}>Show</button>
+                </div>
+                {r.context && <div><strong>Context:</strong> {r.context}</div>}
+              </li>
+            ))}
         </ul>
       </div>
+        {preview && (
+          <div style={{marginTop:12}}>
+            <h4>Preview - page {preview.page}</h4>
+            <img src={preview.img} alt={`page ${preview.page}`} style={{maxWidth:'100%',border:'1px solid #ccc'}} />
+          </div>
+        )}
     </div>
   )
 }

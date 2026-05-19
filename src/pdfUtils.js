@@ -55,8 +55,9 @@ function textForColumn(line, colX, xTol=20){
   return nearest ? nearest.str : ''
 }
 
-export async function searchNameInPDF(arrayBuffer, searchName, headerName='Nama', progressCb){
+export async function searchNameInPDF(arrayBuffer, searchName, headerName='Nama', progressCb, onMatch){
   progressCb = progressCb || (()=>{})
+  onMatch = onMatch || (()=>{})
   const loadingTask = pdfjsLib.getDocument({data:arrayBuffer})
   const pdf = await loadingTask.promise
   const num = pdf.numPages
@@ -68,21 +69,63 @@ export async function searchNameInPDF(arrayBuffer, searchName, headerName='Nama'
     const items = getItemsWithPos(textContent)
     const lines = groupLines(items, 4)
     if(lines.length===0) continue
-    // attempt to find header line: choose topmost line (largest y)
-    const headerLine = lines[0]
-    const colX = findHeaderColumn(headerLine, headerName)
-    if(colX===null) continue
-    // for each subsequent line (assume rows), get column text
-    for(const line of lines.slice(1)){
-      const cellText = textForColumn(line, colX, 24)
-      if(!cellText) continue
-      if(cellText.toLowerCase().includes(searchName.toLowerCase())){
-        // capture some context: join line items
-        const context = line.items.map(i=>i.str).join(' ')
-        results.push({page:p, matchText:cellText, context})
+    // attempt to find header line by scanning lines for headerName
+    const headerLine = lines.find(l => l.items.some(it => it.str && it.str.toLowerCase().includes(headerName.toLowerCase())))
+    let pageFound = false
+    if(headerLine){
+      const colX = findHeaderColumn(headerLine, headerName)
+      if(colX!==null){
+        // for each line after the header line (assume rows), get column text
+        const headerIndex = lines.indexOf(headerLine)
+        for(const line of lines.slice(headerIndex + 1)){
+          const cellText = textForColumn(line, colX, 24)
+          if(!cellText) continue
+          if(cellText.toLowerCase().includes(searchName.toLowerCase())){
+            // capture some context: join line items
+            const context = line.items.map(i=>i.str).join(' ')
+            const match = {page:p, matchText:cellText, context}
+            results.push(match)
+            onMatch(match)
+            pageFound = true
+          }
+        }
+      }
+    }
+    // fallback: if no structured table match found on this page, do a full-page text search
+    if(!pageFound){
+      const pageText = items.map(i=>i.str).join(' ')
+      const idx = pageText.toLowerCase().indexOf(searchName.toLowerCase())
+      if(idx!==-1){
+        const start = Math.max(0, idx-60)
+        const excerpt = pageText.slice(start, idx+searchName.length+60)
+        const match = {page:p, matchText:searchName, context:excerpt}
+        results.push(match)
+        onMatch(match)
       }
     }
   }
   progressCb(`Found ${results.length} matches`)
   return results
+}
+
+export async function renderPageAsImage(arrayBuffer, pageNumber, scale=1.5){
+  const loadingTask = pdfjsLib.getDocument({data:arrayBuffer})
+  const pdf = await loadingTask.promise
+  const page = await pdf.getPage(pageNumber)
+  const viewport = page.getViewport({scale})
+
+  // create a canvas element to render the page
+  const canvas = document.createElement('canvas')
+  canvas.width = Math.floor(viewport.width)
+  canvas.height = Math.floor(viewport.height)
+  const ctx = canvas.getContext('2d')
+
+  const renderContext = {
+    canvasContext: ctx,
+    viewport
+  }
+
+  await page.render(renderContext).promise
+  // return a data URL for display
+  return canvas.toDataURL('image/png')
 }
