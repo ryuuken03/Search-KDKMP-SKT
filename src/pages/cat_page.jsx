@@ -1,5 +1,4 @@
 import React, { useState } from 'react'
-import { searchNameInPDF, getPage1Info } from '../pdfUtils'
 import SummaryCat from '../components/summary_cat'
 
 export default function CatPage() {
@@ -7,23 +6,27 @@ export default function CatPage() {
   const [results, setResults] = useState([])
   const [loading, setLoading] = useState(false)
   const [progress, setProgress] = useState('')
-  const [pdfBuffer, setPdfBuffer] = useState(null)
+  const [jsonData, setJsonData] = useState(null)
   const [page1Info, setPage1Info] = useState(null)
   const [abortController, setAbortController] = useState(null)
   const [hasSearched, setHasSearched] = useState(false)
+  const [currentPage, setCurrentPage] = useState(1)
 
   async function handleSearch() {
     if (!name) return
     setHasSearched(true)
     setLoading(true)
     setResults([])
+    setCurrentPage(1)
 
-    let arr = pdfBuffer
-    if (!arr) {
-      setProgress('Menghubungkan ke sumber file...')
+    let rows = jsonData
+    if (!rows) {
+      setProgress('Menghubungkan ke server data...')
+      const controller = new AbortController()
+      setAbortController(controller)
       try {
-        const res = await fetch('/assets/source.pdf')
-        if (!res.ok) throw new Error(`Gagal mengambil source.pdf: ${res.status}`)
+        const res = await fetch('/assets/data.json', { signal: controller.signal })
+        if (!res.ok) throw new Error(`Gagal mengambil data pencarian: ${res.status}`)
 
         const contentLength = res.headers.get('content-length')
         const total = contentLength ? parseInt(contentLength, 10) : 0
@@ -41,43 +44,72 @@ export default function CatPage() {
             const percent = Math.round((loaded / total) * 100)
             const loadedMb = (loaded / (1024 * 1024)).toFixed(1)
             const totalMb = (total / (1024 * 1024)).toFixed(1)
-            setProgress(`Mengunduh berkas KDKMP: ${percent}% (${loadedMb} MB / ${totalMb} MB)`)
+            setProgress(`Mengunduh basis data pencarian KDKMP: ${percent}% (${loadedMb} MB / ${totalMb} MB)`)
           } else {
             const loadedMb = (loaded / (1024 * 1024)).toFixed(1)
-            setProgress(`Mengunduh berkas KDKMP: ${loadedMb} MB...`)
+            setProgress(`Mengunduh basis data pencarian KDKMP: ${loadedMb} MB...`)
           }
         }
 
-        const pdfArrayBuffer = new Uint8Array(loaded)
+        const jsonBytes = new Uint8Array(loaded)
         let offset = 0
         for (const chunk of chunks) {
-          pdfArrayBuffer.set(chunk, offset)
+          jsonBytes.set(chunk, offset)
           offset += chunk.length
         }
-        arr = pdfArrayBuffer.buffer
-        setPdfBuffer(arr)
+
+        const decoder = new TextDecoder('utf-8')
+        const jsonText = decoder.decode(jsonBytes)
+        rows = JSON.parse(jsonText)
+        setJsonData(rows)
       } catch (e) {
         console.error(e)
-        setResults([{ error: `Gagal mengunduh berkas KDKMP: ${String(e.message || e)}` }])
+        if (e.name === 'AbortError') {
+          setProgress('Pencarian dibatalkan')
+        } else {
+          setResults([{ error: `Gagal memuat basis data pencarian: ${String(e.message || e)}` }])
+          setProgress('Gagal memuat berkas.')
+        }
         setLoading(false)
-        setProgress('Gagal memuat berkas.')
+        setAbortController(null)
         return
       }
     }
 
-    setProgress('Sedang Mencari...')
+    setProgress('Sedang mencari...')
     try {
-      const controller = new AbortController()
-      setAbortController(controller)
-      await searchNameInPDF(arr, name, 'Nama', (p) => setProgress(p), (match) => {
-        setResults((prev) => [...prev, match])
-      }, controller.signal)
+      const query = name.toLowerCase().trim()
+      const matches = []
+
+      // Format kolom dalam data.json: [page, no, peserta, nama, kognitif, substansi, status]
+      for (const row of rows) {
+        const pageNum = row[0]
+        const no = row[1]
+        const peserta = row[2]
+        const nama = row[3]
+        const kognitif = row[4]
+        const substansi = row[5]
+        const status = row[6]
+
+        if (nama.toLowerCase().includes(query)) {
+          matches.push({
+            page: pageNum,
+            matchText: nama,
+            contextItems: [no, peserta, nama, kognitif, substansi, status],
+            firstCol: no,
+            lastCol: status
+          })
+        }
+      }
+
+      setResults(matches)
+      setProgress(`Selesai. Ditemukan ${matches.length} hasil.`)
     } catch (e) {
       console.error(e)
       setResults([{ error: String(e) }])
+      setProgress('Error dalam pencarian.')
     } finally {
       setLoading(false)
-      setProgress('Selesai')
       setAbortController(null)
     }
   }
@@ -86,13 +118,18 @@ export default function CatPage() {
     let mounted = true
     ;(async () => {
       try {
-        // Ambil info halaman 1 secara langsung via URL menggunakan HTTP Range Request (tidak mengunduh seluruh 95MB berkas)
-        const info = await getPage1Info('/assets/source.pdf')
+        const res = await fetch('/assets/summary.json')
+        if (!res.ok) return
+        const data = await res.json()
         if (mounted) {
-          setPage1Info(info)
+          setPage1Info({
+            title: 'Hasil Seleksi KDKMP',
+            subtitle: 'Laporan Rekapitulasi Nilai Seleksi',
+            summary: data
+          })
         }
       } catch (e) {
-        console.error('Gagal mengambil ringkasan halaman 1:', e)
+        console.error('Gagal mengambil ringkasan:', e)
       }
     })()
     return () => {
@@ -109,12 +146,56 @@ export default function CatPage() {
     }
   }
 
+  function handleClear() {
+    setName('')
+    setResults([])
+    setHasSearched(false)
+    setCurrentPage(1)
+    setProgress('')
+  }
+
+
+  const ITEMS_PER_PAGE = 50
+  const totalPages = Math.ceil(results.length / ITEMS_PER_PAGE)
+  const indexOfLastItem = currentPage * ITEMS_PER_PAGE
+  const indexOfFirstItem = indexOfLastItem - ITEMS_PER_PAGE
+  const currentItems = results.slice(indexOfFirstItem, indexOfLastItem)
+
+  const getPageNumbers = () => {
+    const pages = []
+    const range = 2
+
+    if (totalPages <= 7) {
+      for (let i = 1; i <= totalPages; i++) pages.push(i)
+    } else {
+      pages.push(1)
+
+      let start = Math.max(2, currentPage - range)
+      let end = Math.min(totalPages - 1, currentPage + range)
+
+      if (start > 2) {
+        pages.push('...')
+      }
+
+      for (let i = start; i <= end; i++) {
+        pages.push(i)
+      }
+
+      if (end < totalPages - 1) {
+        pages.push('...')
+      }
+
+      pages.push(totalPages)
+    }
+    return pages
+  }
+
   return (
     <div className="cat-page">
       {page1Info && (
         <section className="page1-info" aria-label="Rekapitulasi halaman 1 PDF">
           <div className="page1-info__content">
-            <p className="page1-info__badge">Halaman 1 · source.pdf</p>
+            <p className="page1-info__badge">Ringkasan Seleksi</p>
             {page1Info.title && <h2 className="page1-info__title">{page1Info.title}</h2>}
             {page1Info.subtitle && (
               <p className="page1-info__subtitle">{page1Info.subtitle}</p>
@@ -155,6 +236,11 @@ export default function CatPage() {
             Batal
           </button>
         )}
+        {!loading && hasSearched && (
+          <button type="button" className="secondary" onClick={handleClear} aria-label="Clear">
+            Clear
+          </button>
+        )}
       </div>
 
       <div className="meta">
@@ -176,10 +262,10 @@ export default function CatPage() {
                 </tr>
               </thead>
               <tbody>
-                {results.map((r, i) => {
+                {currentItems.map((r, i) => {
                   const raw = r.contextItems || []
                   const vals = raw.map((v) => String(v || '').trim()).filter((v) => v.length > 0)
-                  const noCol = vals[0] ?? i + 1
+                  const noCol = vals[0] ?? (indexOfFirstItem + i + 1)
                   const peserta = vals[1] ?? r.firstCol ?? ''
                   const nama = vals[2] ?? r.matchText ?? ''
                   const kognitif = vals[3] ?? ''
@@ -215,6 +301,65 @@ export default function CatPage() {
                 )}
               </tbody>
             </table>
+
+            {/* Pagination Controls */}
+            {results.length > ITEMS_PER_PAGE && (
+              <div className="pagination">
+                <div className="pagination__info">
+                  Menampilkan <strong>{indexOfFirstItem + 1}</strong> - <strong>{Math.min(indexOfLastItem, results.length)}</strong> dari <strong>{results.length}</strong> hasil
+                </div>
+                <div className="pagination__buttons">
+                  <button
+                    className="pagination__btn"
+                    onClick={() => setCurrentPage(1)}
+                    disabled={currentPage === 1}
+                    aria-label="Halaman Pertama"
+                  >
+                    &laquo;
+                  </button>
+                  <button
+                    className="pagination__btn"
+                    onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                    disabled={currentPage === 1}
+                    aria-label="Halaman Sebelumnya"
+                  >
+                    &lsaquo;
+                  </button>
+
+                  {getPageNumbers().map((p, idx) => {
+                    if (p === '...') {
+                      return <span key={`ellipsis-${idx}`} className="pagination__ellipsis">&hellip;</span>
+                    }
+                    return (
+                      <button
+                        key={`page-${p}`}
+                        className={`pagination__btn ${currentPage === p ? 'active' : ''}`}
+                        onClick={() => setCurrentPage(p)}
+                      >
+                        {p}
+                      </button>
+                    )
+                  })}
+
+                  <button
+                    className="pagination__btn"
+                    onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+                    disabled={currentPage === totalPages}
+                    aria-label="Halaman Berikutnya"
+                  >
+                    &rsaquo;
+                  </button>
+                  <button
+                    className="pagination__btn"
+                    onClick={() => setCurrentPage(totalPages)}
+                    disabled={currentPage === totalPages}
+                    aria-label="Halaman Terakhir"
+                  >
+                    &raquo;
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
         </section>
       </div>

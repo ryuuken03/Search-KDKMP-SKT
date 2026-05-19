@@ -1,17 +1,15 @@
-# PDF Column Search & Dashboard (Vite + React)
+# PDF JSON Search Indexer & Dashboard (Vite + React)
 
-Aplikasi *client-side* berbasis web untuk melakukan pencarian data secara spesifik di bawah kolom (seperti kolom "Nama") pada dokumen PDF menggunakan `pdfjs-dist`. Aplikasi ini juga dilengkapi dengan *dashboard* visualisasi statistik berbasis `recharts` untuk menganalisis data kehadiran dan kelulusan peserta.
-
-Aplikasi ini berjalan sepenuhnya di sisi browser (*client-side*), sehingga sangat cepat dan tidak memerlukan server backend untuk memproses berkas PDF Anda.
+Aplikasi pencarian data hasil seleksi KDKMP yang super cepat dan responsif. Awalnya aplikasi ini memproses file PDF sebesar 97MB (12.473 halaman) di browser, namun sekarang telah dioptimalkan dengan **metode indexing JSON** sehingga dapat dimuat dan mencari data secara instan (< 0.5 detik).
 
 ---
 
-## 🚀 Fitur Utama
+## 🚀 Fitur Utama & Optimalisasi Performa
 
-- **Pencarian Kolom PDF Cepat**: Ekstraksi teks dan pencarian kolom "Nama" secara instan langsung di browser.
-- **Dashboard Statistik Interaktif**: Menampilkan data kelulusan, jumlah peserta, formasi, serta visualisasi grafik kehadiran (Hadir vs Tidak Hadir).
-- **Desain Modern & Responsif**: Antarmuka yang intuitif dan nyaman diakses baik dari perangkat desktop maupun mobile.
-- **Tanpa Database/Backend**: Semua pemrosesan data dilakukan secara lokal dan aman di browser pengguna.
+1. **Pencarian Instan (< 0.5 detik)**: Pencarian nama langsung memindai array JSON lokal, tidak lagi memilah file PDF 97MB di sisi client.
+2. **Dashboard Ringkasan Instan**: Dashboard statistik dimuat seketika karena membaca file `summary.json` kecil (250 bytes) saat halaman pertama dibuka.
+3. **Optimasi Bundle JavaScript**: Pustaka PDF.js yang berat tidak lagi dimuat di browser pengguna, mengurangi ukuran JS bundle dari **2.28 MB menjadi hanya 523 KB** (hanya 158 KB setelah gzip).
+4. **Bypass Batas Ukuran File Vercel**: File PDF asli (`source.pdf`) tidak ikut disertakan ke dalam berkas build produksi, sehingga aman dari batas ukuran file Vercel Hobby (max 50MB).
 
 ---
 
@@ -19,54 +17,50 @@ Aplikasi ini berjalan sepenuhnya di sisi browser (*client-side*), sehingga sanga
 
 Sebelum menjalankan aplikasi, pastikan Anda telah menginstal perkakas berikut pada komputer Anda:
 - [Node.js](https://nodejs.org/) (Versi 18.x atau yang lebih baru direkomendasikan)
-- **NPM** (biasanya otomatis terinstal bersama Node.js) atau **Yarn**
+- **NPM** (biasanya otomatis terinstal bersama Node.js)
 
 ---
 
 ## 💻 Cara Menjalankan Aplikasi secara Lokal
 
-Ikuti langkah-langkah berikut untuk menjalankan aplikasi di lingkungan pengembangan Anda:
-
-### 1. Masuk ke Direktori Projek
-Buka terminal/command prompt dan masuk ke folder projek ini:
+### 1. Kloning/Masuk ke folder projek
+Buka terminal dan masuk ke folder projek ini:
 ```bash
 cd "Search KDKMP SKT"
 ```
 
 ### 2. Instal Dependensi
-Pasang semua pustaka yang dibutuhkan dengan menjalankan perintah berikut:
+Pasang semua pustaka yang dibutuhkan:
 ```bash
 npm install
 ```
 
-### 3. Jalankan Server Pengembangan (Dev Server)
-Jalankan aplikasi dalam mode pengembangan:
+### 3. Letakkan Berkas PDF & Ekstrak Indeks JSON (Wajib)
+Jika ada pembaruan pada berkas PDF hasil seleksi:
+1. Simpan berkas PDF Anda dengan nama `source.pdf` di dalam folder `assets/` (`assets/source.pdf`).
+2. Jalankan script pengekstraksi data untuk mengubah PDF menjadi indeks JSON terkompresi:
+   ```bash
+   node scripts/extract_data.mjs
+   ```
+   *(Script ini akan membaca 12.473 halaman secara lokal dan menghasilkan file `assets/data.json` serta `assets/summary.json` secara otomatis).*
+
+### 4. Jalankan Aplikasi (Mode Development)
+Jalankan aplikasi di browser lokal:
 ```bash
 npm run dev
 ```
 
-Setelah server berjalan, terminal akan menampilkan alamat lokal. Buka browser Anda dan akses:
+Buka browser Anda dan akses:
 👉 **[http://localhost:5173](http://localhost:5173)**
 
 ---
 
-## 📦 Build untuk Produksi (Production Build)
+## 📦 Build untuk Produksi & Deploy (Vercel)
 
-Jika Anda ingin mengompilasi aplikasi untuk di-deploy ke hosting (seperti Vercel, Netlify, atau GitHub Pages), jalankan perintah:
+Untuk mengompilasi aplikasi ke versi produksi yang siap di-deploy ke hosting (seperti Vercel, Netlify, atau GitHub Pages):
 
 ```bash
 npm run build
 ```
 
-Perintah ini akan membuat folder baru bernama `dist/` yang berisi berkas HTML, CSS, dan JavaScript yang telah diminifikasi dan siap digunakan.
-
----
-
-## ☁️ Catatan Deploy ke Cloud (Vercel)
-
-Jika Anda men-deploy aplikasi ini ke Vercel atau layanan sejenis, pastikan hal-hal berikut:
-1. Pastikan folder `node_modules` **tidak ikut di-push** ke repositori Git Anda (sudah otomatis terkonfigurasi di `.gitignore`).
-2. Gunakan pengaturan build berikut di dashboard hosting Anda:
-   - **Build Command**: `npm run build` atau `vite build`
-   - **Output Directory**: `dist`
-   - **Install Command**: `npm install`
+Perintah ini akan membuat folder `dist/` yang hanya berisi file static HTML/JS/CSS dan database JSON terkompresi. Berkas PDF asli (`source.pdf`) **sengaja dilewatkan** agar tidak melebihi kuota upload dan membebani server hosting Anda.

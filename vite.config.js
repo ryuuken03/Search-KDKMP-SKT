@@ -31,6 +31,7 @@ function copyAssetsPlugin() {
         }
         const files = fs.readdirSync(srcDir)
         for (const file of files) {
+          if (file === 'source.pdf') continue // Lewatkan file PDF besar untuk menghindari batas ukuran file Vercel (50MB)
           const srcFile = path.join(srcDir, file)
           const destFile = path.join(destDir, file)
           fs.copyFileSync(srcFile, destFile)
