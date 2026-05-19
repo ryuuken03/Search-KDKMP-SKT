@@ -1,11 +1,22 @@
 <!doctype html>
-<html>
+<html lang="id">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>PDF Column Search</title>
-    <script type="module" crossorigin src="/assets/index-BIB8KhyU.js"></script>
-    <link rel="stylesheet" crossorigin href="/assets/index-BGuZYJol.css">
+    <title>Hasil Seleksi KDKMP-SKT</title>
+    <script>
+      (function () {
+        try {
+          var theme = localStorage.getItem('kdkmp-theme') === 'light' ? 'light' : 'dark';
+          var root = document.documentElement;
+          root.setAttribute('data-theme', theme);
+          root.classList.toggle('dark', theme === 'dark');
+          root.style.colorScheme = theme === 'dark' ? 'dark' : 'light';
+        } catch (e) {}
+      })();
+    </script>
+    <script type="module" crossorigin src="/assets/index-CXIQ_gRI.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-x5_qTnqN.css">
   </head>
   <body>
     <div id="root"></div>
