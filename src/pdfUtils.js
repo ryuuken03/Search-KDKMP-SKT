@@ -55,11 +55,12 @@ function textForColumn(line, colX, xTol=20){
   return nearest ? nearest.str : ''
 }
 
-export async function searchNameInPDF(arrayBuffer, searchName, headerName='Nama', progressCb, onMatch, signal){
+export async function searchNameInPDF(source, searchName, headerName='Nama', progressCb, onMatch, signal){
   progressCb = progressCb || (()=>{})
   onMatch = onMatch || (()=>{})
   signal = signal || null
-  const loadingTask = pdfjsLib.getDocument({data:arrayBuffer})
+  const param = typeof source === 'string' ? { url: source } : { data: source }
+  const loadingTask = pdfjsLib.getDocument(param)
   const pdf = await loadingTask.promise
   const num = pdf.numPages
   const results = []
@@ -205,8 +206,9 @@ export function parsePage1Summary(textLines){
 }
 
 /** Informasi halaman 1: judul + tabel rekap statistik. */
-export async function getPage1Info(arrayBuffer){
-  const loadingTask = pdfjsLib.getDocument({data:arrayBuffer})
+export async function getPage1Info(source){
+  const param = typeof source === 'string' ? { url: source } : { data: source }
+  const loadingTask = pdfjsLib.getDocument(param)
   const pdf = await loadingTask.promise
   const page = await pdf.getPage(1)
   const textContent = await page.getTextContent({normalizeWhitespace: true})

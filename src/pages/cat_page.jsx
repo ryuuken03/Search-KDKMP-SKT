@@ -17,13 +17,56 @@ export default function CatPage() {
     setHasSearched(true)
     setLoading(true)
     setResults([])
-    setProgress('Ambil data dari sumber file.')
+
+    let arr = pdfBuffer
+    if (!arr) {
+      setProgress('Menghubungkan ke sumber file...')
+      try {
+        const res = await fetch('/assets/source.pdf')
+        if (!res.ok) throw new Error(`Gagal mengambil source.pdf: ${res.status}`)
+
+        const contentLength = res.headers.get('content-length')
+        const total = contentLength ? parseInt(contentLength, 10) : 0
+        const reader = res.body.getReader()
+        let loaded = 0
+        const chunks = []
+
+        while (true) {
+          const { done, value } = await reader.read()
+          if (done) break
+          chunks.push(value)
+          loaded += value.length
+
+          if (total) {
+            const percent = Math.round((loaded / total) * 100)
+            const loadedMb = (loaded / (1024 * 1024)).toFixed(1)
+            const totalMb = (total / (1024 * 1024)).toFixed(1)
+            setProgress(`Mengunduh berkas KDKMP: ${percent}% (${loadedMb} MB / ${totalMb} MB)`)
+          } else {
+            const loadedMb = (loaded / (1024 * 1024)).toFixed(1)
+            setProgress(`Mengunduh berkas KDKMP: ${loadedMb} MB...`)
+          }
+        }
+
+        const pdfArrayBuffer = new Uint8Array(loaded)
+        let offset = 0
+        for (const chunk of chunks) {
+          pdfArrayBuffer.set(chunk, offset)
+          offset += chunk.length
+        }
+        arr = pdfArrayBuffer.buffer
+        setPdfBuffer(arr)
+      } catch (e) {
+        console.error(e)
+        setResults([{ error: `Gagal mengunduh berkas KDKMP: ${String(e.message || e)}` }])
+        setLoading(false)
+        setProgress('Gagal memuat berkas.')
+        return
+      }
+    }
+
+    setProgress('Sedang Mencari...')
     try {
-      const res = await fetch('/assets/source.pdf')
-      if (!res.ok) throw new Error(`Gagal mengambil source.pdf: ${res.status}`)
-      const arr = await res.arrayBuffer()
-      setPdfBuffer(arr)
-      setProgress('Sedang Mencari...')
       const controller = new AbortController()
       setAbortController(controller)
       await searchNameInPDF(arr, name, 'Nama', (p) => setProgress(p), (match) => {
@@ -43,19 +86,13 @@ export default function CatPage() {
     let mounted = true
     ;(async () => {
       try {
-        const res = await fetch('/assets/source.pdf')
-        if (!res.ok) return
-        const arr = await res.arrayBuffer()
-        if (!mounted) return
-        setPdfBuffer(arr)
-        try {
-          const info = await getPage1Info(arr)
-          if (mounted) setPage1Info(info)
-        } catch (e) {
-          /* ignore */
+        // Ambil info halaman 1 secara langsung via URL menggunakan HTTP Range Request (tidak mengunduh seluruh 95MB berkas)
+        const info = await getPage1Info('/assets/source.pdf')
+        if (mounted) {
+          setPage1Info(info)
         }
       } catch (e) {
-        /* ignore */
+        console.error('Gagal mengambil ringkasan halaman 1:', e)
       }
     })()
     return () => {
