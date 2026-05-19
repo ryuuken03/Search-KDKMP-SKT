@@ -19,8 +19,29 @@ function serveRootAssets() {
   }
 }
 
+function copyAssetsPlugin() {
+  return {
+    name: 'copy-assets-plugin',
+    closeBundle() {
+      const srcDir = path.resolve(__dirname, 'assets')
+      const destDir = path.resolve(__dirname, 'dist/assets')
+      if (fs.existsSync(srcDir)) {
+        if (!fs.existsSync(destDir)) {
+          fs.mkdirSync(destDir, { recursive: true })
+        }
+        const files = fs.readdirSync(srcDir)
+        for (const file of files) {
+          const srcFile = path.join(srcDir, file)
+          const destFile = path.join(destDir, file)
+          fs.copyFileSync(srcFile, destFile)
+        }
+      }
+    },
+  }
+}
+
 export default defineConfig({
-  plugins: [react(), serveRootAssets()],
+  plugins: [react(), serveRootAssets(), copyAssetsPlugin()],
   publicDir: 'public',
   resolve: {
     alias: {
@@ -29,5 +50,8 @@ export default defineConfig({
   },
   server: {
     fs: { allow: ['.', 'assets'] },
+  },
+  build: {
+    chunkSizeWarningLimit: 1600,
   },
 })
