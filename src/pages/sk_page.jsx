@@ -3,6 +3,7 @@ import SummarySK from '../components/summary_sk'
 
 export default function SKPage() {
   const [name, setName] = useState('')
+  const [nodi, setNodi] = useState('')
   const [results, setResults] = useState([])
   const [loading, setLoading] = useState(false)
   const [progress, setProgress] = useState('')
@@ -13,7 +14,7 @@ export default function SKPage() {
   const [currentPage, setCurrentPage] = useState(1)
 
   async function handleSearch() {
-    if (!name) return
+    if (!name && !nodi) return
     setHasSearched(true)
     setLoading(true)
     setResults([])
@@ -78,7 +79,8 @@ export default function SKPage() {
 
     setProgress('Sedang mencari...')
     try {
-      const query = name.toLowerCase().trim()
+      const queryNama = name.toLowerCase().trim()
+      const queryNodi = nodi.toLowerCase().trim()
       const matches = []
 
       // Format kolom dalam data.json: [page, no, peserta, nama, kognitif, substansi, status]
@@ -91,7 +93,10 @@ export default function SKPage() {
         const substansi = row[5]
         const status = row[6]
 
-        if (nama.toLowerCase().includes(query)) {
+        const matchNama = queryNama ? nama.toLowerCase().includes(queryNama) : true
+        const matchNodi = queryNodi ? String(no).toLowerCase().includes(queryNodi) : true
+
+        if (matchNama && matchNodi) {
           matches.push({
             page: pageNum,
             matchText: nama,
@@ -148,6 +153,7 @@ export default function SKPage() {
 
   function handleClear() {
     setName('')
+    setNodi('')
     setResults([])
     setHasSearched(false)
     setCurrentPage(1)
@@ -207,6 +213,15 @@ export default function SKPage() {
 
       <div className="controls">
         <input
+          id="search-nodi"
+          type="text"
+          placeholder="Cari Peringkat Peserta"
+          value={nodi}
+          onChange={(e) => setNodi(e.target.value)}
+          onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+        />
+        <input
+          id="search-nama"
           type="text"
           placeholder="Cari Nama"
           value={name}
@@ -253,7 +268,7 @@ export default function SKPage() {
             <table>
               <thead>
                 <tr>
-                  <th>No</th>
+                  <th>Peringkat</th>
                   <th>Nomor Peserta</th>
                   <th>Nama</th>
                   <th>Kognitif</th>

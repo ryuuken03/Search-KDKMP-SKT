@@ -78,7 +78,7 @@ export default function SummarySK({ summary }) {
     { name: 'P1/L', value: p1lCount, label: 'P1/L', description: 'Peserta seleksi kompetensi memenuhi NAB sub tes kognitif ≥ 100 dan mengikuti seleksi kompetensi tambahan' },
     { name: 'P2/L', value: p2lCount, label: 'P2/L', description: 'Peserta seleksi kompetensi memenuhi NAB sub tes kognitif ≥ 90 dan sub tes substansi ≥ 71 serta mengikuti seleksi kompetensi tambahan' },
     { name: 'TL', value: tlCount, label: 'TL', description: 'Peserta Tidak Lulus' },
-    { name: 'TH', value: thCount, label: 'TH / HT', description: 'Peserta Tidak Hadir' },
+    { name: 'TH', value: thCount, label: 'TH', description: 'Peserta Tidak Hadir' },
     { name: 'TMS', value: tmsCount, label: 'TMS', description: 'Gugur dikarenakan tidak memenuhi syarat yang ditentukan oleh panselnas' },
     { name: 'APS', value: apsCount, label: 'APS', description: 'Peserta yang mengajukan pengunduran diri atas permintaan sendiri' }
   ];
@@ -185,7 +185,7 @@ export default function SummarySK({ summary }) {
                     </Pie>
                     <Tooltip
                       formatter={(value) => fmtNum(value)}
-                      contentStyle={{backgroundColor: 'hsl(var(--card))', borderColor: 'hsl(var(--border))', color: 'hsl(var(--foreground))', borderRadius: '8px' }}
+                      contentStyle={{ backgroundColor: 'hsl(var(--card))', borderColor: 'hsl(var(--border))', color: 'hsl(var(--foreground))', borderRadius: '8px' }}
                       itemStyle={{ color: 'hsl(var(--foreground))' }}
                     />
                     <Legend wrapperStyle={{ marginTop: '40px' }} />
