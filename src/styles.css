@@ -249,6 +249,20 @@ body {
   margin-bottom: 12px;
 }
 
+.controls__fields {
+  flex: 1;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  min-width: 0;
+}
+
+.controls__actions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
 .controls input[type="text"],
 .controls input[type="number"] {
   flex: 1;
@@ -557,13 +571,19 @@ body {
   }
 
   .controls {
-    flex-wrap: wrap;
-    align-items: center;
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .controls__fields {
+    display: flex;
+    gap: 8px;
   }
 
   .controls input[type="text"],
   .controls input[type="number"] {
     width: 100%;
+    min-width: 0;
     height: 48px;
     padding-top: 12px;
     padding-bottom: 12px;
@@ -571,8 +591,15 @@ body {
   }
 
   .controls select {
+    flex: 1;
+    min-width: 0;
     height: 48px;
     font-size: 16px;
+  }
+
+  .controls__actions {
+    display: flex;
+    gap: 8px;
   }
 
   .controls button {
@@ -605,9 +632,13 @@ body {
   .data-table thead,
   .data-table tbody,
   .data-table th,
-  .data-table td,
-  .data-table tr {
+  .data-table td {
     display: block;
+  }
+
+  .data-table tr {
+    display: flex;
+    flex-wrap: wrap;
   }
 
   .data-table thead {
@@ -625,8 +656,23 @@ body {
   .data-table td {
     display: flex;
     justify-content: space-between;
+    align-items: center;
     padding: 8px;
     border-top: none;
+    width: 100%;
+  }
+
+  /* Kognitif, Substansi, Status — share one row, stacked label+value */
+  .data-table td:nth-child(4),
+  .data-table td:nth-child(5),
+  .data-table td:nth-child(6) {
+    width: 33.33%;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    text-align: center;
+    padding: 6px 4px;
+    border-top: 1px solid hsl(var(--border) / 0.5);
   }
 
   .data-table td::before {
@@ -635,6 +681,15 @@ body {
     margin-right: 8px;
     font-size: 12px;
     font-weight: 500;
+    flex-shrink: 0;
+  }
+
+  .data-table td:nth-child(4)::before,
+  .data-table td:nth-child(5)::before,
+  .data-table td:nth-child(6)::before {
+    margin-right: 0;
+    margin-bottom: 2px;
+    font-size: 10px;
   }
 
   .data-table tr.empty-row td {
