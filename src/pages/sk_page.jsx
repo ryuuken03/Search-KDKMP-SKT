@@ -148,16 +148,16 @@ export default function SKPage() {
   // Silently preload data on mount so the default first-page view works instantly
   React.useEffect(() => {
     if (jsonData) return
-    ;(async () => {
-      try {
-        const res = await fetch('/assets/data.json')
-        if (!res.ok) return
-        const text = await res.text()
-        setJsonData(JSON.parse(text))
-      } catch (e) {
-        console.error('Gagal memuat data awal:', e)
-      }
-    })()
+      ; (async () => {
+        try {
+          const res = await fetch('/assets/data.json')
+          if (!res.ok) return
+          const text = await res.text()
+          setJsonData(JSON.parse(text))
+        } catch (e) {
+          console.error('Gagal memuat data awal:', e)
+        }
+      })()
   }, [])
 
   function cancelSearch() {
@@ -187,14 +187,14 @@ export default function SKPage() {
   const displayItems = hasSearched
     ? results.slice(indexOfFirstItem, indexOfLastItem)
     : (jsonData
-        ? jsonData.slice(indexOfFirstItem, indexOfLastItem).map(row => ({
-            page: row[0],
-            matchText: row[3],
-            contextItems: [row[1], row[2], row[3], row[4], row[5], row[6]],
-            firstCol: row[1],
-            lastCol: row[6]
-          }))
-        : [])
+      ? jsonData.slice(indexOfFirstItem, indexOfLastItem).map(row => ({
+        page: row[0],
+        matchText: row[3],
+        contextItems: [row[1], row[2], row[3], row[4], row[5], row[6]],
+        firstCol: row[1],
+        lastCol: row[6]
+      }))
+      : [])
 
   const getPageNumbers = () => {
     const pages = []
@@ -303,7 +303,7 @@ export default function SKPage() {
               <thead>
                 <tr>
                   <th>Peringkat</th>
-                  <th>Nomor Peserta</th>
+                  <th>No Peserta</th>
                   <th>Nama</th>
                   <th>Kognitif</th>
                   <th>Substansi</th>
@@ -329,12 +329,12 @@ export default function SKPage() {
                   }
                   return (
                     <tr key={i}>
-                      <td data-label="No">{noCol}</td>
-                      <td data-label="Nomor Peserta">{peserta}</td>
-                      <td data-label="Nama">{nama}</td>
-                      <td data-label="Kognitif">{kognitif}</td>
-                      <td data-label="Substansi">{substansi}</td>
-                      <td data-label="Status">{status}</td>
+                      <td data-label="Peringkat"><span>{noCol}</span></td>
+                      <td data-label="No Peserta"><span>{peserta}</span></td>
+                      <td data-label="Nama"><span>{nama}</span></td>
+                      <td data-label="Kognitif"><span>{kognitif}</span></td>
+                      <td data-label="Substansi"><span>{substansi}</span></td>
+                      <td data-label="Status"><span>{status}</span></td>
                     </tr>
                   )
                 })}

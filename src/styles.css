@@ -362,7 +362,7 @@ body {
 
 .layout {
   display: grid;
-  grid-template-columns: 1fr;
+  grid-template-columns: minmax(0, 1fr);
   gap: 20px;
 }
 
@@ -545,6 +545,14 @@ body {
   vertical-align: top;
 }
 
+/* Allow text wrap/break for Peringkat & No Peserta if too wide */
+.data-table tbody td:nth-child(1) span,
+.data-table tbody td:nth-child(2) span {
+  word-break: break-all;
+  overflow-wrap: anywhere;
+}
+
+
 .data-table tbody tr {
   transition: background 0.12s;
 }
@@ -568,6 +576,7 @@ body {
   .app {
     margin: 18px;
     padding: 16px;
+    max-width: 100%;
   }
 
   .controls {
@@ -626,6 +635,9 @@ body {
     border: 0;
     background: transparent;
     box-shadow: none;
+    max-width: 100%;
+    width: 100%;
+    min-width: 0;
   }
 
   .data-table table,
@@ -635,33 +647,46 @@ body {
   .data-table td {
     display: block;
     width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
   }
 
   .data-table tr {
     display: flex;
     flex-wrap: wrap;
     width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    margin-bottom: 12px;
+    border: 1px solid hsl(var(--border));
+    border-radius: var(--radius);
+    padding: 8px;
+    background: hsl(var(--card));
+    box-sizing: border-box;
+    overflow: hidden;
   }
 
   .data-table thead {
     display: none;
   }
 
-  .data-table tr {
-    margin-bottom: 12px;
-    border: 1px solid hsl(var(--border));
-    border-radius: var(--radius);
-    padding: 8px;
-    background: hsl(var(--card));
-  }
-
   .data-table td {
     display: flex;
     justify-content: space-between;
-    align-items: center;
+    align-items: flex-start;
     padding: 8px;
     border-top: none;
     width: 100%;
+  }
+
+  /* Value span: proper flex child so it can shrink + wrap */
+  .data-table td span {
+    min-width: 0;
+    flex: 1;
+    text-align: right;
+    word-break: break-all;
+    overflow-wrap: anywhere;
   }
 
   /* Kognitif, Substansi, Status — share one row, stacked label+value */
@@ -701,6 +726,11 @@ body {
 
   .data-table tr.empty-row td::before {
     content: none;
+  }
+
+  .pagination__buttons {
+    flex-wrap: wrap;
+    justify-content: center;
   }
 }
 
