@@ -77,7 +77,7 @@ export default function SummarySK({ summary }) {
     { name: 'P/L', value: plCount, label: 'P/L', description: 'Peserta seleksi kompetensi memenuhi NAB sub tes kognitif ≥ 110 dan mengikuti seleksi kompetensi tambahan' },
     { name: 'P1/L', value: p1lCount, label: 'P1/L', description: 'Peserta seleksi kompetensi memenuhi NAB sub tes kognitif ≥ 100 dan mengikuti seleksi kompetensi tambahan' },
     { name: 'P2/L', value: p2lCount, label: 'P2/L', description: 'Peserta seleksi kompetensi memenuhi NAB sub tes kognitif ≥ 90 dan sub tes substansi ≥ 71 serta mengikuti seleksi kompetensi tambahan' },
-    { name: 'TL', value: tlCount, label: 'TL', description: 'Peserta Tidak Lulus' },
+    { name: 'TL', value: tlCount, label: 'TL', description: 'Peserta Hadir Tidak Lulus' },
     { name: 'TH', value: thCount, label: 'TH', description: 'Peserta Tidak Hadir' },
     { name: 'TMS', value: tmsCount, label: 'TMS', description: 'Gugur dikarenakan tidak memenuhi syarat yang ditentukan oleh panselnas' },
     { name: 'APS', value: apsCount, label: 'APS', description: 'Peserta yang mengajukan pengunduran diri atas permintaan sendiri' }
@@ -163,7 +163,7 @@ export default function SummarySK({ summary }) {
         <div className="summary-dashboard__grid">
           {/* Section 1: Kelulusan dan Tidak Lulus */}
           <div className="summary-dashboard__card">
-            <h3 className="summary-dashboard__card-title">1. Kelulusan & Tidak Lulus</h3>
+            <h3 className="summary-dashboard__card-title">1. Lulus & Tidak Lulus</h3>
             <div className="summary-dashboard__chart-container">
               {kelulusanData[0].value === 0 && kelulusanData[1].value === 0 ? (
                 <span className="summary-dashboard__empty-chart">Data tidak tersedia</span>
