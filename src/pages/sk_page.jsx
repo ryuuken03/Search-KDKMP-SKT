@@ -2,8 +2,8 @@ import React, { useState } from 'react'
 import SummarySK from '../components/summary_sk'
 
 export default function SKPage() {
-  const [name, setName] = useState('')
-  const [nodi, setNodi] = useState('')
+  const [query, setQuery] = useState('')
+  const [searchMode, setSearchMode] = useState('Nama')
   const [results, setResults] = useState([])
   const [loading, setLoading] = useState(false)
   const [progress, setProgress] = useState('')
@@ -14,7 +14,7 @@ export default function SKPage() {
   const [currentPage, setCurrentPage] = useState(1)
 
   async function handleSearch() {
-    if (!name && !nodi) return
+    if (!query.trim()) return
     setHasSearched(true)
     setLoading(true)
     setResults([])
@@ -79,8 +79,7 @@ export default function SKPage() {
 
     setProgress('Sedang mencari...')
     try {
-      const queryNama = name.toLowerCase().trim()
-      const queryNodi = nodi.toLowerCase().trim()
+      const trimmedQuery = query.trim()
       const matches = []
 
       // Format kolom dalam data.json: [page, no, peserta, nama, kognitif, substansi, status]
@@ -93,10 +92,14 @@ export default function SKPage() {
         const substansi = row[5]
         const status = row[6]
 
-        const matchNama = queryNama ? nama.toLowerCase().includes(queryNama) : true
-        const matchNodi = queryNodi ? String(no).toLowerCase().includes(queryNodi) : true
+        let matched = false
+        if (searchMode === 'Nama') {
+          matched = nama.toLowerCase().includes(trimmedQuery.toLowerCase())
+        } else {
+          matched = String(no) === trimmedQuery
+        }
 
-        if (matchNama && matchNodi) {
+        if (matched) {
           matches.push({
             page: pageNum,
             matchText: nama,
@@ -142,6 +145,21 @@ export default function SKPage() {
     }
   }, [])
 
+  // Silently preload data on mount so the default first-page view works instantly
+  React.useEffect(() => {
+    if (jsonData) return
+    ;(async () => {
+      try {
+        const res = await fetch('/assets/data.json')
+        if (!res.ok) return
+        const text = await res.text()
+        setJsonData(JSON.parse(text))
+      } catch (e) {
+        console.error('Gagal memuat data awal:', e)
+      }
+    })()
+  }, [])
+
   function cancelSearch() {
     if (abortController) {
       abortController.abort()
@@ -152,8 +170,7 @@ export default function SKPage() {
   }
 
   function handleClear() {
-    setName('')
-    setNodi('')
+    setQuery('')
     setResults([])
     setHasSearched(false)
     setCurrentPage(1)
@@ -162,10 +179,22 @@ export default function SKPage() {
 
 
   const ITEMS_PER_PAGE = 50
-  const totalPages = Math.ceil(results.length / ITEMS_PER_PAGE)
+  const totalItems = hasSearched ? results.length : (jsonData ? jsonData.length : 0)
+  const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE)
   const indexOfLastItem = currentPage * ITEMS_PER_PAGE
   const indexOfFirstItem = indexOfLastItem - ITEMS_PER_PAGE
-  const currentItems = results.slice(indexOfFirstItem, indexOfLastItem)
+
+  const displayItems = hasSearched
+    ? results.slice(indexOfFirstItem, indexOfLastItem)
+    : (jsonData
+        ? jsonData.slice(indexOfFirstItem, indexOfLastItem).map(row => ({
+            page: row[0],
+            matchText: row[3],
+            contextItems: [row[1], row[2], row[3], row[4], row[5], row[6]],
+            firstCol: row[1],
+            lastCol: row[6]
+          }))
+        : [])
 
   const getPageNumbers = () => {
     const pages = []
@@ -213,21 +242,22 @@ export default function SKPage() {
 
       <div className="controls">
         <input
-          id="search-nodi"
-          type="text"
-          placeholder="Cari Peringkat Peserta"
-          value={nodi}
-          onChange={(e) => setNodi(e.target.value)}
+          id="search-query"
+          type={searchMode === 'Peringkat' ? 'number' : 'text'}
+          placeholder={searchMode === 'Nama' ? 'Cari Nama Peserta...' : 'Cari Peringkat (angka)...'}
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
           onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
         />
-        <input
-          id="search-nama"
-          type="text"
-          placeholder="Cari Nama"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-        />
+        <select
+          id="search-mode"
+          value={searchMode}
+          onChange={(e) => { setSearchMode(e.target.value); setQuery('') }}
+          aria-label="Mode Pencarian"
+        >
+          <option value="Nama">Nama</option>
+          <option value="Peringkat">Peringkat</option>
+        </select>
         <button onClick={handleSearch} disabled={loading} aria-label="Cari">
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -277,7 +307,7 @@ export default function SKPage() {
                 </tr>
               </thead>
               <tbody>
-                {currentItems.map((r, i) => {
+                {displayItems.map((r, i) => {
                   const raw = r.contextItems || []
                   const vals = raw.map((v) => String(v || '').trim()).filter((v) => v.length > 0)
                   const noCol = vals[0] ?? (indexOfFirstItem + i + 1)
@@ -309,6 +339,11 @@ export default function SKPage() {
                     <td colSpan={6}>Sedang mencari…</td>
                   </tr>
                 )}
+                {!loading && !hasSearched && !jsonData && (
+                  <tr className="empty-row">
+                    <td colSpan={6}>Memuat data...</td>
+                  </tr>
+                )}
                 {!loading && hasSearched && results.length === 0 && (
                   <tr className="empty-row">
                     <td colSpan={6}>Hasil tidak ditemukan.</td>
@@ -318,10 +353,10 @@ export default function SKPage() {
             </table>
 
             {/* Pagination Controls */}
-            {results.length > ITEMS_PER_PAGE && (
+            {totalItems > ITEMS_PER_PAGE && (
               <div className="pagination">
                 <div className="pagination__info">
-                  Menampilkan <strong>{indexOfFirstItem + 1}</strong> - <strong>{Math.min(indexOfLastItem, results.length)}</strong> dari <strong>{results.length}</strong> hasil
+                  Menampilkan <strong>{indexOfFirstItem + 1}</strong> - <strong>{Math.min(indexOfLastItem, totalItems)}</strong> dari <strong>{totalItems}</strong> {hasSearched ? 'hasil' : 'data'}
                 </div>
                 <div className="pagination__buttons">
                   <button
