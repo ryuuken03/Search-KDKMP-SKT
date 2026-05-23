@@ -66,8 +66,8 @@ function parsePage1Summary(textLines) {
 }
 
 async function extract() {
-  const pdfPath = './assets/kdkmp/source.pdf';
-  const outPath = './assets/kdkmp/data.json';
+  const pdfPath = './assets/knmp/source.pdf';
+  const outPath = './assets/knmp/data.json';
 
   console.log('Loading PDF from:', pdfPath);
   if (!fs.existsSync(pdfPath)) {
@@ -118,12 +118,6 @@ async function extract() {
         // Jika baris dimulai dengan angka (No urut peserta) dan memiliki minimal 6 kolom data
         if (cleanItems.length >= 6 && /^\d+$/.test(cleanItems[0])) {
           // Format kolom: [No, Nomor Peserta, Nama, Kognitif, Substansi, Status]
-          // cleanItems[0] = No
-          // cleanItems[1] = Nomor Peserta
-          // cleanItems[2] = Nama
-          // cleanItems[3] = Kognitif
-          // cleanItems[4] = Substansi
-          // cleanItems[5] = Status / Hasil (P/L, dsb)
           rows.push([
             p,                  // Index 0: Halaman
             cleanItems[0],      // Index 1: No

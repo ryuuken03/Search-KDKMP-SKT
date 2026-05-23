@@ -12,7 +12,7 @@ function fmtNum(value) {
   return n.toLocaleString('id-ID')
 }
 
-export default function SummarySK({ summary }) {
+export default function SummarySK({ summary, isKnmp }) {
   if (!summary) {
     return <p className="page1-info__empty">Data rekap halaman 1 tidak ditemukan.</p>;
   }

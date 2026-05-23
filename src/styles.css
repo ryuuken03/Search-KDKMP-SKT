@@ -200,6 +200,31 @@ body {
   color: hsl(var(--muted-foreground));
 }
 
+.toggle-data-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 40px;
+  padding: 0 16px;
+  border-radius: var(--radius);
+  border: 1px solid hsl(var(--border));
+  background: hsl(var(--secondary));
+  color: hsl(var(--foreground));
+  font-weight: 600;
+  font-size: 13px;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.toggle-data-btn:hover {
+  background: hsl(var(--accent));
+}
+
+.toggle-data-btn:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px hsl(var(--ring) / 0.35);
+}
+
 .theme-toggle {
   display: inline-flex;
   align-items: center;

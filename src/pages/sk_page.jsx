@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import SummarySK from '../components/summary_sk'
 
-export default function SKPage() {
+export default function SKPage({ isKnmp }) {
   const [query, setQuery] = useState('')
   const [searchMode, setSearchMode] = useState('Nama')
   const [results, setResults] = useState([])
@@ -12,6 +12,16 @@ export default function SKPage() {
   const [abortController, setAbortController] = useState(null)
   const [hasSearched, setHasSearched] = useState(false)
   const [currentPage, setCurrentPage] = useState(1)
+
+  // Reset data and search results when switching between datasets
+  React.useEffect(() => {
+    setJsonData(null)
+    setResults([])
+    setHasSearched(false)
+    setQuery('')
+    setProgress('')
+    setPage1Info(null)
+  }, [isKnmp])
 
   async function handleSearch() {
     if (!query.trim()) return
@@ -26,7 +36,7 @@ export default function SKPage() {
       const controller = new AbortController()
       setAbortController(controller)
       try {
-        const res = await fetch('/assets/data.json', { signal: controller.signal })
+        const res = await fetch(`/assets/${isKnmp ? 'knmp' : 'kdkmp'}/data.json`, { signal: controller.signal })
         if (!res.ok) throw new Error(`Gagal mengambil data pencarian: ${res.status}`)
 
         const contentLength = res.headers.get('content-length')
@@ -45,10 +55,10 @@ export default function SKPage() {
             const percent = Math.round((loaded / total) * 100)
             const loadedMb = (loaded / (1024 * 1024)).toFixed(1)
             const totalMb = (total / (1024 * 1024)).toFixed(1)
-            setProgress(`Mengunduh basis data pencarian KDKMP: ${percent}% (${loadedMb} MB / ${totalMb} MB)`)
+            setProgress(`Mengunduh basis data pencarian ${isKnmp ? 'KNMP' : 'KDKMP'}: ${percent}% (${loadedMb} MB / ${totalMb} MB)`)
           } else {
             const loadedMb = (loaded / (1024 * 1024)).toFixed(1)
-            setProgress(`Mengunduh basis data pencarian KDKMP: ${loadedMb} MB...`)
+            setProgress(`Mengunduh basis data pencarian ${isKnmp ? 'KNMP' : 'KDKMP'}: ${loadedMb} MB...`)
           }
         }
 
@@ -61,7 +71,8 @@ export default function SKPage() {
 
         const decoder = new TextDecoder('utf-8')
         const jsonText = decoder.decode(jsonBytes)
-        rows = JSON.parse(jsonText)
+        const parsed = JSON.parse(jsonText)
+        rows = parsed.rows || parsed
         setJsonData(rows)
       } catch (e) {
         console.error(e)
@@ -126,12 +137,12 @@ export default function SKPage() {
     let mounted = true
       ; (async () => {
         try {
-          const res = await fetch('/assets/summary.json')
+          const res = await fetch(`/assets/${isKnmp ? 'knmp' : 'kdkmp'}/summary.json`)
           if (!res.ok) return
           const data = await res.json()
           if (mounted) {
             setPage1Info({
-              title: 'Hasil Seleksi KDKMP Seleksi Kompetensi',
+              title: `Hasil Seleksi ${isKnmp ? 'KNMP' : 'KDKMP'} Seleksi Kompetensi`,
               subtitle: 'Laporan Rekapitulasi Nilai Seleksi',
               summary: data
             })
@@ -143,22 +154,28 @@ export default function SKPage() {
     return () => {
       mounted = false
     }
-  }, [])
+  }, [isKnmp])
 
-  // Silently preload data on mount so the default first-page view works instantly
+  // Silently preload data on mount/change so the default first-page view works instantly
   React.useEffect(() => {
-    if (jsonData) return
+    let mounted = true
       ; (async () => {
         try {
-          const res = await fetch('/assets/data.json')
+          const res = await fetch(`/assets/${isKnmp ? 'knmp' : 'kdkmp'}/data.json`)
           if (!res.ok) return
           const text = await res.text()
-          setJsonData(JSON.parse(text))
+          if (mounted) {
+            const parsed = JSON.parse(text)
+            setJsonData(parsed.rows || parsed)
+          }
         } catch (e) {
           console.error('Gagal memuat data awal:', e)
         }
       })()
-  }, [])
+    return () => {
+      mounted = false
+    }
+  }, [isKnmp])
 
   function cancelSearch() {
     if (abortController) {
@@ -235,7 +252,7 @@ export default function SKPage() {
             {page1Info.subtitle && (
               <p className="page1-info__subtitle">{page1Info.subtitle}</p>
             )}
-            <SummarySK summary={page1Info.summary} />
+            <SummarySK summary={page1Info.summary} isKnmp={isKnmp} />
           </div>
         </section>
       )}

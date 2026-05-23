@@ -30,12 +30,24 @@ function ThemeToggle({ isDark, onToggle }) {
 export default function App() {
   const [activeTab, setActiveTab] = useState('sk')
   const { isDark, toggleTheme } = useTheme()
+  const [isKnmp, setIsKnmp] = useState(false)
 
   return (
     <div className="app">
       <header className="app-header">
-        <h1>Hasil Seleksi KDKMP</h1>
-        <ThemeToggle isDark={isDark} onToggle={toggleTheme} />
+        <h1>Hasil Seleksi {isKnmp ? 'KNMP' : 'KDKMP'}</h1>
+        <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+          {activeTab === 'sk' && (
+            <button
+              type="button"
+              className="toggle-data-btn"
+              onClick={() => setIsKnmp(prev => !prev)}
+            >
+              {isKnmp ? 'KDKMP' : 'KNMP'}
+            </button>
+          )}
+          <ThemeToggle isDark={isDark} onToggle={toggleTheme} />
+        </div>
       </header>
 
       <nav className="app-tabs" role="tablist" aria-label="Jenis hasil seleksi">
@@ -69,7 +81,7 @@ export default function App() {
         aria-labelledby={activeTab === 'sk' ? 'tab-sk' : 'tab-skt'}
         className="app-tab-panel"
       >
-        {activeTab === 'sk' ? <SKPage /> : <SktPage />}
+        {activeTab === 'sk' ? <SKPage isKnmp={isKnmp} /> : <SktPage />}
       </div>
     </div>
   )

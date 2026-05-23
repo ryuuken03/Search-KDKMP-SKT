@@ -1,0 +1,30 @@
+{
+  "jumlahFormasi": "1369",
+  "jumlahPeserta": "12241",
+  "kehadiran": {
+    "hadir": "9015",
+    "tidakHadir": "3226"
+  },
+  "kelulusan": {
+    "jumlah": "3166",
+    "persen": "25.86"
+  },
+  "nilaiKognitif": {
+    "tertinggi": "154",
+    "terendah": "65"
+  },
+  "nilaiSubstansi": {
+    "tertinggi": "100",
+    "terendah": "0"
+  },
+  "statusCounts": {
+    "P/L": 3128,
+    "P1/L": 5291,
+    "P2/L": 10038,
+    "TL": 34387,
+    "TH": 19288,
+    "22.18": 1,
+    "27.26": 1,
+    "25.79": 1
+  }
+}
