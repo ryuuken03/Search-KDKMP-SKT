@@ -34,7 +34,8 @@ function copyAssetsPlugin() {
             copyRecursive(path.join(src, file), path.join(dest, file))
           }
         } else {
-          if (path.basename(src) === 'source.pdf') return // Lewatkan file PDF besar untuk menghindari batas ukuran file Vercel (50MB)
+          const filename = path.basename(src)
+          if (filename === 'source.pdf' || filename === 'data.json') return // Lewatkan PDF besar dan database utuh
           fs.copyFileSync(src, dest)
         }
       }
