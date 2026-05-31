@@ -101,6 +101,74 @@ export function useSKSearch(isKnmp) {
       setProgress(`Selesai. Ditemukan ${matches.length} hasil.`)
       setLoading(false)
       setAbortController(null)
+    } else if (searchMode === 'Nomor Peserta') {
+      setProgress('Mencari nomor peserta...')
+      const totalRows = page1Info?.summary?.totalRows || (isKnmp ? 72135 : 411516)
+      const totalChunks = Math.ceil(totalRows / CHUNK_SIZE)
+      const matches = []
+      const queryUpper = trimmedQuery.toUpperCase()
+      const isStartsWithP = queryUpper.startsWith('P')
+
+      const controller = new AbortController()
+      setAbortController(controller)
+
+      try {
+        let reachedLimit = false
+        for (let chunkIdx = 0; chunkIdx < totalChunks; chunkIdx++) {
+          setProgress(`Mencari Nomor Peserta di data grup ${chunkIdx + 1}/${totalChunks}...`)
+          const cacheKey = `${dataset}_${chunkIdx}`
+          let chunkData = loadedChunks[cacheKey]
+
+          if (!chunkData) {
+            const res = await fetch(`/assets/${dataset}/sk/chunks/chunk_${chunkIdx}.json`, { signal: controller.signal })
+            if (!res.ok) throw new Error(`Gagal memuat chunk data: ${res.status}`)
+            chunkData = await res.json()
+            setLoadedChunks(prev => ({
+              ...prev,
+              [cacheKey]: chunkData
+            }))
+          }
+
+          // Scan the chunk for the matching nomor peserta (row[2] is nomor peserta)
+          for (const row of chunkData) {
+            if (row) {
+              const cellVal = String(row[2]).toUpperCase()
+              const isMatch = isStartsWithP ? cellVal.startsWith(queryUpper) : cellVal.includes(queryUpper)
+              if (isMatch) {
+                matches.push({
+                  page: row[0],
+                  matchText: row[3],
+                  contextItems: [row[1], row[2], row[3], row[4], row[5], row[6]],
+                  firstCol: row[1],
+                  lastCol: row[6]
+                })
+                if (matches.length >= 1000) {
+                  reachedLimit = true
+                  break
+                }
+              }
+            }
+          }
+
+          if (reachedLimit) {
+            break
+          }
+        }
+
+        setResults(matches)
+        setProgress(`Selesai. Ditemukan ${reachedLimit ? '1000+ (dibatasi)' : matches.length} hasil.`)
+      } catch (e) {
+        console.error(e)
+        if (e.name === 'AbortError') {
+          setProgress('Pencarian dibatalkan')
+        } else {
+          setResults([{ error: `Gagal memuat data pencarian: ${String(e.message || e)}` }])
+          setProgress('Gagal memuat berkas.')
+        }
+      } finally {
+        setLoading(false)
+        setAbortController(null)
+      }
     } else {
       // Search by Name (Nama)
       if (trimmedQuery.length < 2) {

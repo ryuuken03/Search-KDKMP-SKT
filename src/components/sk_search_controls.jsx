@@ -17,9 +17,29 @@ export default function SKSearchControls({
         <input
           id="search-query"
           type={searchMode === 'Peringkat' ? 'number' : 'text'}
-          placeholder={searchMode === 'Nama' ? 'Cari Nama Peserta...' : 'Cari Peringkat (angka)...'}
+          placeholder={
+            searchMode === 'Nama'
+              ? 'Cari Nama Peserta...'
+              : searchMode === 'Nomor Peserta'
+              ? 'Cari Nomor Peserta...'
+              : 'Cari Peringkat (angka)...'
+          }
           value={query}
-          onChange={(e) => setQuery(e.target.value)}
+          onChange={(e) => {
+            const val = e.target.value
+            if (searchMode === 'Nomor Peserta') {
+              let cleaned = ''
+              const first = val[0]
+              if (first && (first === 'p' || first === 'P')) {
+                cleaned = 'P' + val.slice(1).replace(/[^0-9]/g, '')
+              } else {
+                cleaned = val.replace(/[^0-9]/g, '')
+              }
+              setQuery(cleaned)
+            } else {
+              setQuery(val)
+            }
+          }}
           onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
         />
       </div>
@@ -34,6 +54,7 @@ export default function SKSearchControls({
           aria-label="Mode Pencarian"
         >
           <option value="Nama">Nama</option>
+          <option value="Nomor Peserta">Nomor Peserta</option>
           <option value="Peringkat">Peringkat</option>
         </select>
         <button onClick={handleSearch} disabled={loading} aria-label="Cari">
