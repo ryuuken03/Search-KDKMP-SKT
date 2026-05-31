@@ -63,7 +63,7 @@ export default function SKPage({ isKnmp }) {
         const controller = new AbortController()
         setAbortController(controller)
         try {
-          const res = await fetch(`/assets/${dataset}/chunks/chunk_${chunkIdx}.json`, { signal: controller.signal })
+          const res = await fetch(`/assets/${dataset}/sk/chunks/chunk_${chunkIdx}.json`, { signal: controller.signal })
           if (!res.ok) throw new Error(`Gagal memuat chunk data: ${res.status}`)
           chunkData = await res.json()
           setLoadedChunks(prev => ({
@@ -130,7 +130,7 @@ export default function SKPage({ isKnmp }) {
         const controller = new AbortController()
         setAbortController(controller)
         try {
-          const res = await fetch(`/assets/${dataset}/names/${prefix}.json`, { signal: controller.signal })
+          const res = await fetch(`/assets/${dataset}/sk/names/${prefix}.json`, { signal: controller.signal })
           if (res.status === 404) {
             setResults([])
             setProgress('Selesai. Ditemukan 0 hasil.')
@@ -206,7 +206,7 @@ export default function SKPage({ isKnmp }) {
     let mounted = true
       ; (async () => {
         try {
-          const res = await fetch(`/assets/${isKnmp ? 'knmp' : 'kdkmp'}/summary.json`)
+          const res = await fetch(`/assets/${isKnmp ? 'knmp' : 'kdkmp'}/sk/summary.json`)
           if (!res.ok) return
           const data = await res.json()
           if (mounted) {
@@ -242,7 +242,7 @@ export default function SKPage({ isKnmp }) {
 
     ;(async () => {
       try {
-        const res = await fetch(`/assets/${dataset}/chunks/chunk_${chunkIdx}.json`)
+        const res = await fetch(`/assets/${dataset}/sk/chunks/chunk_${chunkIdx}.json`)
         if (!res.ok) throw new Error(`Gagal memuat chunk data: ${res.status}`)
         const chunkData = await res.json()
         if (mounted) {

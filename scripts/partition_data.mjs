@@ -21,9 +21,9 @@ function clearDir(dirPath) {
 }
 
 function partitionDataset(type) {
-  const dataPath = `./assets/${type}/data.json`;
-  const chunksDir = `./assets/${type}/chunks`;
-  const namesDir = `./assets/${type}/names`;
+  const dataPath = `./assets/${type}/sk/data.json`;
+  const chunksDir = `./assets/${type}/sk/chunks`;
+  const namesDir = `./assets/${type}/sk/names`;
 
   console.log(`\n=== Partitioning ${type.toUpperCase()} ===`);
   if (!fs.existsSync(dataPath)) {
@@ -38,7 +38,7 @@ function partitionDataset(type) {
   console.log(`Total rows: ${rows.length}`);
 
   // Update summary.json with totalRows
-  const summaryPath = `./assets/${type}/summary.json`;
+  const summaryPath = `./assets/${type}/sk/summary.json`;
   if (fs.existsSync(summaryPath)) {
     const summary = JSON.parse(fs.readFileSync(summaryPath, 'utf-8'));
     summary.totalRows = rows.length;

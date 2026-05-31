@@ -66,8 +66,8 @@ function parsePage1Summary(textLines) {
 }
 
 async function extract() {
-  const pdfPath = './assets/knmp/source.pdf';
-  const outPath = './assets/knmp/data.json';
+  const pdfPath = './assets/knmp/sk/source.pdf';
+  const outPath = './assets/knmp/sk/data.json';
 
   console.log('Loading PDF from:', pdfPath);
   if (!fs.existsSync(pdfPath)) {
