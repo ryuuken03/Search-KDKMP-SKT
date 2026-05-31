@@ -134,7 +134,6 @@ export function useSKSearch(isKnmp) {
       setAbortController(null)
     } else if (mode === 'Nomor Peserta') {
       setProgress('Mencari nomor peserta...')
-      const totalRows = page1Info?.summary?.totalRows || (isKnmp ? 72135 : 411516)
       const matches = []
       const queryUpper = trimmedQuery.toUpperCase()
       const isStartsWithP = queryUpper.startsWith('P')
@@ -156,62 +155,24 @@ export function useSKSearch(isKnmp) {
         }
 
         setProgress('Memindai indeks nomor peserta...')
-        const matchedRanks = []
         for (let i = 0; i < indexList.length; i++) {
-          const val = String(indexList[i] || '').toUpperCase()
-          const isMatch = isStartsWithP ? val.startsWith(queryUpper) : val.includes(queryUpper)
+          const suffix = indexList[i]
+          const val = (suffix.length >= 8 && suffix.length <= 9) ? 'P26407581' + suffix : suffix
+          const valUpper = val.toUpperCase()
+          const isMatch = isStartsWithP ? valUpper.startsWith(queryUpper) : valUpper.includes(queryUpper)
           if (isMatch) {
-            matchedRanks.push(i + 1)
-            if (matchedRanks.length >= 1000) {
+            matches.push({
+              rank: i + 1,
+              noPeserta: val
+            })
+            if (matches.length >= 1000) {
               break
             }
           }
         }
 
-        const uniqueChunkIndices = [...new Set(matchedRanks.map(rank => Math.floor((rank - 1) / CHUNK_SIZE)))]
-
-        if (uniqueChunkIndices.length > 0) {
-          setProgress(`Memuat ${uniqueChunkIndices.length} grup data yang cocok...`)
-          const newChunks = {}
-          await Promise.all(uniqueChunkIndices.map(async (chunkIdx) => {
-            const cacheKey = `${dataset}_${chunkIdx}`
-            if (!loadedChunks[cacheKey]) {
-              const res = await fetch(`/assets/${dataset}/sk/chunks/chunk_${chunkIdx}.json`, { signal: controller.signal })
-              if (!res.ok) throw new Error(`Gagal memuat chunk data: ${res.status}`)
-              const chunkData = await res.json()
-              newChunks[cacheKey] = chunkData
-            }
-          }))
-
-          if (Object.keys(newChunks).length > 0) {
-            setLoadedChunks(prev => ({
-              ...prev,
-              ...newChunks
-            }))
-          }
-
-          for (const rank of matchedRanks) {
-            const chunkIdx = Math.floor((rank - 1) / CHUNK_SIZE)
-            const relIdx = (rank - 1) % CHUNK_SIZE
-            const cacheKey = `${dataset}_${chunkIdx}`
-            const chunkData = loadedChunks[cacheKey] || newChunks[cacheKey]
-            if (chunkData) {
-              const row = chunkData[relIdx]
-              if (row) {
-                matches.push({
-                  page: row[0],
-                  matchText: row[3],
-                  contextItems: [row[1], row[2], row[3], row[4], row[5], row[6]],
-                  firstCol: row[1],
-                  lastCol: row[6]
-                })
-              }
-            }
-          }
-        }
-
         setResults(matches)
-        setProgress(`Selesai. Ditemukan ${matchedRanks.length >= 1000 ? '1000+ (dibatasi)' : matches.length} hasil.`)
+        setProgress(`Selesai. Ditemukan ${matches.length >= 1000 ? '1000+ (dibatasi)' : matches.length} hasil.`)
       } catch (e) {
         console.error(e)
         if (e.name === 'AbortError') {
@@ -324,6 +285,90 @@ export function useSKSearch(isKnmp) {
     }
   }
 
+  const dataset = isKnmp ? 'knmp' : 'kdkmp'
+
+  const sortedResults = [...results].sort((a, b) => {
+    if (!sortConfig.key) return 0
+
+    let valA, valB
+    if (sortConfig.key === 'peringkat') {
+      valA = a.rank || parseInt(a.contextItems?.[0] || '0', 10)
+      valB = b.rank || parseInt(b.contextItems?.[0] || '0', 10)
+      return sortConfig.direction === 'asc' ? valA - valB : valB - valA
+    } else if (sortConfig.key === 'noPeserta') {
+      valA = String(a.noPeserta || a.contextItems?.[1] || '')
+      valB = String(b.noPeserta || b.contextItems?.[1] || '')
+      return sortConfig.direction === 'asc'
+        ? valA.localeCompare(valB, undefined, { numeric: true, sensitivity: 'base' })
+        : valB.localeCompare(valA, undefined, { numeric: true, sensitivity: 'base' })
+    } else if (sortConfig.key === 'nama') {
+      const getNama = (item) => {
+        if (item.contextItems) return item.contextItems[2] || ''
+        const rIdx = item.rank
+        const cIdx = Math.floor((rIdx - 1) / CHUNK_SIZE)
+        const relIdx = (rIdx - 1) % CHUNK_SIZE
+        const chunkData = loadedChunks[`${dataset}_${cIdx}`]
+        return chunkData?.[relIdx]?.[3] || ''
+      }
+      valA = getNama(a)
+      valB = getNama(b)
+      return sortConfig.direction === 'asc'
+        ? valA.localeCompare(valB, undefined, { sensitivity: 'base' })
+        : valB.localeCompare(valA, undefined, { sensitivity: 'base' })
+    }
+    return 0
+  })
+
+  const ITEMS_PER_PAGE = 50
+  const totalItems = hasSearched
+    ? sortedResults.length
+    : (page1Info?.summary?.totalRows || (isKnmp ? 72135 : 411516))
+  const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE)
+  const indexOfLastItem = currentPage * ITEMS_PER_PAGE
+  const indexOfFirstItem = indexOfLastItem - ITEMS_PER_PAGE
+
+  const chunkIdx = Math.floor((currentPage - 1) / 100)
+  const cacheKey = `${dataset}_${chunkIdx}`
+  const currentChunk = loadedChunks[cacheKey]
+  const relativeStart = ((currentPage - 1) % 100) * ITEMS_PER_PAGE
+
+  const displayItems = hasSearched
+    ? sortedResults.slice(indexOfFirstItem, indexOfLastItem).map(item => {
+        if (item.contextItems) {
+          return item
+        }
+        const rIdx = item.rank
+        const cIdx = Math.floor((rIdx - 1) / CHUNK_SIZE)
+        const relIdx = (rIdx - 1) % CHUNK_SIZE
+        const chunkData = loadedChunks[`${dataset}_${cIdx}`]
+        if (chunkData && chunkData[relIdx]) {
+          const row = chunkData[relIdx]
+          return {
+            page: row[0],
+            matchText: row[3],
+            contextItems: [row[1], row[2], row[3], row[4], row[5], row[6]],
+            firstCol: row[1],
+            lastCol: row[6]
+          }
+        }
+        return {
+          page: Math.ceil(rIdx / 50),
+          matchText: '',
+          contextItems: [String(rIdx), item.noPeserta, 'Memuat...', '', '', ''],
+          firstCol: String(rIdx),
+          lastCol: ''
+        }
+      })
+    : (currentChunk
+      ? currentChunk.slice(relativeStart, relativeStart + ITEMS_PER_PAGE).map(row => ({
+        page: row[0],
+        matchText: row[3],
+        contextItems: [row[1], row[2], row[3], row[4], row[5], row[6]],
+        firstCol: row[1],
+        lastCol: row[6]
+      }))
+      : [])
+
   useEffect(() => {
     let mounted = true
     ;(async () => {
@@ -391,6 +436,70 @@ export function useSKSearch(isKnmp) {
     }
   }, [currentPage, hasSearched, isKnmp, loadedChunks])
 
+  // Load chunks for currently visible displayItems of search results on-demand
+  useEffect(() => {
+    if (!hasSearched) return
+    let mounted = true
+
+    // Find which chunks are needed for the visible displayItems
+    const neededChunkIndices = new Set()
+    const currentDataset = isKnmp ? 'knmp' : 'kdkmp'
+
+    for (const item of displayItems) {
+      if (item && !item.matchText && item.contextItems?.[2] === 'Memuat...') {
+        const rankVal = parseInt(item.contextItems[0], 10)
+        if (!isNaN(rankVal)) {
+          const cIdx = Math.floor((rankVal - 1) / CHUNK_SIZE)
+          const cacheKey = `${currentDataset}_${cIdx}`
+          if (!loadedChunks[cacheKey]) {
+            neededChunkIndices.add(cIdx)
+          }
+        }
+      }
+    }
+
+    if (neededChunkIndices.size === 0) return
+
+    setLoading(true)
+    setProgress('Memuat rincian data...')
+
+    const controller = new AbortController()
+
+    ;(async () => {
+      try {
+        const newChunks = {}
+        await Promise.all(Array.from(neededChunkIndices).map(async (cIdx) => {
+          const res = await fetch(`/assets/${currentDataset}/sk/chunks/chunk_${cIdx}.json`, { signal: controller.signal })
+          if (!res.ok) throw new Error(`Gagal memuat chunk data: ${res.status}`)
+          const chunkData = await res.json()
+          newChunks[`${currentDataset}_${cIdx}`] = chunkData
+        }))
+
+        if (mounted) {
+          setLoadedChunks(prev => ({
+            ...prev,
+            ...newChunks
+          }))
+          setProgress('')
+        }
+      } catch (e) {
+        console.error(e)
+        if (mounted && e.name !== 'AbortError') {
+          setProgress('Gagal memuat rincian.')
+        }
+      } finally {
+        if (mounted) {
+          setLoading(false)
+        }
+      }
+    })()
+
+    return () => {
+      mounted = false
+      controller.abort()
+    }
+  }, [displayItems, hasSearched, isKnmp, loadedChunks])
+
   function cancelSearch() {
     if (abortController) {
       abortController.abort()
@@ -421,55 +530,7 @@ export function useSKSearch(isKnmp) {
     setCurrentPage(1)
   }
 
-  const sortedResults = [...results].sort((a, b) => {
-    if (!sortConfig.key) return 0
 
-    let valA, valB
-    if (sortConfig.key === 'peringkat') {
-      valA = parseInt(a.contextItems?.[0] || '0', 10)
-      valB = parseInt(b.contextItems?.[0] || '0', 10)
-      return sortConfig.direction === 'asc' ? valA - valB : valB - valA
-    } else if (sortConfig.key === 'noPeserta') {
-      valA = String(a.contextItems?.[1] || '')
-      valB = String(b.contextItems?.[1] || '')
-      return sortConfig.direction === 'asc'
-        ? valA.localeCompare(valB, undefined, { numeric: true, sensitivity: 'base' })
-        : valB.localeCompare(valA, undefined, { numeric: true, sensitivity: 'base' })
-    } else if (sortConfig.key === 'nama') {
-      valA = String(a.contextItems?.[2] || '')
-      valB = String(b.contextItems?.[2] || '')
-      return sortConfig.direction === 'asc'
-        ? valA.localeCompare(valB, undefined, { sensitivity: 'base' })
-        : valB.localeCompare(valA, undefined, { sensitivity: 'base' })
-    }
-    return 0
-  })
-
-  const ITEMS_PER_PAGE = 50
-  const totalItems = hasSearched
-    ? sortedResults.length
-    : (page1Info?.summary?.totalRows || (isKnmp ? 72135 : 411516))
-  const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE)
-  const indexOfLastItem = currentPage * ITEMS_PER_PAGE
-  const indexOfFirstItem = indexOfLastItem - ITEMS_PER_PAGE
-
-  const dataset = isKnmp ? 'knmp' : 'kdkmp'
-  const chunkIdx = Math.floor((currentPage - 1) / 100)
-  const cacheKey = `${dataset}_${chunkIdx}`
-  const currentChunk = loadedChunks[cacheKey]
-  const relativeStart = ((currentPage - 1) % 100) * ITEMS_PER_PAGE
-
-  const displayItems = hasSearched
-    ? sortedResults.slice(indexOfFirstItem, indexOfLastItem)
-    : (currentChunk
-      ? currentChunk.slice(relativeStart, relativeStart + ITEMS_PER_PAGE).map(row => ({
-        page: row[0],
-        matchText: row[3],
-        contextItems: [row[1], row[2], row[3], row[4], row[5], row[6]],
-        firstCol: row[1],
-        lastCol: row[6]
-      }))
-      : [])
 
   return {
     query,

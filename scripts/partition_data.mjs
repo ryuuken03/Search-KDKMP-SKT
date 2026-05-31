@@ -99,9 +99,15 @@ function partitionDataset(type) {
   }
   console.log(`Saved prefix files successfully.`);
 
-  // 4. Save participant numbers list for fast index search
+  // 4. Save participant numbers list for fast index search (optimized suffix compression)
   console.log('Generating participant numbers index...');
-  const participantNumbers = rows.map(row => row[2] || '');
+  const participantNumbers = rows.map(row => {
+    const val = String(row[2] || '');
+    if (val.startsWith('P26407581')) {
+      return val.slice(9);
+    }
+    return val;
+  });
   const noPesertaPath = path.join(`./assets/${type}/sk`, 'no_peserta.json');
   fs.writeFileSync(noPesertaPath, JSON.stringify(participantNumbers));
   console.log(`Saved participant numbers index to ${noPesertaPath} successfully.`);
