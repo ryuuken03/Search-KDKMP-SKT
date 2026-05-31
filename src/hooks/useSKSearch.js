@@ -1,4 +1,12 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
+
+// ─── Jabatan Config ─────────────────────────────────────────────────────────
+export const KNMP_JABATAN = [
+  { slug: 'manajer_operasional',   label: 'Manajer Operasional' },
+  { slug: 'kepala_produksi',       label: 'Kepala Produksi' },
+  { slug: 'penjamin_mutu',         label: 'Penjamin Mutu' },
+  { slug: 'administrasi_keuangan', label: 'Administrasi Keuangan' },
+]
 
 export function detectSearchMode(queryStr, totalRows) {
   const trimmed = queryStr.trim()
@@ -35,7 +43,11 @@ export function useSKSearch(isKnmp) {
   const [hasSearched, setHasSearched] = useState(false)
   const [currentPage, setCurrentPage] = useState(1)
 
-  // Reset data and search results when switching between datasets
+  // ── KNMP Jabatan State ────────────────────────────────────────────────────
+  const [selectedJabatan, setSelectedJabatan] = useState(KNMP_JABATAN[0].slug) // default jabatan pertama
+  const [knmpSummaries, setKnmpSummaries] = useState({}) // slug → summaryData
+
+  // Reset data ketika pindah dataset
   useEffect(() => {
     setResults([])
     setHasSearched(false)
@@ -45,9 +57,101 @@ export function useSKSearch(isKnmp) {
     setPage1Info(null)
     setCurrentPage(1)
     setSortConfig({ key: null, direction: 'asc' })
+    setSelectedJabatan(KNMP_JABATAN[0].slug) // reset ke jabatan pertama
+    setKnmpSummaries({})
+    setLoadedChunks({})
+    setLoadedPrefixes({})
+    setLoadedParticipantNumbers({})
   }, [isKnmp])
 
+  // Reset search ketika jabatan berubah (untuk KNMP)
+  useEffect(() => {
+    if (!isKnmp) return
+    setResults([])
+    setHasSearched(false)
+    setCurrentPage(1)
+    setSortConfig({ key: null, direction: 'asc' })
+    setProgress('')
+    setLastSearchedQuery('')
+  }, [selectedJabatan])
+
   const CHUNK_SIZE = 5000
+
+  // ── Compute active path prefix untuk fetch ──────────────────────────────
+  function getDatasetPath(jabatanSlug) {
+    if (!isKnmp) return '/assets/kdkmp/sk'
+    if (!jabatanSlug || jabatanSlug === 'semua') return null
+    return `/assets/knmp/sk/${jabatanSlug}`
+  }
+
+  function getCacheKey(jabatanSlug, suffix) {
+    if (!isKnmp) return `kdkmp_${suffix}`
+    return `knmp_${jabatanSlug}_${suffix}`
+  }
+
+  // ── Fetch KNMP summaries ketika masuk mode KNMP ───────────────────────────
+  useEffect(() => {
+    if (!isKnmp) return
+    let mounted = true
+
+    ;(async () => {
+      const summaryMap = {}
+      await Promise.all(
+        KNMP_JABATAN.map(async ({ slug }) => {
+          try {
+            const res = await fetch(`/assets/knmp/sk/${slug}/summary.json`)
+            if (res.ok) {
+              summaryMap[slug] = await res.json()
+            }
+          } catch (e) {
+            console.error(`Gagal fetch summary ${slug}:`, e)
+          }
+        })
+      )
+      if (mounted) {
+        setKnmpSummaries(summaryMap)
+      }
+    })()
+
+    return () => { mounted = false }
+  }, [isKnmp])
+
+  // ── Compute page1Info berdasarkan selectedJabatan ─────────────────────────
+  useEffect(() => {
+    if (!isKnmp) return
+
+    const s = knmpSummaries[selectedJabatan]
+    if (!s) return
+    const jabatanLabel = KNMP_JABATAN.find(j => j.slug === selectedJabatan)?.label || selectedJabatan
+    setPage1Info({
+      title: 'Hasil Seleksi KNMP Seleksi Kompetensi',
+      subtitle: 'Laporan Rekapitulasi Nilai Seleksi',
+      summary: s
+    })
+  }, [isKnmp, selectedJabatan, knmpSummaries])
+
+  // ── Fetch KDKMP summary (non-KNMP) ────────────────────────────────────────
+  useEffect(() => {
+    if (isKnmp) return
+    let mounted = true
+    ;(async () => {
+      try {
+        const res = await fetch('/assets/kdkmp/sk/summary.json')
+        if (!res.ok) return
+        const data = await res.json()
+        if (mounted) {
+          setPage1Info({
+            title: 'Hasil Seleksi KDKMP Seleksi Kompetensi',
+            subtitle: 'Laporan Rekapitulasi Nilai Seleksi',
+            summary: data
+          })
+        }
+      } catch (e) {
+        console.error('Gagal mengambil ringkasan KDKMP:', e)
+      }
+    })()
+    return () => { mounted = false }
+  }, [isKnmp])
 
   async function handleSearch(overrideMode) {
     const trimmedQuery = query.trim()
@@ -76,7 +180,6 @@ export function useSKSearch(isKnmp) {
         return
       }
 
-      const totalRows = page1Info?.summary?.totalRows || (isKnmp ? 72135 : 411516)
       if (rankVal > totalRows) {
         setResults([])
         setProgress('Selesai. Ditemukan 0 hasil.')
@@ -85,7 +188,8 @@ export function useSKSearch(isKnmp) {
       }
 
       const chunkIdx = Math.floor((rankVal - 1) / CHUNK_SIZE)
-      const cacheKey = `${dataset}_${chunkIdx}`
+      const jabSlug = isKnmp ? selectedJabatan : null
+      const cacheKey = jabSlug ? getCacheKey(jabSlug, chunkIdx) : `${dataset}_${chunkIdx}`
       let chunkData = loadedChunks[cacheKey]
 
       if (!chunkData) {
@@ -93,15 +197,12 @@ export function useSKSearch(isKnmp) {
         const controller = new AbortController()
         setAbortController(controller)
         try {
-          const res = await fetch(`/assets/${dataset}/sk/chunks/chunk_${chunkIdx}.json`, { signal: controller.signal })
+          const basePath = isKnmp ? `/assets/knmp/sk/${jabSlug}` : `/assets/${dataset}/sk`
+          const res = await fetch(`${basePath}/chunks/chunk_${chunkIdx}.json`, { signal: controller.signal })
           if (!res.ok) throw new Error(`Gagal memuat chunk data: ${res.status}`)
           chunkData = await res.json()
-          setLoadedChunks(prev => ({
-            ...prev,
-            [cacheKey]: chunkData
-          }))
+          setLoadedChunks(prev => ({ ...prev, [cacheKey]: chunkData }))
         } catch (e) {
-          console.error(e)
           if (e.name === 'AbortError') {
             setProgress('Pencarian dibatalkan')
           } else {
@@ -119,12 +220,15 @@ export function useSKSearch(isKnmp) {
       const matches = []
 
       if (row && String(row[1]) === trimmedQuery) {
+        const jabatanLabel = isKnmp ? (KNMP_JABATAN.find(j => j.slug === selectedJabatan)?.label || '') : null
         matches.push({
           page: row[0],
           matchText: row[3],
           contextItems: [row[1], row[2], row[3], row[4], row[5], row[6]],
           firstCol: row[1],
-          lastCol: row[6]
+          lastCol: row[6],
+          jabatan: jabatanLabel,
+          jabatanSlug: isKnmp ? selectedJabatan : null,
         })
       }
 
@@ -132,6 +236,7 @@ export function useSKSearch(isKnmp) {
       setProgress(`Selesai. Ditemukan ${matches.length} hasil.`)
       setLoading(false)
       setAbortController(null)
+
     } else if (mode === 'Nomor Peserta') {
       setProgress('Mencari nomor peserta...')
       const matches = []
@@ -142,19 +247,22 @@ export function useSKSearch(isKnmp) {
       setAbortController(controller)
 
       try {
-        let indexList = loadedParticipantNumbers[dataset]
+        const jabSlug = isKnmp ? selectedJabatan : null
+        const cacheKey = jabSlug ? `knmp_${jabSlug}_noPeserta` : `${dataset}_noPeserta`
+        let indexList = loadedParticipantNumbers[cacheKey]
+
         if (!indexList) {
           setProgress('Mengunduh indeks nomor peserta...')
-          const res = await fetch(`/assets/${dataset}/sk/no_peserta.json`, { signal: controller.signal })
+          const basePath = jabSlug ? `/assets/knmp/sk/${jabSlug}` : `/assets/${dataset}/sk`
+          const res = await fetch(`${basePath}/no_peserta.json`, { signal: controller.signal })
           if (!res.ok) throw new Error(`Gagal memuat indeks nomor peserta: ${res.status}`)
           indexList = await res.json()
-          setLoadedParticipantNumbers(prev => ({
-            ...prev,
-            [dataset]: indexList
-          }))
+          setLoadedParticipantNumbers(prev => ({ ...prev, [cacheKey]: indexList }))
         }
 
         setProgress('Memindai indeks nomor peserta...')
+        const jabatanLabel = jabSlug ? (KNMP_JABATAN.find(j => j.slug === jabSlug)?.label || '') : null
+
         for (let i = 0; i < indexList.length; i++) {
           const suffix = indexList[i]
           const val = (suffix.length >= 8 && suffix.length <= 9) ? 'P26407581' + suffix : suffix
@@ -163,18 +271,17 @@ export function useSKSearch(isKnmp) {
           if (isMatch) {
             matches.push({
               rank: i + 1,
-              noPeserta: val
+              noPeserta: val,
+              jabatan: jabatanLabel,
+              jabatanSlug: jabSlug,
             })
-            if (matches.length >= 1000) {
-              break
-            }
+            if (matches.length >= 1000) break
           }
         }
 
         setResults(matches)
         setProgress(`Selesai. Ditemukan ${matches.length >= 1000 ? '1000+ (dibatasi)' : matches.length} hasil.`)
       } catch (e) {
-        console.error(e)
         if (e.name === 'AbortError') {
           setProgress('Pencarian dibatalkan')
         } else {
@@ -185,8 +292,9 @@ export function useSKSearch(isKnmp) {
         setLoading(false)
         setAbortController(null)
       }
+
     } else {
-      // Search by Name (Nama)
+      // ── Search by Nama ───────────────────────────────────────────────────
       if (trimmedQuery.length < 2) {
         setResults([{ error: 'Masukkan minimal 2 karakter untuk pencarian nama.' }])
         setProgress('Kueri terlalu pendek.')
@@ -195,8 +303,8 @@ export function useSKSearch(isKnmp) {
       }
 
       setProgress('Menghubungkan ke server data...')
-      const queryWords = trimmedQuery.toLowerCase().split(/[^a-z0-9]+/);
-      const firstWord = queryWords[0] || '';
+      const queryWords = trimmedQuery.toLowerCase().split(/[^a-z0-9]+/)
+      const firstWord = queryWords[0] || ''
       if (!firstWord) {
         setResults([{ error: 'Format pencarian nama tidak valid.' }])
         setProgress('Gagal mencari.')
@@ -204,16 +312,20 @@ export function useSKSearch(isKnmp) {
         return
       }
 
-      const prefix = firstWord.length >= 2 ? firstWord.slice(0, 2) : firstWord;
-      const cacheKey = `${dataset}_${prefix}`
-      let nameRows = loadedPrefixes[cacheKey]
+      const prefix = firstWord.length >= 2 ? firstWord.slice(0, 2) : firstWord
+      const jabSlug = isKnmp ? selectedJabatan : null
+      const allMatches = []
+      const controller = new AbortController()
+      setAbortController(controller)
 
-      if (!nameRows) {
-        setProgress(`Mengunduh indeks nama "${prefix.toUpperCase()}"...`)
-        const controller = new AbortController()
-        setAbortController(controller)
-        try {
-          const res = await fetch(`/assets/${dataset}/sk/names/${prefix}.json`, { signal: controller.signal })
+      try {
+        const cacheKey = jabSlug ? `knmp_${jabSlug}_${prefix}` : `${dataset}_${prefix}`
+        let nameRows = loadedPrefixes[cacheKey]
+
+        if (!nameRows) {
+          setProgress(`Mengunduh indeks nama "${prefix.toUpperCase()}"...`)
+          const basePath = jabSlug ? `/assets/knmp/sk/${jabSlug}` : `/assets/${dataset}/sk`
+          const res = await fetch(`${basePath}/names/${prefix}.json`, { signal: controller.signal })
           if (res.status === 404) {
             setResults([])
             setProgress('Selesai. Ditemukan 0 hasil.')
@@ -223,61 +335,48 @@ export function useSKSearch(isKnmp) {
           }
           if (!res.ok) throw new Error(`Gagal mengambil data nama: ${res.status}`)
           nameRows = await res.json()
-          setLoadedPrefixes(prev => ({
-            ...prev,
-            [cacheKey]: nameRows
-          }))
-        } catch (e) {
-          console.error(e)
-          if (e.name === 'AbortError') {
-            setProgress('Pencarian dibatalkan')
-          } else {
-            setResults([{ error: `Gagal memuat basis data pencarian nama: ${String(e.message || e)}` }])
-            setProgress('Gagal memuat berkas.')
-          }
-          setLoading(false)
-          setAbortController(null)
-          return
+          setLoadedPrefixes(prev => ({ ...prev, [cacheKey]: nameRows }))
         }
-      }
 
-      setProgress('Sedang mencari...')
-      try {
-        const matches = []
-        for (const row of nameRows) {
-          const pageNum = row[0]
-          const no = row[1]
-          const peserta = row[2]
-          const nama = row[3]
-          const kognitif = row[4]
-          const substansi = row[5]
-          const status = row[6]
+        if (nameRows) {
+          setProgress('Sedang mencari...')
+          const jabatanLabel = jabSlug ? (KNMP_JABATAN.find(j => j.slug === jabSlug)?.label || '') : null
 
-          let matched = true
-          for (const qWord of queryWords) {
-            if (!nama.toLowerCase().includes(qWord)) {
-              matched = false
-              break
+          for (const row of nameRows) {
+            const nama = row[3]
+            if (!nama) continue
+
+            let matched = true
+            for (const qWord of queryWords) {
+              if (!nama.toLowerCase().includes(qWord)) {
+                matched = false
+                break
+              }
+            }
+
+            if (matched) {
+              allMatches.push({
+                page: row[0],
+                matchText: nama,
+                contextItems: [row[1], row[2], row[3], row[4], row[5], row[6]],
+                firstCol: row[1],
+                lastCol: row[6],
+                jabatan: jabatanLabel,
+                jabatanSlug: jabSlug,
+              })
             }
           }
-
-          if (matched) {
-            matches.push({
-              page: pageNum,
-              matchText: nama,
-              contextItems: [no, peserta, nama, kognitif, substansi, status],
-              firstCol: no,
-              lastCol: status
-            })
-          }
         }
 
-        setResults(matches)
-        setProgress(`Selesai. Ditemukan ${matches.length} hasil.`)
+        setResults(allMatches)
+        setProgress(`Selesai. Ditemukan ${allMatches.length} hasil.`)
       } catch (e) {
-        console.error(e)
-        setResults([{ error: String(e) }])
-        setProgress('Error dalam pencarian.')
+        if (e.name === 'AbortError') {
+          setProgress('Pencarian dibatalkan')
+        } else {
+          setResults([{ error: String(e) }])
+          setProgress('Error dalam pencarian.')
+        }
       } finally {
         setLoading(false)
         setAbortController(null)
@@ -307,11 +406,20 @@ export function useSKSearch(isKnmp) {
         const rIdx = item.rank
         const cIdx = Math.floor((rIdx - 1) / CHUNK_SIZE)
         const relIdx = (rIdx - 1) % CHUNK_SIZE
-        const chunkData = loadedChunks[`${dataset}_${cIdx}`]
+        const cKey = item.jabatanSlug
+          ? `knmp_${item.jabatanSlug}_${cIdx}`
+          : `${dataset}_${cIdx}`
+        const chunkData = loadedChunks[cKey]
         return chunkData?.[relIdx]?.[3] || ''
       }
       valA = getNama(a)
       valB = getNama(b)
+      return sortConfig.direction === 'asc'
+        ? valA.localeCompare(valB, undefined, { sensitivity: 'base' })
+        : valB.localeCompare(valA, undefined, { sensitivity: 'base' })
+    } else if (sortConfig.key === 'jabatan') {
+      valA = String(a.jabatan || '')
+      valB = String(b.jabatan || '')
       return sortConfig.direction === 'asc'
         ? valA.localeCompare(valB, undefined, { sensitivity: 'base' })
         : valB.localeCompare(valA, undefined, { sensitivity: 'base' })
@@ -327,20 +435,29 @@ export function useSKSearch(isKnmp) {
   const indexOfLastItem = currentPage * ITEMS_PER_PAGE
   const indexOfFirstItem = indexOfLastItem - ITEMS_PER_PAGE
 
+  // Chunk browsing (non-searched mode) — hanya untuk jabatan spesifik
   const chunkIdx = Math.floor((currentPage - 1) / 100)
-  const cacheKey = `${dataset}_${chunkIdx}`
-  const currentChunk = loadedChunks[cacheKey]
+  const activeJabSlug = isKnmp && selectedJabatan !== 'semua' ? selectedJabatan : null
+  const cacheKeyChunk = activeJabSlug
+    ? `knmp_${activeJabSlug}_${chunkIdx}`
+    : `${dataset}_${chunkIdx}`
+  const currentChunk = loadedChunks[cacheKeyChunk]
   const relativeStart = ((currentPage - 1) % 100) * ITEMS_PER_PAGE
+
+  const jabatanLabelForSlug = (slug) =>
+    KNMP_JABATAN.find(j => j.slug === slug)?.label || null
 
   const displayItems = hasSearched
     ? sortedResults.slice(indexOfFirstItem, indexOfLastItem).map(item => {
-        if (item.contextItems) {
-          return item
-        }
+        if (item.contextItems) return item
+        // Nomor Peserta result — perlu load chunk
         const rIdx = item.rank
         const cIdx = Math.floor((rIdx - 1) / CHUNK_SIZE)
         const relIdx = (rIdx - 1) % CHUNK_SIZE
-        const chunkData = loadedChunks[`${dataset}_${cIdx}`]
+        const cKey = item.jabatanSlug
+          ? `knmp_${item.jabatanSlug}_${cIdx}`
+          : `${dataset}_${cIdx}`
+        const chunkData = loadedChunks[cKey]
         if (chunkData && chunkData[relIdx]) {
           const row = chunkData[relIdx]
           return {
@@ -348,7 +465,9 @@ export function useSKSearch(isKnmp) {
             matchText: row[3],
             contextItems: [row[1], row[2], row[3], row[4], row[5], row[6]],
             firstCol: row[1],
-            lastCol: row[6]
+            lastCol: row[6],
+            jabatan: item.jabatan,
+            jabatanSlug: item.jabatanSlug,
           }
         }
         return {
@@ -356,144 +475,108 @@ export function useSKSearch(isKnmp) {
           matchText: '',
           contextItems: [String(rIdx), item.noPeserta, 'Memuat...', '', '', ''],
           firstCol: String(rIdx),
-          lastCol: ''
+          lastCol: '',
+          jabatan: item.jabatan,
+          jabatanSlug: item.jabatanSlug,
         }
       })
+    // Browse mode (non-searched): tampilkan chunk jika ada
+    // Untuk KNMP 'semua' tidak ada chunk yg di-load — return [] saja
     : (currentChunk
       ? currentChunk.slice(relativeStart, relativeStart + ITEMS_PER_PAGE).map(row => ({
-        page: row[0],
-        matchText: row[3],
-        contextItems: [row[1], row[2], row[3], row[4], row[5], row[6]],
-        firstCol: row[1],
-        lastCol: row[6]
-      }))
+          page: row[0],
+          matchText: row[3],
+          contextItems: [row[1], row[2], row[3], row[4], row[5], row[6]],
+          firstCol: row[1],
+          lastCol: row[6],
+          jabatan: activeJabSlug ? jabatanLabelForSlug(activeJabSlug) : null,
+          jabatanSlug: activeJabSlug,
+        }))
       : [])
 
-  useEffect(() => {
-    let mounted = true
-    ;(async () => {
-      try {
-        const res = await fetch(`/assets/${isKnmp ? 'knmp' : 'kdkmp'}/sk/summary.json`)
-        if (!res.ok) return
-        const data = await res.json()
-        if (mounted) {
-          setPage1Info({
-            title: `Hasil Seleksi ${isKnmp ? 'KNMP' : 'KDKMP'} Seleksi Kompetensi`,
-            subtitle: 'Laporan Rekapitulasi Nilai Seleksi',
-            summary: data
-          })
-        }
-      } catch (e) {
-        console.error('Gagal mengambil ringkasan:', e)
-      }
-    })()
-    return () => {
-      mounted = false
-    }
-  }, [isKnmp])
-
-  // Load the sequential chunk for the current page dynamically if not searched
+  // ── Load chunk untuk browse (non-searched, jabatan spesifik) ───────────────
   useEffect(() => {
     if (hasSearched) return
+    if (isKnmp && selectedJabatan === 'semua') return
     let mounted = true
-    const chunkIdx = Math.floor((currentPage - 1) / 100)
-    const dataset = isKnmp ? 'knmp' : 'kdkmp'
-    const cacheKey = `${dataset}_${chunkIdx}`
 
-    if (loadedChunks[cacheKey]) {
-      return
-    }
+    const cIdx = Math.floor((currentPage - 1) / 100)
+    const jabSlug = isKnmp ? selectedJabatan : null
+    const cKey = jabSlug ? `knmp_${jabSlug}_${cIdx}` : `${dataset}_${cIdx}`
+
+    if (loadedChunks[cKey]) return
 
     setLoading(true)
     setProgress('Memuat data...')
 
     ;(async () => {
       try {
-        const res = await fetch(`/assets/${dataset}/sk/chunks/chunk_${chunkIdx}.json`)
+        const basePath = jabSlug ? `/assets/knmp/sk/${jabSlug}` : `/assets/${dataset}/sk`
+        const res = await fetch(`${basePath}/chunks/chunk_${cIdx}.json`)
         if (!res.ok) throw new Error(`Gagal memuat chunk data: ${res.status}`)
         const chunkData = await res.json()
         if (mounted) {
-          setLoadedChunks(prev => ({
-            ...prev,
-            [cacheKey]: chunkData
-          }))
+          setLoadedChunks(prev => ({ ...prev, [cKey]: chunkData }))
           setProgress('')
         }
       } catch (e) {
-        console.error(e)
-        if (mounted) {
-          setProgress('Gagal memuat data.')
-        }
+        if (mounted) setProgress('Gagal memuat data.')
       } finally {
-        if (mounted) {
-          setLoading(false)
-        }
+        if (mounted) setLoading(false)
       }
     })()
 
-    return () => {
-      mounted = false
-    }
-  }, [currentPage, hasSearched, isKnmp, loadedChunks])
+    return () => { mounted = false }
+  }, [currentPage, hasSearched, isKnmp, selectedJabatan, loadedChunks])
 
-  // Load chunks for currently visible displayItems of search results on-demand
+  // ── Lazy-load chunks untuk search results (Nomor Peserta) ─────────────────
   useEffect(() => {
     if (!hasSearched) return
     let mounted = true
 
-    // Find which chunks are needed for the visible displayItems
-    const neededChunkIndices = new Set()
-    const currentDataset = isKnmp ? 'knmp' : 'kdkmp'
+    const neededChunks = new Set()
 
     for (const item of displayItems) {
       if (item && !item.matchText && item.contextItems?.[2] === 'Memuat...') {
         const rankVal = parseInt(item.contextItems[0], 10)
         if (!isNaN(rankVal)) {
           const cIdx = Math.floor((rankVal - 1) / CHUNK_SIZE)
-          const cacheKey = `${currentDataset}_${cIdx}`
-          if (!loadedChunks[cacheKey]) {
-            neededChunkIndices.add(cIdx)
+          const cKey = item.jabatanSlug
+            ? `knmp_${item.jabatanSlug}_${cIdx}`
+            : `${dataset}_${cIdx}`
+          if (!loadedChunks[cKey]) {
+            neededChunks.add(JSON.stringify({ cIdx, jabatanSlug: item.jabatanSlug }))
           }
         }
       }
     }
 
-    console.log('[LazyLoad] displayItems count:', displayItems.length)
-    console.log('[LazyLoad] neededChunkIndices:', Array.from(neededChunkIndices))
-
-    if (neededChunkIndices.size === 0) return
+    if (neededChunks.size === 0) return
 
     setLoading(true)
     setProgress('Memuat rincian data...')
-
     const controller = new AbortController()
 
     ;(async () => {
       try {
         const newChunks = {}
-        await Promise.all(Array.from(neededChunkIndices).map(async (cIdx) => {
-          const res = await fetch(`/assets/${currentDataset}/sk/chunks/chunk_${cIdx}.json`, { signal: controller.signal })
+        await Promise.all(Array.from(neededChunks).map(async (raw) => {
+          const { cIdx, jabatanSlug } = JSON.parse(raw)
+          const basePath = jabatanSlug ? `/assets/knmp/sk/${jabatanSlug}` : `/assets/${dataset}/sk`
+          const cKey = jabatanSlug ? `knmp_${jabatanSlug}_${cIdx}` : `${dataset}_${cIdx}`
+          const res = await fetch(`${basePath}/chunks/chunk_${cIdx}.json`, { signal: controller.signal })
           if (!res.ok) throw new Error(`Gagal memuat chunk data: ${res.status}`)
-          const chunkData = await res.json()
-          newChunks[`${currentDataset}_${cIdx}`] = chunkData
+          newChunks[cKey] = await res.json()
         }))
 
         if (mounted) {
-          setLoadedChunks(prev => ({
-            ...prev,
-            ...newChunks
-          }))
+          setLoadedChunks(prev => ({ ...prev, ...newChunks }))
           setProgress('')
         }
       } catch (e) {
-        console.error(e)
-        if (mounted && e.name !== 'AbortError') {
-          setProgress('Gagal memuat rincian.')
-        }
+        if (mounted && e.name !== 'AbortError') setProgress('Gagal memuat rincian.')
       } finally {
-        if (mounted) {
-          setLoading(false)
-        }
+        if (mounted) setLoading(false)
       }
     })()
 
@@ -501,7 +584,7 @@ export function useSKSearch(isKnmp) {
       mounted = false
       controller.abort()
     }
-  }, [currentPage, results, sortConfig, isKnmp, loadedChunks])
+  }, [currentPage, results, sortConfig, isKnmp, selectedJabatan, loadedChunks])
 
   function cancelSearch() {
     if (abortController) {
@@ -533,8 +616,6 @@ export function useSKSearch(isKnmp) {
     setCurrentPage(1)
   }
 
-
-
   return {
     query,
     setQuery,
@@ -559,6 +640,10 @@ export function useSKSearch(isKnmp) {
     indexOfLastItem,
     indexOfFirstItem,
     currentChunk,
-    displayItems
+    displayItems,
+    // KNMP jabatan
+    selectedJabatan,
+    setSelectedJabatan,
+    knmpSummaries,
   }
 }

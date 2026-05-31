@@ -1,0 +1,29 @@
+{
+  "jumlahFormasi": "1369",
+  "jumlahPeserta": "27254",
+  "kehadiran": {
+    "hadir": "19333",
+    "tidakHadir": "7921"
+  },
+  "kelulusan": {
+    "jumlah": "7030",
+    "persen": "25.79"
+  },
+  "nilaiKognitif": {
+    "tertinggi": "150",
+    "terendah": "65"
+  },
+  "nilaiSubstansi": {
+    "tertinggi": "100",
+    "terendah": "0"
+  },
+  "jabatan": "ADMINISTRASI KEUANGAN",
+  "statusCounts": {
+    "P/L": 1209,
+    "P1/L": 2096,
+    "P2/L": 3725,
+    "TL": 12303,
+    "TH": 7921
+  },
+  "totalRows": 27254
+}

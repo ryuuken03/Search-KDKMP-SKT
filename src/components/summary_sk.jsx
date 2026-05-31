@@ -3,6 +3,7 @@ import {
   PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer,
   BarChart, Bar, XAxis, YAxis
 } from 'recharts';
+import KnmpJabatanFilter from './knmp_jabatan_filter';
 
 function fmtNum(value) {
   if (value == null || value === '') return '—'
@@ -12,7 +13,7 @@ function fmtNum(value) {
   return n.toLocaleString('id-ID')
 }
 
-export default function SummarySK({ summary, isKnmp }) {
+export default function SummarySK({ summary, isKnmp, selectedJabatan, setSelectedJabatan, knmpSummaries }) {
   if (!summary) {
     return <p className="page1-info__empty">Data rekap halaman 1 tidak ditemukan.</p>;
   }
@@ -123,6 +124,16 @@ export default function SummarySK({ summary, isKnmp }) {
         id="summary-dashboard-content"
         className={`summary-dashboard__content ${isExpanded ? 'summary-dashboard__content--expanded' : ''}`}
       >
+        {/* KNMP: Filter jabatan compact — di bawah judul / di atas KPI Cards */}
+        {isKnmp && selectedJabatan && setSelectedJabatan && (
+          <KnmpJabatanFilter
+            selectedJabatan={selectedJabatan}
+            setSelectedJabatan={setSelectedJabatan}
+            knmpSummaries={knmpSummaries || {}}
+            compact
+          />
+        )}
+
         {/* KPI Cards: Jumlah Peserta & Jumlah Formasi */}
         <div className="summary-dashboard__kpis">
           <div className="summary-dashboard__kpi-card">
@@ -168,7 +179,7 @@ export default function SummarySK({ summary, isKnmp }) {
               {kelulusanData[0].value === 0 && kelulusanData[1].value === 0 ? (
                 <span className="summary-dashboard__empty-chart">Data tidak tersedia</span>
               ) : (
-                <ResponsiveContainer width="100%" height="100%">
+                <ResponsiveContainer width="100%" height={200}>
                   <PieChart>
                     <Pie
                       data={kelulusanData}
@@ -216,7 +227,7 @@ export default function SummarySK({ summary, isKnmp }) {
               {kehadiranData[0].value === 0 && kehadiranData[1].value === 0 ? (
                 <span className="summary-dashboard__empty-chart">Data tidak tersedia</span>
               ) : (
-                <ResponsiveContainer width="100%" height="100%">
+                <ResponsiveContainer width="100%" height={200}>
                   <PieChart>
                     <Pie
                       data={kehadiranData}

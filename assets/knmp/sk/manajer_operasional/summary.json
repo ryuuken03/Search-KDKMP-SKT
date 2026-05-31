@@ -1,0 +1,29 @@
+{
+  "jumlahFormasi": "1369",
+  "jumlahPeserta": "12241",
+  "kehadiran": {
+    "hadir": "9015",
+    "tidakHadir": "3226"
+  },
+  "kelulusan": {
+    "jumlah": "3166",
+    "persen": "25.86"
+  },
+  "nilaiKognitif": {
+    "tertinggi": "154",
+    "terendah": "65"
+  },
+  "nilaiSubstansi": {
+    "tertinggi": "100",
+    "terendah": "0"
+  },
+  "jabatan": "MANAJER OPERASIONAL",
+  "statusCounts": {
+    "P/L": 542,
+    "P1/L": 892,
+    "P2/L": 1732,
+    "TL": 5849,
+    "TH": 3226
+  },
+  "totalRows": 12241
+}

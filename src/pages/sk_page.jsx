@@ -3,6 +3,7 @@ import SummarySK from '../components/summary_sk'
 import { useSKSearch } from '../hooks/useSKSearch'
 import SKSearchControls from '../components/sk_search_controls'
 import SKResultsTable from '../components/sk_results_table'
+import KnmpJabatanFilter from '../components/knmp_jabatan_filter'
 
 export default function SKPage({ isKnmp }) {
   const {
@@ -28,7 +29,11 @@ export default function SKPage({ isKnmp }) {
     indexOfLastItem,
     indexOfFirstItem,
     currentChunk,
-    displayItems
+    displayItems,
+    // KNMP jabatan
+    selectedJabatan,
+    setSelectedJabatan,
+    knmpSummaries,
   } = useSKSearch(isKnmp)
 
   return (
@@ -41,9 +46,24 @@ export default function SKPage({ isKnmp }) {
             {page1Info.subtitle && (
               <p className="page1-info__subtitle">{page1Info.subtitle}</p>
             )}
-            <SummarySK summary={page1Info.summary} isKnmp={isKnmp} />
+            <SummarySK
+              summary={page1Info.summary}
+              isKnmp={isKnmp}
+              selectedJabatan={selectedJabatan}
+              setSelectedJabatan={setSelectedJabatan}
+              knmpSummaries={knmpSummaries}
+            />
           </div>
         </section>
+      )}
+
+      {/* ── KNMP Jabatan Filter (standalone, di luar summary panel) ────── */}
+      {isKnmp && (
+        <KnmpJabatanFilter
+          selectedJabatan={selectedJabatan}
+          setSelectedJabatan={setSelectedJabatan}
+          knmpSummaries={knmpSummaries}
+        />
       )}
 
       <SKSearchControls
@@ -96,6 +116,7 @@ export default function SKPage({ isKnmp }) {
             ITEMS_PER_PAGE={ITEMS_PER_PAGE}
             sortConfig={sortConfig}
             requestSort={requestSort}
+            isKnmp={isKnmp}
           />
         </section>
       </div>

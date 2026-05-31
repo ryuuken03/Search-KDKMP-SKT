@@ -15,16 +15,17 @@ export default function SKResultsTable({
   indexOfLastItem,
   ITEMS_PER_PAGE,
   sortConfig,
-  requestSort
+  requestSort,
+  isKnmp,
 }) {
+  const colSpan = isKnmp ? 7 : 6
+
   const renderHeader = (key, label) => {
     const isSorted = sortConfig?.key === key
     const direction = sortConfig?.direction
 
     const handleClick = () => {
-      if (hasSearched) {
-        requestSort(key)
-      }
+      if (hasSearched) requestSort(key)
     }
 
     const titleText = hasSearched
@@ -65,22 +66,25 @@ export default function SKResultsTable({
             <th>Kognitif</th>
             <th>Substansi</th>
             <th>Status</th>
+            {isKnmp && renderHeader('jabatan', 'Jabatan')}
           </tr>
         </thead>
         <tbody>
           {displayItems.map((r, i) => {
             const raw = r.contextItems || []
             const vals = raw.map((v) => String(v || '').trim()).filter((v) => v.length > 0)
-            const noCol = vals[0] ?? (indexOfFirstItem + i + 1)
-            const peserta = vals[1] ?? r.firstCol ?? ''
-            const nama = vals[2] ?? r.matchText ?? ''
-            const kognitif = vals[3] ?? ''
+            const noCol     = vals[0] ?? (indexOfFirstItem + i + 1)
+            const peserta   = vals[1] ?? r.firstCol ?? ''
+            const nama      = vals[2] ?? r.matchText ?? ''
+            const kognitif  = vals[3] ?? ''
             const substansi = vals[4] ?? ''
-            const status = vals[5] ?? r.lastCol ?? ''
+            const status    = vals[5] ?? r.lastCol ?? ''
+            const jabatan   = r.jabatan ?? ''
+
             if (r.error) {
               return (
                 <tr key={i} className="empty-row">
-                  <td colSpan={6}>{r.error}</td>
+                  <td colSpan={colSpan}>{r.error}</td>
                 </tr>
               )
             }
@@ -92,22 +96,29 @@ export default function SKResultsTable({
                 <td data-label="Kognitif"><span>{kognitif}</span></td>
                 <td data-label="Substansi"><span>{substansi}</span></td>
                 <td data-label="Status"><span>{status}</span></td>
+                {isKnmp && (
+                  <td data-label="Jabatan">
+                    <span className={`jabatan-badge jabatan-badge--${r.jabatanSlug || 'unknown'}`}>
+                      {jabatan}
+                    </span>
+                  </td>
+                )}
               </tr>
             )
           })}
           {loading && resultsLength === 0 && (
             <tr className="empty-row">
-              <td colSpan={6}>Sedang mencari…</td>
+              <td colSpan={colSpan}>Sedang mencari…</td>
             </tr>
           )}
           {!loading && !hasSearched && !currentChunk && (
             <tr className="empty-row">
-              <td colSpan={6}>Memuat data...</td>
+              <td colSpan={colSpan}>Memuat data...</td>
             </tr>
           )}
           {!loading && hasSearched && resultsLength === 0 && (
             <tr className="empty-row">
-              <td colSpan={6}>Hasil tidak ditemukan.</td>
+              <td colSpan={colSpan}>Hasil tidak ditemukan.</td>
             </tr>
           )}
         </tbody>

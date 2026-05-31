@@ -1,0 +1,29 @@
+{
+  "jumlahFormasi": "1369",
+  "jumlahPeserta": "20116",
+  "kehadiran": {
+    "hadir": "15174",
+    "tidakHadir": "4942"
+  },
+  "kelulusan": {
+    "jumlah": "5484",
+    "persen": "27.26"
+  },
+  "nilaiKognitif": {
+    "tertinggi": "154",
+    "terendah": "65"
+  },
+  "nilaiSubstansi": {
+    "tertinggi": "100",
+    "terendah": "0"
+  },
+  "jabatan": "PENJAMIN MUTU",
+  "statusCounts": {
+    "P/L": 958,
+    "P1/L": 1568,
+    "P2/L": 2958,
+    "TL": 9690,
+    "TH": 4942
+  },
+  "totalRows": 20116
+}

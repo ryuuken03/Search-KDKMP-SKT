@@ -1,0 +1,29 @@
+{
+  "jumlahFormasi": "1369",
+  "jumlahPeserta": "12521",
+  "kehadiran": {
+    "hadir": "9322",
+    "tidakHadir": "3199"
+  },
+  "kelulusan": {
+    "jumlah": "2777",
+    "persen": "22.18"
+  },
+  "nilaiKognitif": {
+    "tertinggi": "148",
+    "terendah": "65"
+  },
+  "nilaiSubstansi": {
+    "tertinggi": "100",
+    "terendah": "0"
+  },
+  "jabatan": "KEPALA PRODUKSI",
+  "statusCounts": {
+    "P/L": 419,
+    "P1/L": 735,
+    "P2/L": 1623,
+    "TL": 6545,
+    "TH": 3199
+  },
+  "totalRows": 12521
+}

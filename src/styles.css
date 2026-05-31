@@ -1329,3 +1329,270 @@ body {
     transform: translateY(0);
   }
 }
+
+/* ─── Jabatan Filter ──────────────────────────────────────────────────────── */
+.jabatan-filter {
+  margin-bottom: 16px;
+  padding: 14px 16px;
+  border-radius: calc(var(--radius) + 2px);
+  border: 1px solid hsl(var(--border));
+  background: hsl(var(--muted) / 0.3);
+  animation: fadeInSlide 0.25s ease;
+}
+
+/* Compact mode: embed di dalam panel, tanpa border/bg */
+.jabatan-filter--compact {
+  margin-bottom: 16px;
+  padding: 0 0 4px;
+  border: none;
+  background: none;
+  animation: none;
+}
+
+.jabatan-filter--compact .jabatan-filter__inner {
+  gap: 8px;
+}
+
+.jabatan-filter--compact .jabatan-pill {
+  height: 30px;
+  font-size: 12px;
+  padding: 0 12px;
+}
+
+.jabatan-filter__inner {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.jabatan-filter__label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: hsl(var(--muted-foreground));
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.jabatan-filter__icon {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+}
+
+.jabatan-filter__pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+/* Pill base */
+.jabatan-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 34px;
+  padding: 0 14px;
+  border-radius: 999px;
+  border: 1.5px solid hsl(var(--border));
+  background: hsl(var(--card));
+  color: hsl(var(--foreground));
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s, color 0.15s, box-shadow 0.15s, transform 0.1s;
+  white-space: nowrap;
+}
+
+.jabatan-pill:hover {
+  background: hsl(var(--accent));
+  border-color: hsl(var(--ring) / 0.5);
+}
+
+.jabatan-pill:active {
+  transform: scale(0.97);
+}
+
+/* Count badge inside pill */
+.jabatan-pill__count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 22px;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: 999px;
+  background: hsl(var(--muted));
+  color: hsl(var(--muted-foreground));
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 1;
+  transition: background 0.15s, color 0.15s;
+}
+
+/* Active pill — default "Semua" */
+.jabatan-pill--active {
+  border-color: transparent;
+  box-shadow: 0 0 0 2px hsl(var(--ring) / 0.4), 0 2px 6px rgb(0 0 0 / 0.08);
+}
+
+/* Per-jabatan color theming — pill active states */
+.jabatan-pill--active:not([class*="jabatan-pill--manajer"]):not([class*="jabatan-pill--kepala"]):not([class*="jabatan-pill--penjamin"]):not([class*="jabatan-pill--administrasi"]) {
+  background: hsl(var(--brand));
+  color: hsl(var(--btn-search-fg));
+}
+.jabatan-pill--active:not([class*="jabatan-pill--manajer"]):not([class*="jabatan-pill--kepala"]):not([class*="jabatan-pill--penjamin"]):not([class*="jabatan-pill--administrasi"]) .jabatan-pill__count {
+  background: hsl(var(--btn-search-fg) / 0.2);
+  color: hsl(var(--btn-search-fg));
+}
+
+/* Manajer Operasional — Indigo */
+.jabatan-pill--manajer_operasional.jabatan-pill--active {
+  background: hsl(239 84% 67%);
+  border-color: transparent;
+  color: #fff;
+}
+.jabatan-pill--manajer_operasional.jabatan-pill--active .jabatan-pill__count {
+  background: rgba(255,255,255,0.22);
+  color: #fff;
+}
+.jabatan-pill--manajer_operasional:not(.jabatan-pill--active):hover {
+  border-color: hsl(239 84% 67% / 0.5);
+}
+
+/* Kepala Produksi — Emerald */
+.jabatan-pill--kepala_produksi.jabatan-pill--active {
+  background: hsl(160 84% 39%);
+  border-color: transparent;
+  color: #fff;
+}
+.jabatan-pill--kepala_produksi.jabatan-pill--active .jabatan-pill__count {
+  background: rgba(255,255,255,0.22);
+  color: #fff;
+}
+.jabatan-pill--kepala_produksi:not(.jabatan-pill--active):hover {
+  border-color: hsl(160 84% 39% / 0.5);
+}
+
+/* Penjamin Mutu — Amber */
+.jabatan-pill--penjamin_mutu.jabatan-pill--active {
+  background: hsl(43 96% 56%);
+  border-color: transparent;
+  color: hsl(43 20% 15%);
+}
+.jabatan-pill--penjamin_mutu.jabatan-pill--active .jabatan-pill__count {
+  background: rgba(0,0,0,0.12);
+  color: hsl(43 20% 15%);
+}
+.jabatan-pill--penjamin_mutu:not(.jabatan-pill--active):hover {
+  border-color: hsl(43 96% 56% / 0.5);
+}
+
+/* Administrasi Keuangan — Rose */
+.jabatan-pill--administrasi_keuangan.jabatan-pill--active {
+  background: hsl(347 77% 50%);
+  border-color: transparent;
+  color: #fff;
+}
+.jabatan-pill--administrasi_keuangan.jabatan-pill--active .jabatan-pill__count {
+  background: rgba(255,255,255,0.22);
+  color: #fff;
+}
+.jabatan-pill--administrasi_keuangan:not(.jabatan-pill--active):hover {
+  border-color: hsl(347 77% 50% / 0.5);
+}
+
+/* ─── Jabatan Badge (in table cells) ─────────────────────────────────────── */
+.jabatan-badge {
+  display: inline-flex;
+  align-items: center;
+  height: 22px;
+  padding: 0 9px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 600;
+  white-space: nowrap;
+  letter-spacing: 0.01em;
+  /* default */
+  background: hsl(var(--muted));
+  color: hsl(var(--muted-foreground));
+}
+
+.jabatan-badge--manajer_operasional {
+  background: hsl(239 84% 67% / 0.15);
+  color: hsl(239 84% 50%);
+  border: 1px solid hsl(239 84% 67% / 0.3);
+}
+html[data-theme='dark'] .jabatan-badge--manajer_operasional,
+html.dark .jabatan-badge--manajer_operasional {
+  background: hsl(239 84% 67% / 0.18);
+  color: hsl(239 84% 80%);
+  border-color: hsl(239 84% 67% / 0.25);
+}
+
+.jabatan-badge--kepala_produksi {
+  background: hsl(160 84% 39% / 0.12);
+  color: hsl(160 70% 35%);
+  border: 1px solid hsl(160 84% 39% / 0.25);
+}
+html[data-theme='dark'] .jabatan-badge--kepala_produksi,
+html.dark .jabatan-badge--kepala_produksi {
+  background: hsl(160 84% 39% / 0.18);
+  color: hsl(160 70% 65%);
+  border-color: hsl(160 84% 39% / 0.25);
+}
+
+.jabatan-badge--penjamin_mutu {
+  background: hsl(43 96% 56% / 0.15);
+  color: hsl(36 80% 35%);
+  border: 1px solid hsl(43 96% 56% / 0.3);
+}
+html[data-theme='dark'] .jabatan-badge--penjamin_mutu,
+html.dark .jabatan-badge--penjamin_mutu {
+  background: hsl(43 96% 56% / 0.18);
+  color: hsl(43 90% 70%);
+  border-color: hsl(43 96% 56% / 0.25);
+}
+
+.jabatan-badge--administrasi_keuangan {
+  background: hsl(347 77% 50% / 0.12);
+  color: hsl(347 65% 40%);
+  border: 1px solid hsl(347 77% 50% / 0.25);
+}
+html[data-theme='dark'] .jabatan-badge--administrasi_keuangan,
+html.dark .jabatan-badge--administrasi_keuangan {
+  background: hsl(347 77% 50% / 0.18);
+  color: hsl(347 70% 75%);
+  border-color: hsl(347 77% 50% / 0.25);
+}
+
+/* ─── Mobile adjustments for jabatan filter ──────────────────────────────── */
+@media (max-width: 720px) {
+  .jabatan-filter__inner {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .jabatan-filter__pills {
+    width: 100%;
+    gap: 6px;
+  }
+
+  .jabatan-pill {
+    height: 36px;
+    font-size: 12px;
+    padding: 0 12px;
+  }
+
+  /* Jabatan badge in mobile card rows */
+  .data-table td:last-child .jabatan-badge {
+    font-size: 10px;
+    height: 20px;
+  }
+}
