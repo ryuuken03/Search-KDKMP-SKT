@@ -3,8 +3,6 @@ import React from 'react'
 export default function SKSearchControls({
   query,
   setQuery,
-  searchMode,
-  setSearchMode,
   handleSearch,
   loading,
   cancelSearch,
@@ -16,48 +14,15 @@ export default function SKSearchControls({
       <div className="controls__fields">
         <input
           id="search-query"
-          type={searchMode === 'Peringkat' ? 'number' : 'text'}
-          placeholder={
-            searchMode === 'Nama'
-              ? 'Cari Nama Peserta...'
-              : searchMode === 'Nomor Peserta'
-              ? 'Cari Nomor Peserta...'
-              : 'Cari Peringkat (angka)...'
-          }
+          type="text"
+          placeholder="Cari Nama, Nomor Peserta, atau Peringkat..."
           value={query}
-          onChange={(e) => {
-            const val = e.target.value
-            if (searchMode === 'Nomor Peserta') {
-              let cleaned = ''
-              const first = val[0]
-              if (first && (first === 'p' || first === 'P')) {
-                cleaned = 'P' + val.slice(1).replace(/[^0-9]/g, '')
-              } else {
-                cleaned = val.replace(/[^0-9]/g, '')
-              }
-              setQuery(cleaned)
-            } else {
-              setQuery(val)
-            }
-          }}
+          onChange={(e) => setQuery(e.target.value)}
           onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
         />
       </div>
       <div className="controls__actions">
-        <select
-          id="search-mode"
-          value={searchMode}
-          onChange={(e) => {
-            setSearchMode(e.target.value)
-            setQuery('')
-          }}
-          aria-label="Mode Pencarian"
-        >
-          <option value="Nama">Nama</option>
-          <option value="Nomor Peserta">Nomor Peserta</option>
-          <option value="Peringkat">Peringkat</option>
-        </select>
-        <button onClick={handleSearch} disabled={loading} aria-label="Cari">
+        <button onClick={() => handleSearch()} disabled={loading} aria-label="Cari">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="16"

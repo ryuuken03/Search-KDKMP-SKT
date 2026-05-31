@@ -562,6 +562,29 @@ body {
   white-space: nowrap;
 }
 
+.data-table thead th.sortable {
+  cursor: pointer;
+  user-select: none;
+}
+
+.data-table thead th.sortable:not(.disabled):hover {
+  background: hsl(var(--accent) / 0.8) !important;
+  color: hsl(var(--foreground));
+}
+
+.data-table thead th.sortable.disabled {
+  cursor: default;
+}
+
+.data-table thead th.sortable.disabled:hover {
+  background: hsl(var(--table-header-bg)) !important;
+  color: hsl(var(--muted-foreground)) !important;
+}
+
+.data-table thead th.sortable .sort-indicator {
+  transition: opacity 0.15s;
+}
+
 .data-table tbody td {
   padding: 12px 16px;
   border-top: 1px solid hsl(var(--border));
@@ -1241,5 +1264,67 @@ body {
     align-items: center;
     border-top: 1px solid hsl(var(--border));
     padding: 14px 0;
+  }
+}
+
+/* Fallback Hint Box */
+.search-fallback-hint {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 12px 0 18px;
+  padding: 12px 16px;
+  border-radius: var(--radius);
+  border: 1px solid hsl(var(--border));
+  background: hsl(var(--muted) / 0.35);
+  border-left: 3px solid hsl(var(--brand));
+  font-size: 13px;
+  animation: fadeInSlide 0.3s ease-out;
+}
+
+.search-fallback-hint__icon {
+  font-size: 16px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.search-fallback-hint__text {
+  color: hsl(var(--foreground));
+  line-height: 1.4;
+}
+
+.search-fallback-hint__link {
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  color: hsl(var(--brand));
+  font-weight: 600;
+  text-decoration: underline;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: inherit;
+  transition: color 0.15s;
+}
+
+.search-fallback-hint__link:hover:not(:disabled) {
+  color: hsl(var(--brand-foreground));
+}
+
+.search-fallback-hint__link:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  text-decoration: none;
+}
+
+@keyframes fadeInSlide {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }

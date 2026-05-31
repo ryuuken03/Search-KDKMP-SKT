@@ -13,16 +13,55 @@ export default function SKResultsTable({
   totalItems,
   totalPages,
   indexOfLastItem,
-  ITEMS_PER_PAGE
+  ITEMS_PER_PAGE,
+  sortConfig,
+  requestSort
 }) {
+  const renderHeader = (key, label) => {
+    const isSorted = sortConfig?.key === key
+    const direction = sortConfig?.direction
+
+    const handleClick = () => {
+      if (hasSearched) {
+        requestSort(key)
+      }
+    }
+
+    const titleText = hasSearched
+      ? `Klik untuk mengurutkan berdasarkan ${label}`
+      : 'Cari Nama atau Nomor Peserta terlebih dahulu untuk mengurutkan seluruh hasil'
+
+    return (
+      <th
+        onClick={handleClick}
+        className={hasSearched ? 'sortable' : 'sortable disabled'}
+        style={{ cursor: hasSearched ? 'pointer' : 'default', userSelect: 'none' }}
+        title={titleText}
+      >
+        <div style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+          <span>{label}</span>
+          <span
+            className="sort-indicator"
+            style={{
+              opacity: isSorted ? 1 : (hasSearched ? 0.35 : 0.15),
+              fontSize: '10px'
+            }}
+          >
+            {isSorted ? (direction === 'asc' ? '▲' : '▼') : '↕'}
+          </span>
+        </div>
+      </th>
+    )
+  }
+
   return (
     <div className="data-table">
       <table>
         <thead>
           <tr>
-            <th>Peringkat</th>
-            <th>No Peserta</th>
-            <th>Nama</th>
+            {renderHeader('peringkat', 'Peringkat')}
+            {renderHeader('noPeserta', 'No Peserta')}
+            {renderHeader('nama', 'Nama')}
             <th>Kognitif</th>
             <th>Substansi</th>
             <th>Status</th>

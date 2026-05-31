@@ -1,9 +1,30 @@
 import { useState, useEffect } from 'react'
 
+export function detectSearchMode(queryStr, totalRows) {
+  const trimmed = queryStr.trim()
+  // 1. Diawali huruf P/p diikuti angka
+  if (/^[pP]\d+$/.test(trimmed)) {
+    return 'Nomor Peserta'
+  }
+  // 2. Angka murni
+  if (/^\d+$/.test(trimmed)) {
+    const num = parseInt(trimmed, 10)
+    if (num <= totalRows) {
+      return 'Peringkat'
+    } else {
+      return 'Nomor Peserta'
+    }
+  }
+  // 3. Sisanya adalah Nama
+  return 'Nama'
+}
+
 export function useSKSearch(isKnmp) {
   const [query, setQuery] = useState('')
   const [searchMode, setSearchMode] = useState('Nama')
+  const [lastSearchedQuery, setLastSearchedQuery] = useState('')
   const [results, setResults] = useState([])
+  const [sortConfig, setSortConfig] = useState({ key: null, direction: 'asc' })
   const [loading, setLoading] = useState(false)
   const [progress, setProgress] = useState('')
   const [loadedChunks, setLoadedChunks] = useState({})
@@ -18,24 +39,33 @@ export function useSKSearch(isKnmp) {
     setResults([])
     setHasSearched(false)
     setQuery('')
+    setLastSearchedQuery('')
     setProgress('')
     setPage1Info(null)
     setCurrentPage(1)
+    setSortConfig({ key: null, direction: 'asc' })
   }, [isKnmp])
 
   const CHUNK_SIZE = 5000
 
-  async function handleSearch() {
+  async function handleSearch(overrideMode) {
     const trimmedQuery = query.trim()
     if (!trimmedQuery) return
+
+    const totalRows = page1Info?.summary?.totalRows || (isKnmp ? 72135 : 411516)
+    const mode = overrideMode || detectSearchMode(trimmedQuery, totalRows)
+
+    setSearchMode(mode)
+    setLastSearchedQuery(trimmedQuery)
     setHasSearched(true)
     setLoading(true)
     setResults([])
     setCurrentPage(1)
+    setSortConfig({ key: null, direction: 'asc' })
 
     const dataset = isKnmp ? 'knmp' : 'kdkmp'
 
-    if (searchMode === 'Peringkat') {
+    if (mode === 'Peringkat') {
       setProgress('Mencari peringkat...')
       const rankVal = parseInt(trimmedQuery, 10)
       if (isNaN(rankVal) || rankVal <= 0) {
@@ -101,7 +131,7 @@ export function useSKSearch(isKnmp) {
       setProgress(`Selesai. Ditemukan ${matches.length} hasil.`)
       setLoading(false)
       setAbortController(null)
-    } else if (searchMode === 'Nomor Peserta') {
+    } else if (mode === 'Nomor Peserta') {
       setProgress('Mencari nomor peserta...')
       const totalRows = page1Info?.summary?.totalRows || (isKnmp ? 72135 : 411516)
       const totalChunks = Math.ceil(totalRows / CHUNK_SIZE)
@@ -347,15 +377,52 @@ export function useSKSearch(isKnmp) {
 
   function handleClear() {
     setQuery('')
+    setLastSearchedQuery('')
     setResults([])
     setHasSearched(false)
     setCurrentPage(1)
     setProgress('')
+    setSortConfig({ key: null, direction: 'asc' })
   }
+
+  const requestSort = (key) => {
+    let direction = 'asc'
+    if (sortConfig.key === key && sortConfig.direction === 'asc') {
+      direction = 'desc'
+    } else if (sortConfig.key === key && sortConfig.direction === 'desc') {
+      key = null
+    }
+    setSortConfig({ key, direction })
+    setCurrentPage(1)
+  }
+
+  const sortedResults = [...results].sort((a, b) => {
+    if (!sortConfig.key) return 0
+
+    let valA, valB
+    if (sortConfig.key === 'peringkat') {
+      valA = parseInt(a.contextItems?.[0] || '0', 10)
+      valB = parseInt(b.contextItems?.[0] || '0', 10)
+      return sortConfig.direction === 'asc' ? valA - valB : valB - valA
+    } else if (sortConfig.key === 'noPeserta') {
+      valA = String(a.contextItems?.[1] || '')
+      valB = String(b.contextItems?.[1] || '')
+      return sortConfig.direction === 'asc'
+        ? valA.localeCompare(valB, undefined, { numeric: true, sensitivity: 'base' })
+        : valB.localeCompare(valA, undefined, { numeric: true, sensitivity: 'base' })
+    } else if (sortConfig.key === 'nama') {
+      valA = String(a.contextItems?.[2] || '')
+      valB = String(b.contextItems?.[2] || '')
+      return sortConfig.direction === 'asc'
+        ? valA.localeCompare(valB, undefined, { sensitivity: 'base' })
+        : valB.localeCompare(valA, undefined, { sensitivity: 'base' })
+    }
+    return 0
+  })
 
   const ITEMS_PER_PAGE = 50
   const totalItems = hasSearched
-    ? results.length
+    ? sortedResults.length
     : (page1Info?.summary?.totalRows || (isKnmp ? 72135 : 411516))
   const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE)
   const indexOfLastItem = currentPage * ITEMS_PER_PAGE
@@ -368,7 +435,7 @@ export function useSKSearch(isKnmp) {
   const relativeStart = ((currentPage - 1) % 100) * ITEMS_PER_PAGE
 
   const displayItems = hasSearched
-    ? results.slice(indexOfFirstItem, indexOfLastItem)
+    ? sortedResults.slice(indexOfFirstItem, indexOfLastItem)
     : (currentChunk
       ? currentChunk.slice(relativeStart, relativeStart + ITEMS_PER_PAGE).map(row => ({
         page: row[0],
@@ -384,7 +451,10 @@ export function useSKSearch(isKnmp) {
     setQuery,
     searchMode,
     setSearchMode,
-    results,
+    lastSearchedQuery,
+    results: sortedResults,
+    sortConfig,
+    requestSort,
     loading,
     progress,
     page1Info,

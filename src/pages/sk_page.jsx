@@ -9,8 +9,10 @@ export default function SKPage({ isKnmp }) {
     query,
     setQuery,
     searchMode,
-    setSearchMode,
+    lastSearchedQuery,
     results,
+    sortConfig,
+    requestSort,
     loading,
     progress,
     page1Info,
@@ -47,14 +49,31 @@ export default function SKPage({ isKnmp }) {
       <SKSearchControls
         query={query}
         setQuery={setQuery}
-        searchMode={searchMode}
-        setSearchMode={setSearchMode}
         handleSearch={handleSearch}
         loading={loading}
         cancelSearch={cancelSearch}
         hasSearched={hasSearched}
         handleClear={handleClear}
       />
+
+      {/* Smart Fallback Hint */}
+      {hasSearched && searchMode === 'Peringkat' && /^\d+$/.test(lastSearchedQuery) && (
+        <div className="search-fallback-hint">
+          <span className="search-fallback-hint__icon">💡</span>
+          <span className="search-fallback-hint__text">
+            Menampilkan peringkat <strong>{lastSearchedQuery}</strong>. Apakah Anda ingin mencari{' '}
+            <button
+              type="button"
+              className="search-fallback-hint__link"
+              onClick={() => handleSearch('Nomor Peserta')}
+              disabled={loading}
+            >
+              Nomor Peserta mengandung "{lastSearchedQuery}"
+            </button>
+            ?
+          </span>
+        </div>
+      )}
 
       <div className="meta">
         <strong>Progres:</strong> {progress}
@@ -75,6 +94,8 @@ export default function SKPage({ isKnmp }) {
             totalPages={totalPages}
             indexOfLastItem={indexOfLastItem}
             ITEMS_PER_PAGE={ITEMS_PER_PAGE}
+            sortConfig={sortConfig}
+            requestSort={requestSort}
           />
         </section>
       </div>
