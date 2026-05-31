@@ -29,6 +29,7 @@ export function useSKSearch(isKnmp) {
   const [progress, setProgress] = useState('')
   const [loadedChunks, setLoadedChunks] = useState({})
   const [loadedPrefixes, setLoadedPrefixes] = useState({})
+  const [loadedParticipantNumbers, setLoadedParticipantNumbers] = useState({})
   const [page1Info, setPage1Info] = useState(null)
   const [abortController, setAbortController] = useState(null)
   const [hasSearched, setHasSearched] = useState(false)
@@ -134,7 +135,6 @@ export function useSKSearch(isKnmp) {
     } else if (mode === 'Nomor Peserta') {
       setProgress('Mencari nomor peserta...')
       const totalRows = page1Info?.summary?.totalRows || (isKnmp ? 72135 : 411516)
-      const totalChunks = Math.ceil(totalRows / CHUNK_SIZE)
       const matches = []
       const queryUpper = trimmedQuery.toUpperCase()
       const isStartsWithP = queryUpper.startsWith('P')
@@ -143,28 +143,61 @@ export function useSKSearch(isKnmp) {
       setAbortController(controller)
 
       try {
-        let reachedLimit = false
-        for (let chunkIdx = 0; chunkIdx < totalChunks; chunkIdx++) {
-          setProgress(`Mencari Nomor Peserta di data grup ${chunkIdx + 1}/${totalChunks}...`)
-          const cacheKey = `${dataset}_${chunkIdx}`
-          let chunkData = loadedChunks[cacheKey]
+        let indexList = loadedParticipantNumbers[dataset]
+        if (!indexList) {
+          setProgress('Mengunduh indeks nomor peserta...')
+          const res = await fetch(`/assets/${dataset}/sk/no_peserta.json`, { signal: controller.signal })
+          if (!res.ok) throw new Error(`Gagal memuat indeks nomor peserta: ${res.status}`)
+          indexList = await res.json()
+          setLoadedParticipantNumbers(prev => ({
+            ...prev,
+            [dataset]: indexList
+          }))
+        }
 
-          if (!chunkData) {
-            const res = await fetch(`/assets/${dataset}/sk/chunks/chunk_${chunkIdx}.json`, { signal: controller.signal })
-            if (!res.ok) throw new Error(`Gagal memuat chunk data: ${res.status}`)
-            chunkData = await res.json()
+        setProgress('Memindai indeks nomor peserta...')
+        const matchedRanks = []
+        for (let i = 0; i < indexList.length; i++) {
+          const val = String(indexList[i] || '').toUpperCase()
+          const isMatch = isStartsWithP ? val.startsWith(queryUpper) : val.includes(queryUpper)
+          if (isMatch) {
+            matchedRanks.push(i + 1)
+            if (matchedRanks.length >= 1000) {
+              break
+            }
+          }
+        }
+
+        const uniqueChunkIndices = [...new Set(matchedRanks.map(rank => Math.floor((rank - 1) / CHUNK_SIZE)))]
+
+        if (uniqueChunkIndices.length > 0) {
+          setProgress(`Memuat ${uniqueChunkIndices.length} grup data yang cocok...`)
+          const newChunks = {}
+          await Promise.all(uniqueChunkIndices.map(async (chunkIdx) => {
+            const cacheKey = `${dataset}_${chunkIdx}`
+            if (!loadedChunks[cacheKey]) {
+              const res = await fetch(`/assets/${dataset}/sk/chunks/chunk_${chunkIdx}.json`, { signal: controller.signal })
+              if (!res.ok) throw new Error(`Gagal memuat chunk data: ${res.status}`)
+              const chunkData = await res.json()
+              newChunks[cacheKey] = chunkData
+            }
+          }))
+
+          if (Object.keys(newChunks).length > 0) {
             setLoadedChunks(prev => ({
               ...prev,
-              [cacheKey]: chunkData
+              ...newChunks
             }))
           }
 
-          // Scan the chunk for the matching nomor peserta (row[2] is nomor peserta)
-          for (const row of chunkData) {
-            if (row) {
-              const cellVal = String(row[2]).toUpperCase()
-              const isMatch = isStartsWithP ? cellVal.startsWith(queryUpper) : cellVal.includes(queryUpper)
-              if (isMatch) {
+          for (const rank of matchedRanks) {
+            const chunkIdx = Math.floor((rank - 1) / CHUNK_SIZE)
+            const relIdx = (rank - 1) % CHUNK_SIZE
+            const cacheKey = `${dataset}_${chunkIdx}`
+            const chunkData = loadedChunks[cacheKey] || newChunks[cacheKey]
+            if (chunkData) {
+              const row = chunkData[relIdx]
+              if (row) {
                 matches.push({
                   page: row[0],
                   matchText: row[3],
@@ -172,21 +205,13 @@ export function useSKSearch(isKnmp) {
                   firstCol: row[1],
                   lastCol: row[6]
                 })
-                if (matches.length >= 1000) {
-                  reachedLimit = true
-                  break
-                }
               }
             }
-          }
-
-          if (reachedLimit) {
-            break
           }
         }
 
         setResults(matches)
-        setProgress(`Selesai. Ditemukan ${reachedLimit ? '1000+ (dibatasi)' : matches.length} hasil.`)
+        setProgress(`Selesai. Ditemukan ${matchedRanks.length >= 1000 ? '1000+ (dibatasi)' : matches.length} hasil.`)
       } catch (e) {
         console.error(e)
         if (e.name === 'AbortError') {

@@ -98,6 +98,13 @@ function partitionDataset(type) {
     fs.writeFileSync(prefixPath, JSON.stringify(prefixMap[pref]));
   }
   console.log(`Saved prefix files successfully.`);
+
+  // 4. Save participant numbers list for fast index search
+  console.log('Generating participant numbers index...');
+  const participantNumbers = rows.map(row => row[2] || '');
+  const noPesertaPath = path.join(`./assets/${type}/sk`, 'no_peserta.json');
+  fs.writeFileSync(noPesertaPath, JSON.stringify(participantNumbers));
+  console.log(`Saved participant numbers index to ${noPesertaPath} successfully.`);
 }
 
 try {
