@@ -458,6 +458,9 @@ export function useSKSearch(isKnmp) {
       }
     }
 
+    console.log('[LazyLoad] displayItems count:', displayItems.length)
+    console.log('[LazyLoad] neededChunkIndices:', Array.from(neededChunkIndices))
+
     if (neededChunkIndices.size === 0) return
 
     setLoading(true)
@@ -498,7 +501,7 @@ export function useSKSearch(isKnmp) {
       mounted = false
       controller.abort()
     }
-  }, [displayItems, hasSearched, isKnmp, loadedChunks])
+  }, [currentPage, results, sortConfig, isKnmp, loadedChunks])
 
   function cancelSearch() {
     if (abortController) {
