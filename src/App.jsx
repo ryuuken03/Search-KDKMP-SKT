@@ -8,21 +8,23 @@ function ThemeToggle({ isDark, onToggle }) {
   return (
     <button
       type="button"
-      className="theme-toggle"
+      className={`theme-switch ${isDark ? 'theme-switch--dark' : ''}`}
       onClick={onToggle}
       aria-label={isDark ? 'Mode terang' : 'Mode gelap'}
       title={isDark ? 'Mode terang' : 'Mode gelap'}
     >
-      {isDark ? (
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-          <circle cx="12" cy="12" r="4" />
-          <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41" />
-        </svg>
-      ) : (
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
-        </svg>
-      )}
+      <span className="theme-switch__thumb">
+        {isDark ? (
+          <svg className="theme-switch__icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+          </svg>
+        ) : (
+          <svg className="theme-switch__icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="4" />
+            <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41" />
+          </svg>
+        )}
+      </span>
     </button>
   )
 }
@@ -35,8 +37,15 @@ export default function App() {
   return (
     <div className="app">
       <header className="app-header">
-        <h1>Hasil Seleksi {isKnmp ? 'KNMP' : 'KDKMP'}</h1>
-        <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+        <div className="app-header-title">
+          <img
+            src={isKnmp ? '/assets/images/logo-knmp.jpg' : '/assets/images/logo-kdkmp.jpg'}
+            alt={isKnmp ? 'Logo KNMP' : 'Logo KDKMP'}
+            className="app-logo"
+          />
+          <h1 style={{ margin: 0 }}>Hasil Seleksi {isKnmp ? 'KNMP' : 'KDKMP'}</h1>
+        </div>
+        <div className="app-header-actions">
           {activeTab === 'sk' && (
             <button
               type="button"

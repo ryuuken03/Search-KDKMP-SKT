@@ -114,6 +114,26 @@ body {
   margin-bottom: 0;
 }
 
+.app-header-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.app-logo {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  object-fit: contain;
+  background-color: #fff;
+}
+
+.app-header-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
 .app-tabs {
   display: flex;
   gap: 8px;
@@ -225,34 +245,59 @@ body {
   box-shadow: 0 0 0 3px hsl(var(--ring) / 0.35);
 }
 
-.theme-toggle {
+.theme-switch {
+  position: relative;
+  width: 56px;
+  height: 32px;
+  border-radius: 16px;
+  background-color: hsl(var(--secondary));
+  border: 1px solid hsl(var(--border));
+  cursor: pointer;
+  padding: 0;
+  transition: background-color 0.2s, border-color 0.2s, box-shadow 0.2s;
   display: inline-flex;
   align-items: center;
-  justify-content: center;
-  width: 40px;
-  height: 40px;
   flex-shrink: 0;
-  padding: 0;
-  border-radius: var(--radius);
-  border: 1px solid hsl(var(--border));
-  background: hsl(var(--secondary));
-  color: hsl(var(--foreground));
-  cursor: pointer;
-  transition: background 0.15s, border-color 0.15s;
 }
 
-.theme-toggle:hover {
-  background: hsl(var(--accent));
+.theme-switch--dark {
+  background-color: hsl(var(--primary));
+  border-color: transparent;
 }
 
-.theme-toggle:focus-visible {
+.theme-switch:focus-visible {
   outline: none;
   box-shadow: 0 0 0 3px hsl(var(--ring) / 0.35);
 }
 
-.theme-toggle svg {
-  width: 18px;
-  height: 18px;
+.theme-switch__thumb {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background-color: hsl(var(--background));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+}
+
+.theme-switch--dark .theme-switch__thumb {
+  transform: translateX(24px);
+  background-color: hsl(var(--background));
+}
+
+.theme-switch__icon {
+  width: 14px;
+  height: 14px;
+  color: hsl(var(--foreground));
+}
+
+.theme-switch--dark .theme-switch__icon {
+  color: hsl(var(--primary));
 }
 
 .app h1 {
@@ -625,6 +670,25 @@ body {
     margin: 18px;
     padding: 16px;
     max-width: 100%;
+  }
+
+  .app-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .app-header-actions {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .theme-switch {
+    margin-left: auto;
+  }
+
+  .app-logo {
+    width: 70px;
+    height: 70px;
   }
 
   .controls {
