@@ -427,7 +427,7 @@ export function useSKSearch(isKnmp) {
     return 0
   })
 
-  const ITEMS_PER_PAGE = 50
+  const ITEMS_PER_PAGE = 25
   const totalItems = hasSearched
     ? sortedResults.length
     : (page1Info?.summary?.totalRows || (isKnmp ? 72135 : 411516))

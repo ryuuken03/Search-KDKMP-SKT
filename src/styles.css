@@ -1587,6 +1587,18 @@ body {
   color: hsl(var(--muted-foreground));
 }
 
+@media (max-width: 720px) {
+  .data-table td .jabatan-badge {
+    flex: 0 1 auto;
+    white-space: normal;
+    height: auto;
+    padding: 4px 10px;
+    word-break: normal;
+    line-height: 1.4;
+    text-align: right;
+  }
+}
+
 .jabatan-badge--manajer_operasional {
   background: hsl(239 84% 67% / 0.15);
   color: hsl(239 84% 50%);
@@ -1660,3 +1672,30 @@ html.dark .jabatan-badge--administrasi_keuangan {
     height: 20px;
   }
 }
+
+.scroll-to-top-btn {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background-color: hsl(var(--brand));
+  color: white;
+  border: none;
+  font-size: 20px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  transition: transform 0.2s, background-color 0.2s;
+  z-index: 1000;
+}
+
+.scroll-to-top-btn:hover {
+  background-color: hsl(var(--brand-foreground));
+  transform: translateY(-2px);
+}
+

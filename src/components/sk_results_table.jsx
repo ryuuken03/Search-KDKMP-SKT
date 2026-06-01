@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import Pagination from './pagination'
 
 export default function SKResultsTable({
@@ -19,6 +19,24 @@ export default function SKResultsTable({
   isKnmp,
 }) {
   const colSpan = isKnmp ? 7 : 6
+
+  const [showScrollTop, setShowScrollTop] = useState(false)
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 300) {
+        setShowScrollTop(true)
+      } else {
+        setShowScrollTop(false)
+      }
+    }
+    window.addEventListener('scroll', handleScroll)
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
+
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }
 
   const renderHeader = (key, label) => {
     const isSorted = sortConfig?.key === key
@@ -73,13 +91,13 @@ export default function SKResultsTable({
           {displayItems.map((r, i) => {
             const raw = r.contextItems || []
             const vals = raw.map((v) => String(v || '').trim()).filter((v) => v.length > 0)
-            const noCol     = vals[0] ?? (indexOfFirstItem + i + 1)
-            const peserta   = vals[1] ?? r.firstCol ?? ''
-            const nama      = vals[2] ?? r.matchText ?? ''
-            const kognitif  = vals[3] ?? ''
+            const noCol = vals[0] ?? (indexOfFirstItem + i + 1)
+            const peserta = vals[1] ?? r.firstCol ?? ''
+            const nama = vals[2] ?? r.matchText ?? ''
+            const kognitif = vals[3] ?? ''
             const substansi = vals[4] ?? ''
-            const status    = vals[5] ?? r.lastCol ?? ''
-            const jabatan   = r.jabatan ?? ''
+            const status = vals[5] ?? r.lastCol ?? ''
+            const jabatan = r.jabatan ?? ''
 
             if (r.error) {
               return (
@@ -135,6 +153,18 @@ export default function SKResultsTable({
         hasSearched={hasSearched}
         itemsPerPage={ITEMS_PER_PAGE}
       />
+      {/* Scroll to Top Button */}
+      {showScrollTop && (
+        <button
+          type="button"
+          onClick={scrollToTop}
+          className="scroll-to-top-btn"
+          aria-label="Kembali ke atas"
+          title="Kembali ke atas"
+        >
+          ↑
+        </button>
+      )}
     </div>
   )
 }
