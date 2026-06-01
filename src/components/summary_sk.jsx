@@ -130,7 +130,6 @@ export default function SummarySK({ summary, isKnmp, selectedJabatan, setSelecte
             selectedJabatan={selectedJabatan}
             setSelectedJabatan={setSelectedJabatan}
             knmpSummaries={knmpSummaries || {}}
-            compact
           />
         )}
 
@@ -179,7 +178,7 @@ export default function SummarySK({ summary, isKnmp, selectedJabatan, setSelecte
               {kelulusanData[0].value === 0 && kelulusanData[1].value === 0 ? (
                 <span className="summary-dashboard__empty-chart">Data tidak tersedia</span>
               ) : (
-                <ResponsiveContainer width="100%" height={200}>
+                <ResponsiveContainer width="100%" height={250}>
                   <PieChart>
                     <Pie
                       data={kelulusanData}
@@ -227,7 +226,7 @@ export default function SummarySK({ summary, isKnmp, selectedJabatan, setSelecte
               {kehadiranData[0].value === 0 && kehadiranData[1].value === 0 ? (
                 <span className="summary-dashboard__empty-chart">Data tidak tersedia</span>
               ) : (
-                <ResponsiveContainer width="100%" height={200}>
+                <ResponsiveContainer width="100%" height={250}>
                   <PieChart>
                     <Pie
                       data={kehadiranData}
@@ -338,9 +337,9 @@ export default function SummarySK({ summary, isKnmp, selectedJabatan, setSelecte
             <div className="summary-dashboard__section4-content">
               <div className="summary-dashboard__section4-chart">
                 <ResponsiveContainer width="100%" height={260}>
-                  <BarChart data={statusData} margin={{ top: 20, right: 10, left: 10, bottom: 5 }}>
+                  <BarChart data={statusData} margin={{ top: 20, right: 10, left: -15, bottom: 5 }}>
                     <XAxis dataKey="name" stroke="currentColor" fontSize={11} tickLine={false} />
-                    <YAxis stroke="currentColor" fontSize={11} tickLine={false} tickFormatter={(val) => val >= 1000 ? `${(val / 1000).toFixed(0)}k` : val} />
+                    <YAxis stroke="currentColor" fontSize={11} tickLine={false} width={40} tickFormatter={(val) => val >= 1000 ? `${(val / 1000).toFixed(0)}k` : val} />
                     <Tooltip
                       formatter={(value) => fmtNum(value)}
                       contentStyle={{ backgroundColor: 'hsl(var(--card))', borderColor: 'hsl(var(--border))', color: 'hsl(var(--foreground))', borderRadius: '8px' }}
@@ -355,7 +354,7 @@ export default function SummarySK({ summary, isKnmp, selectedJabatan, setSelecte
                 </ResponsiveContainer>
               </div>
 
-              <div className="summary-dashboard__section4-legend" style={{ marginTop: '40px' }}>
+              <div className="summary-dashboard__section4-legend" >
                 <div className="summary-dashboard__legend-grid">
                   {statusData.map((item, idx) => (
                     <div key={idx} className="summary-dashboard__legend-item">

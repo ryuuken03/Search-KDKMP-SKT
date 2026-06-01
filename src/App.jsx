@@ -43,7 +43,7 @@ export default function App() {
               className="toggle-data-btn"
               onClick={() => setIsKnmp(prev => !prev)}
             >
-              {isKnmp ? 'KDKMP' : 'KNMP'}
+              Lihat {isKnmp ? 'KDKMP' : 'KNMP'}
             </button>
           )}
           <ThemeToggle isDark={isDark} onToggle={toggleTheme} />
