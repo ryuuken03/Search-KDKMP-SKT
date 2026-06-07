@@ -1,0 +1,206 @@
+{
+  "totalRows": 483648,
+  "statusCounts": {
+    "P/L": 32704,
+    "P1/L": 45843,
+    "P2/L": 22611,
+    "TL": 279660,
+    "TH": 102830,
+    "TMS": 0,
+    "APS": 0
+  },
+  "jabatan": {
+    "KDKMP - Manajer": {
+      "label": "KDKMP - Manajer",
+      "totalRows": 411516,
+      "statusCounts": {
+        "P/L": 29576,
+        "P1/L": 40552,
+        "P2/L": 12573,
+        "TL": 245273,
+        "TH": 83542,
+        "TMS": 0,
+        "APS": 0
+      },
+      "source": {
+        "jumlahFormasi": "3000"
+      }
+    },
+    "KNMP - Manajer Operasional": {
+      "label": "KNMP - Manajer Operasional",
+      "totalRows": 12241,
+      "statusCounts": {
+        "P/L": 542,
+        "P1/L": 892,
+        "P2/L": 1732,
+        "TL": 5849,
+        "TH": 3226,
+        "TMS": 0,
+        "APS": 0
+      },
+      "source": {
+        "jumlahFormasi": "1369",
+        "jumlahPeserta": "12241",
+        "kehadiran": {
+          "hadir": "9015",
+          "tidakHadir": "3226"
+        },
+        "kelulusan": {
+          "jumlah": "3166",
+          "persen": "25.86"
+        },
+        "nilaiKognitif": {
+          "tertinggi": "154",
+          "terendah": "65"
+        },
+        "nilaiSubstansi": {
+          "tertinggi": "100",
+          "terendah": "0"
+        },
+        "jabatan": "MANAJER OPERASIONAL",
+        "statusCounts": {
+          "P/L": 542,
+          "P1/L": 892,
+          "P2/L": 1732,
+          "TL": 5849,
+          "TH": 3226,
+          "TMS": 0,
+          "APS": 0
+        },
+        "totalRows": 12241
+      }
+    },
+    "KNMP - Kepala Produksi": {
+      "label": "KNMP - Kepala Produksi",
+      "totalRows": 12521,
+      "statusCounts": {
+        "P/L": 419,
+        "P1/L": 735,
+        "P2/L": 1623,
+        "TL": 6545,
+        "TH": 3199,
+        "TMS": 0,
+        "APS": 0
+      },
+      "source": {
+        "jumlahFormasi": "1369",
+        "jumlahPeserta": "12521",
+        "kehadiran": {
+          "hadir": "9322",
+          "tidakHadir": "3199"
+        },
+        "kelulusan": {
+          "jumlah": "2777",
+          "persen": "22.18"
+        },
+        "nilaiKognitif": {
+          "tertinggi": "148",
+          "terendah": "65"
+        },
+        "nilaiSubstansi": {
+          "tertinggi": "100",
+          "terendah": "0"
+        },
+        "jabatan": "KEPALA PRODUKSI",
+        "statusCounts": {
+          "P/L": 419,
+          "P1/L": 735,
+          "P2/L": 1623,
+          "TL": 6545,
+          "TH": 3199,
+          "TMS": 0,
+          "APS": 0
+        },
+        "totalRows": 12521
+      }
+    },
+    "KNMP - Penjamin Mutu": {
+      "label": "KNMP - Penjamin Mutu",
+      "totalRows": 20116,
+      "statusCounts": {
+        "P/L": 958,
+        "P1/L": 1568,
+        "P2/L": 2958,
+        "TL": 9690,
+        "TH": 4942,
+        "TMS": 0,
+        "APS": 0
+      },
+      "source": {
+        "jumlahFormasi": "1369",
+        "jumlahPeserta": "20116",
+        "kehadiran": {
+          "hadir": "15174",
+          "tidakHadir": "4942"
+        },
+        "kelulusan": {
+          "jumlah": "5484",
+          "persen": "27.26"
+        },
+        "nilaiKognitif": {
+          "tertinggi": "154",
+          "terendah": "65"
+        },
+        "nilaiSubstansi": {
+          "tertinggi": "100",
+          "terendah": "0"
+        },
+        "jabatan": "PENJAMIN MUTU",
+        "statusCounts": {
+          "P/L": 958,
+          "P1/L": 1568,
+          "P2/L": 2958,
+          "TL": 9690,
+          "TH": 4942,
+          "TMS": 0,
+          "APS": 0
+        },
+        "totalRows": 20116
+      }
+    },
+    "KNMP - Administrasi Keuangan": {
+      "label": "KNMP - Administrasi Keuangan",
+      "totalRows": 27254,
+      "statusCounts": {
+        "P/L": 1209,
+        "P1/L": 2096,
+        "P2/L": 3725,
+        "TL": 12303,
+        "TH": 7921,
+        "TMS": 0,
+        "APS": 0
+      },
+      "source": {
+        "jumlahFormasi": "1369",
+        "jumlahPeserta": "27254",
+        "kehadiran": {
+          "hadir": "19333",
+          "tidakHadir": "7921"
+        },
+        "kelulusan": {
+          "jumlah": "7030",
+          "persen": "25.79"
+        },
+        "nilaiKognitif": {
+          "tertinggi": "150",
+          "terendah": "65"
+        },
+        "nilaiSubstansi": {
+          "tertinggi": "100",
+          "terendah": "0"
+        },
+        "jabatan": "ADMINISTRASI KEUANGAN",
+        "statusCounts": {
+          "P/L": 1209,
+          "P1/L": 2096,
+          "P2/L": 3725,
+          "TL": 12303,
+          "TH": 7921,
+          "TMS": 0,
+          "APS": 0
+        },
+        "totalRows": 27254
+      }
+    }
+  }
+}

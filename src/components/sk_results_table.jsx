@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import Pagination from './pagination'
+import { getJabatanSlug } from '../hooks/useSKSearch'
 
 export default function SKResultsTable({
   displayItems,
@@ -16,9 +17,8 @@ export default function SKResultsTable({
   ITEMS_PER_PAGE,
   sortConfig,
   requestSort,
-  isKnmp,
 }) {
-  const colSpan = isKnmp ? 7 : 6
+  const colSpan = 7
 
   const [showScrollTop, setShowScrollTop] = useState(false)
 
@@ -84,20 +84,20 @@ export default function SKResultsTable({
             <th>Kognitif</th>
             <th>Substansi</th>
             <th>Status</th>
-            {isKnmp && renderHeader('jabatan', 'Jabatan')}
+            {renderHeader('jabatan', 'Jabatan')}
           </tr>
         </thead>
         <tbody>
           {displayItems.map((r, i) => {
             const raw = r.contextItems || []
             const vals = raw.map((v) => String(v || '').trim()).filter((v) => v.length > 0)
-            const noCol = vals[0] ?? (indexOfFirstItem + i + 1)
-            const peserta = vals[1] ?? r.firstCol ?? ''
-            const nama = vals[2] ?? r.matchText ?? ''
+            const noCol    = vals[0] ?? (indexOfFirstItem + i + 1)
+            const peserta  = vals[1] ?? r.firstCol ?? ''
+            const nama     = vals[2] ?? r.matchText ?? ''
             const kognitif = vals[3] ?? ''
             const substansi = vals[4] ?? ''
-            const status = vals[5] ?? r.lastCol ?? ''
-            const jabatan = r.jabatan ?? ''
+            const status   = vals[5] ?? r.lastCol ?? ''
+            const jabatan  = r.jabatan ?? ''
 
             if (r.error) {
               return (
@@ -114,13 +114,11 @@ export default function SKResultsTable({
                 <td data-label="Kognitif"><span>{kognitif}</span></td>
                 <td data-label="Substansi"><span>{substansi}</span></td>
                 <td data-label="Status"><span>{status}</span></td>
-                {isKnmp && (
-                  <td data-label="Jabatan">
-                    <span className={`jabatan-badge jabatan-badge--${r.jabatanSlug || 'unknown'}`}>
-                      {jabatan}
-                    </span>
-                  </td>
-                )}
+                <td data-label="Jabatan">
+                  <span className={`jabatan-badge jabatan-badge--${getJabatanSlug(jabatan)}`}>
+                    {jabatan}
+                  </span>
+                </td>
               </tr>
             )
           })}

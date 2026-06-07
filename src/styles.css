@@ -784,7 +784,7 @@ body {
     display: none;
   }
 
-  .data-table td {
+  .data-table tbody td {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
@@ -794,7 +794,7 @@ body {
   }
 
   /* Value span: proper flex child so it can shrink + wrap */
-  .data-table td span {
+  .data-table tbody td span {
     min-width: 0;
     flex: 1;
     text-align: right;
@@ -803,19 +803,18 @@ body {
   }
 
   /* Kognitif, Substansi, Status — share one row, stacked label+value */
-  .data-table td:nth-child(4),
-  .data-table td:nth-child(5),
-  .data-table td:nth-child(6) {
+  .data-table tbody td:nth-child(4),
+  .data-table tbody td:nth-child(5),
+  .data-table tbody td:nth-child(6) {
     width: 33.33%;
     flex-direction: column;
     justify-content: flex-start;
     align-items: center;
     text-align: center;
     padding: 6px 4px;
-    border-top: 1px solid hsl(var(--border) / 0.5);
   }
 
-  .data-table td::before {
+  .data-table tbody td::before {
     content: attr(data-label);
     color: hsl(var(--muted-foreground));
     margin-right: 8px;
@@ -824,9 +823,9 @@ body {
     flex-shrink: 0;
   }
 
-  .data-table td:nth-child(4)::before,
-  .data-table td:nth-child(5)::before,
-  .data-table td:nth-child(6)::before {
+  .data-table tbody td:nth-child(4)::before,
+  .data-table tbody td:nth-child(5)::before,
+  .data-table tbody td:nth-child(6)::before {
     margin-right: 0;
     margin-bottom: 2px;
     font-size: 10px;
@@ -1506,69 +1505,93 @@ body {
 }
 
 /* Per-jabatan color theming — pill active states */
-.jabatan-pill--active:not([class*="jabatan-pill--manajer"]):not([class*="jabatan-pill--kepala"]):not([class*="jabatan-pill--penjamin"]):not([class*="jabatan-pill--administrasi"]) {
+.jabatan-pill--active:not([class*="jabatan-pill--manajer"]):not([class*="jabatan-pill--kepala"]):not([class*="jabatan-pill--penjamin"]):not([class*="jabatan-pill--administrasi"]):not([class*="jabatan-pill--kdkmp"]) {
   background: hsl(var(--brand));
   color: hsl(var(--btn-search-fg));
 }
-.jabatan-pill--active:not([class*="jabatan-pill--manajer"]):not([class*="jabatan-pill--kepala"]):not([class*="jabatan-pill--penjamin"]):not([class*="jabatan-pill--administrasi"]) .jabatan-pill__count {
+.jabatan-pill--active:not([class*="jabatan-pill--manajer"]):not([class*="jabatan-pill--kepala"]):not([class*="jabatan-pill--penjamin"]):not([class*="jabatan-pill--administrasi"]):not([class*="jabatan-pill--kdkmp"]) .jabatan-pill__count {
   background: hsl(var(--btn-search-fg) / 0.2);
   color: hsl(var(--btn-search-fg));
 }
 
 /* Manajer Operasional — Indigo */
+.jabatan-pill--manajer_operasional {
+  color: hsl(239 84% 50%);
+}
 .jabatan-pill--manajer_operasional.jabatan-pill--active {
-  background: hsl(239 84% 67%);
-  border-color: transparent;
-  color: #fff;
+  background: hsl(239 84% 67% / 0.15);
+  border-color: hsl(239 84% 67% / 0.3);
 }
 .jabatan-pill--manajer_operasional.jabatan-pill--active .jabatan-pill__count {
-  background: rgba(255,255,255,0.22);
-  color: #fff;
+  background: hsl(239 84% 50% / 0.15);
+  color: hsl(239 84% 50%);
 }
 .jabatan-pill--manajer_operasional:not(.jabatan-pill--active):hover {
   border-color: hsl(239 84% 67% / 0.5);
 }
 
 /* Kepala Produksi — Emerald */
+.jabatan-pill--kepala_produksi {
+  color: hsl(160 70% 35%);
+}
 .jabatan-pill--kepala_produksi.jabatan-pill--active {
-  background: hsl(160 84% 39%);
-  border-color: transparent;
-  color: #fff;
+  background: hsl(160 84% 39% / 0.12);
+  border-color: hsl(160 84% 39% / 0.25);
 }
 .jabatan-pill--kepala_produksi.jabatan-pill--active .jabatan-pill__count {
-  background: rgba(255,255,255,0.22);
-  color: #fff;
+  background: hsl(160 70% 35% / 0.15);
+  color: hsl(160 70% 35%);
 }
 .jabatan-pill--kepala_produksi:not(.jabatan-pill--active):hover {
   border-color: hsl(160 84% 39% / 0.5);
 }
 
 /* Penjamin Mutu — Amber */
+.jabatan-pill--penjamin_mutu {
+  color: hsl(36 80% 35%);
+}
 .jabatan-pill--penjamin_mutu.jabatan-pill--active {
-  background: hsl(43 96% 56%);
-  border-color: transparent;
-  color: hsl(43 20% 15%);
+  background: hsl(43 96% 56% / 0.15);
+  border-color: hsl(43 96% 56% / 0.3);
 }
 .jabatan-pill--penjamin_mutu.jabatan-pill--active .jabatan-pill__count {
-  background: rgba(0,0,0,0.12);
-  color: hsl(43 20% 15%);
+  background: hsl(36 80% 35% / 0.15);
+  color: hsl(36 80% 35%);
 }
 .jabatan-pill--penjamin_mutu:not(.jabatan-pill--active):hover {
   border-color: hsl(43 96% 56% / 0.5);
 }
 
 /* Administrasi Keuangan — Rose */
+.jabatan-pill--administrasi_keuangan {
+  color: hsl(347 65% 40%);
+}
 .jabatan-pill--administrasi_keuangan.jabatan-pill--active {
-  background: hsl(347 77% 50%);
-  border-color: transparent;
-  color: #fff;
+  background: hsl(347 77% 50% / 0.12);
+  border-color: hsl(347 77% 50% / 0.25);
 }
 .jabatan-pill--administrasi_keuangan.jabatan-pill--active .jabatan-pill__count {
-  background: rgba(255,255,255,0.22);
-  color: #fff;
+  background: hsl(347 65% 40% / 0.15);
+  color: hsl(347 65% 40%);
 }
 .jabatan-pill--administrasi_keuangan:not(.jabatan-pill--active):hover {
   border-color: hsl(347 77% 50% / 0.5);
+}
+
+/* KDKMP — Blue */
+.jabatan-pill--kdkmp {
+  color: hsl(210 70% 35%);
+}
+.jabatan-pill--kdkmp.jabatan-pill--active {
+  background: hsl(210 80% 50% / 0.12);
+  border-color: hsl(210 80% 50% / 0.25);
+}
+.jabatan-pill--kdkmp.jabatan-pill--active .jabatan-pill__count {
+  background: hsl(210 70% 35% / 0.15);
+  color: hsl(210 70% 35%);
+}
+.jabatan-pill--kdkmp:not(.jabatan-pill--active):hover {
+  border-color: hsl(210 80% 50% / 0.5);
 }
 
 /* ─── Jabatan Badge (in table cells) ─────────────────────────────────────── */
@@ -1647,6 +1670,18 @@ html.dark .jabatan-badge--administrasi_keuangan {
   border-color: hsl(347 77% 50% / 0.25);
 }
 
+.jabatan-badge--kdkmp {
+  background: hsl(210 80% 50% / 0.12);
+  color: hsl(210 70% 35%);
+  border: 1px solid hsl(210 80% 50% / 0.25);
+}
+html[data-theme='dark'] .jabatan-badge--kdkmp,
+html.dark .jabatan-badge--kdkmp {
+  background: hsl(210 80% 50% / 0.18);
+  color: hsl(210 80% 75%);
+  border-color: hsl(210 80% 50% / 0.3);
+}
+
 /* ─── Mobile adjustments for jabatan filter ──────────────────────────────── */
 @media (max-width: 720px) {
   .jabatan-filter__inner {
@@ -1699,3 +1734,423 @@ html.dark .jabatan-badge--administrasi_keuangan {
   transform: translateY(-2px);
 }
 
+
+/* ─── Stat Summary (tabel ringkas statistik kelulusan) ───────────────────── */
+.stat-summary {
+  margin: 8px 0 0;
+}
+
+.stat-summary__toggle-row {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 0;
+}
+
+.stat-summary__toggle-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 20px;
+  border-radius: 999px;
+  border: 1.5px solid hsl(var(--brand) / 0.6);
+  background: hsl(var(--brand) / 0.1);
+  color: hsl(var(--brand));
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s, box-shadow 0.15s;
+  letter-spacing: 0.01em;
+}
+
+.stat-summary__toggle-btn:hover {
+  background: hsl(var(--brand) / 0.18);
+  border-color: hsl(var(--brand) / 0.9);
+  box-shadow: 0 0 0 3px hsl(var(--brand) / 0.15);
+}
+
+.stat-summary__btn-icon {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+
+.stat-summary__chevron {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  transition: transform 0.2s ease;
+}
+
+.stat-summary__chevron--up {
+  transform: rotate(180deg);
+}
+
+.stat-summary__panel {
+  margin-top: 14px;
+  animation: fadeInSlide 0.2s ease-out;
+}
+
+.stat-summary__empty {
+  text-align: center;
+  color: hsl(var(--muted-foreground));
+  font-size: 13px;
+  padding: 16px 0;
+}
+
+/* Wrapper untuk horizontal scroll di mobile */
+.stat-table-wrapper {
+  overflow-x: auto;
+  border-radius: calc(var(--radius) + 2px);
+  border: 1px solid hsl(var(--border));
+}
+
+/* ─── Mobile Cards for Stat Summary ──────────────────────────────────────── */
+.stat-cards-wrapper {
+  display: none;
+}
+
+@media (max-width: 720px) {
+  .stat-table-wrapper {
+    display: none;
+  }
+  .stat-cards-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+}
+
+.stat-card {
+  background: hsl(var(--card));
+  border: 1px solid hsl(var(--border) / 0.6);
+  border-radius: 10px;
+  padding: 14px 16px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+.stat-card__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  border-bottom: 1px solid hsl(var(--border) / 0.5);
+  padding-bottom: 12px;
+  margin-bottom: 12px;
+}
+
+.stat-card__title {
+  font-size: 13px;
+  font-weight: 700;
+  color: hsl(var(--foreground));
+  line-height: 1.4;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.stat-card__total-pill {
+  flex-shrink: 0;
+  background: hsl(var(--muted) / 0.8);
+  color: hsl(var(--muted-foreground));
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  border: 1px solid hsl(var(--border) / 0.4);
+}
+.stat-card__total-pill strong {
+  color: hsl(var(--foreground));
+  font-size: 12px;
+}
+
+.stat-card__body {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px 16px;
+}
+
+.stat-card__stat-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12px;
+  padding: 2px 0;
+}
+
+.stat-card__stat-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: hsl(var(--muted-foreground));
+  font-weight: 500;
+}
+
+.stat-card__icon-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 15px;
+  height: 15px;
+}
+.stat-card__icon-wrapper svg {
+  width: 100%;
+  height: 100%;
+}
+
+.stat-card__value {
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  font-size: 13px;
+}
+
+/* Inherit colors from table classes */
+.stat-card__row--lulus .stat-card__value, .stat-card__row--lulus .stat-card__icon-wrapper { color: #10b981; }
+.stat-card__row--tidak-lulus .stat-card__value, .stat-card__row--tidak-lulus .stat-card__icon-wrapper { color: #f43f5e; }
+.stat-card__row--tidak-hadir .stat-card__value, .stat-card__row--tidak-hadir .stat-card__icon-wrapper { color: #eab308; }
+.stat-card__row--tms .stat-card__value, .stat-card__row--tms .stat-card__icon-wrapper { color: #f97316; }
+.stat-card__row--aps .stat-card__value, .stat-card__row--aps .stat-card__icon-wrapper { color: #a855f7; }
+
+.stat-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+  background: hsl(var(--card));
+  min-width: 480px;
+}
+
+/* Header */
+.stat-table thead tr {
+  background: hsl(var(--muted) / 0.5);
+  border-bottom: 2px solid hsl(var(--border));
+}
+
+.stat-table__th {
+  padding: 10px 16px;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: hsl(var(--muted-foreground));
+  white-space: nowrap;
+}
+
+.stat-table__th--kategori {
+  text-align: left;
+  width: 40%;
+}
+
+.stat-table__th--kdkmp,
+.stat-table__th--knmp,
+.stat-table__th--total {
+  text-align: right;
+}
+
+.stat-table__org-name {
+  display: block;
+  color: hsl(var(--foreground));
+  font-size: 13px;
+}
+
+.stat-table__org-code {
+  display: block;
+  font-size: 11px;
+  font-weight: 500;
+  color: hsl(var(--muted-foreground));
+  letter-spacing: 0.03em;
+  text-transform: none;
+}
+
+/* Rows */
+.stat-table__row {
+  border-bottom: 1px solid hsl(var(--border) / 0.6);
+  transition: background 0.12s;
+}
+
+.stat-table__row:last-child {
+  border-bottom: none;
+}
+
+.stat-table__row:hover {
+  background: hsl(var(--muted) / 0.3);
+}
+
+.stat-table__td {
+  padding: 11px 16px;
+  vertical-align: middle;
+}
+
+.stat-table__td--kategori {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 500;
+  color: hsl(var(--foreground));
+}
+
+.stat-table__td--num {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  color: hsl(var(--foreground));
+  white-space: nowrap;
+}
+
+.stat-table__td--total {
+  font-weight: 700;
+}
+
+/* Row color variants */
+.stat-table__row--lulus .stat-table__td--num {
+  color: #10b981;
+}
+
+.stat-table__row--tidak-lulus .stat-table__td--num {
+  color: #f43f5e;
+}
+
+.stat-table__row--tidak-hadir .stat-table__td--num {
+  color: #eab308;
+}
+
+/* Icons */
+.stat-table__row-icon {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+
+.stat-table__row-icon--pelamar {
+  color: hsl(var(--muted-foreground));
+}
+
+.stat-table__row-icon--lulus {
+  color: #10b981;
+}
+
+.stat-table__row-icon--tidak-lulus {
+  color: #f43f5e;
+}
+
+.stat-table__row-icon--tidak-hadir {
+  color: #eab308;
+}
+
+@media (max-width: 540px) {
+  .stat-table__th,
+  .stat-table__td {
+    padding: 9px 12px;
+    font-size: 13px;
+  }
+
+  .stat-table__toggle-btn {
+    font-size: 13px;
+    padding: 7px 16px;
+  }
+}
+
+/* ─── Stat Table: header 2 baris + sub-kolom jabatan ─────────────────────── */
+
+/* Group header baris 1 */
+.stat-table__thead-group th,
+.stat-table__thead-sub th {
+  background: hsl(var(--muted) / 0.5);
+}
+
+.stat-table__thead-group th {
+  border-bottom: 1px solid hsl(var(--border) / 0.5);
+}
+
+.stat-table__thead-sub th {
+  border-bottom: 2px solid hsl(var(--border));
+  font-size: 11px;
+  font-weight: 600;
+  color: hsl(var(--muted-foreground));
+  text-align: right;
+  padding: 7px 12px;
+  white-space: nowrap;
+}
+
+/* Kolom group KNMP — spanning semua jabatan */
+.stat-table__th--knmp-group {
+  text-align: center;
+  border-left: 2px solid hsl(var(--border));
+  font-size: 13px;
+  font-weight: 700;
+  color: hsl(var(--foreground));
+  letter-spacing: 0.04em;
+}
+
+/* Setiap sub-kolom jabatan */
+.stat-table__th--jabatan {
+  border-left: 1px solid hsl(var(--border) / 0.4);
+  min-width: 110px;
+}
+
+.stat-table__th--jabatan:first-child {
+  border-left: 2px solid hsl(var(--border));
+}
+
+/* Cell nilai per jabatan */
+.stat-table__td--num:not(:nth-child(2)) {
+  border-left: 1px solid hsl(var(--border) / 0.3);
+}
+
+/* Kolom KDKMP — pisahkan dengan border */
+.stat-table__th--kdkmp,
+.stat-table__td:nth-child(2) {
+  border-right: 2px solid hsl(var(--border));
+}
+
+/* rowSpan cells — vertical align tengah */
+.stat-table__th--group {
+  vertical-align: middle;
+}
+
+/* ─── Stat Table: baris TMS & APS ───────────────────────────────────────── */
+.stat-table__row--tms .stat-table__td--num {
+  color: #f97316;
+}
+
+.stat-table__row--aps .stat-table__td--num {
+  color: #a855f7;
+}
+
+/* ─── Stat Legend (keterangan di bawah tabel) ────────────────────────────── */
+.stat-legend {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 16px 24px;
+  margin-top: 12px;
+  padding: 12px 14px;
+  border-radius: var(--radius);
+  border: 1px solid hsl(var(--border) / 0.6);
+  background: hsl(var(--muted) / 0.25);
+}
+
+.stat-legend__item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  font-weight: 500;
+  color: hsl(var(--muted-foreground));
+  white-space: nowrap;
+}
+
+.stat-legend__dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+@media (max-width: 600px) {
+  .stat-legend {
+    justify-content: flex-start;
+    gap: 12px 16px;
+  }
+}

@@ -32,34 +32,30 @@ function ThemeToggle({ isDark, onToggle }) {
 export default function App() {
   const [activeTab, setActiveTab] = useState('sk')
   const { isDark, toggleTheme } = useTheme()
-  const [isKnmp, setIsKnmp] = useState(false)
 
   return (
     <div className="app">
       <header className="app-header">
         <div className="app-header-title">
-          <img
-            src={isKnmp ? '/assets/images/logo-knmp.jpg' : '/assets/images/logo-kdkmp.jpg'}
-            alt={isKnmp ? 'Logo KNMP' : 'Logo KDKMP'}
-            className="app-logo"
-          />
-          <h1 style={{ margin: 0 }}>Hasil Seleksi {isKnmp ? 'KNMP' : 'KDKMP'}</h1>
+          <h1 style={{ margin: 0 }}>Hasil Seleksi KDKMP &amp; KNMP</h1>
         </div>
         <div className="app-header-actions">
-          {activeTab === 'sk' && (
-            <button
-              type="button"
-              className="toggle-data-btn"
-              onClick={() => setIsKnmp(prev => !prev)}
-            >
-              Lihat {isKnmp ? 'KDKMP' : 'KNMP'}
-            </button>
-          )}
           <ThemeToggle isDark={isDark} onToggle={toggleTheme} />
         </div>
       </header>
 
       <nav className="app-tabs" role="tablist" aria-label="Jenis hasil seleksi">
+        <button
+          type="button"
+          role="tab"
+          id="tab-skt"
+          aria-selected={activeTab === 'skt'}
+          aria-controls="panel-skt"
+          className={`app-tabs__btn${activeTab === 'skt' ? ' app-tabs__btn--active' : ''}`}
+          onClick={() => setActiveTab('skt')}
+        >
+          Hasil Akhir
+        </button>
         <button
           type="button"
           role="tab"
@@ -71,17 +67,6 @@ export default function App() {
         >
           Hasil SK
         </button>
-        <button
-          type="button"
-          role="tab"
-          id="tab-skt"
-          aria-selected={activeTab === 'skt'}
-          aria-controls="panel-skt"
-          className={`app-tabs__btn${activeTab === 'skt' ? ' app-tabs__btn--active' : ''}`}
-          onClick={() => setActiveTab('skt')}
-        >
-          Hasil SKT
-        </button>
       </nav>
 
       <div
@@ -90,7 +75,7 @@ export default function App() {
         aria-labelledby={activeTab === 'sk' ? 'tab-sk' : 'tab-skt'}
         className="app-tab-panel"
       >
-        {activeTab === 'sk' ? <SKPage isKnmp={isKnmp} /> : <SktPage />}
+        {activeTab === 'sk' ? <SKPage /> : <SktPage />}
       </div>
     </div>
   )

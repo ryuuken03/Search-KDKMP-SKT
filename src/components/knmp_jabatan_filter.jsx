@@ -1,20 +1,19 @@
 import React from 'react'
-import { KNMP_JABATAN } from '../hooks/useSKSearch'
+import { JABATAN_LABELS, getJabatanSlug } from '../hooks/useSKSearch'
 
 /**
- * KnmpJabatanFilter — pill buttons untuk filter jabatan KNMP.
- * Reusable: dipakai di sk_page.jsx dan summary_sk.jsx.
+ * JabatanFilter — pill buttons untuk filter jabatan.
  *
  * Props:
- *  - selectedJabatan  : slug jabatan aktif
+ *  - selectedJabatan  : label jabatan aktif
  *  - setSelectedJabatan : setter
- *  - knmpSummaries    : { [slug]: summaryData } — opsional, untuk tampilkan count
- *  - compact          : boolean — mode ringkas (tanpa border panel, padding kecil)
+ *  - summaries        : { [label]: summaryData }
+ *  - compact          : boolean — mode ringkas
  */
-export default function KnmpJabatanFilter({
+export default function JabatanFilter({
   selectedJabatan,
   setSelectedJabatan,
-  knmpSummaries = {},
+  summaries = {},
   compact = false,
 }) {
   return (
@@ -43,16 +42,17 @@ export default function KnmpJabatanFilter({
         )}
 
         <div className="jabatan-filter__pills" role="group" aria-label="Pilih jabatan">
-          {KNMP_JABATAN.map(({ slug, label }) => {
-            const summaryData = knmpSummaries[slug]
-            const isActive = selectedJabatan === slug
+          {JABATAN_LABELS.map((label) => {
+            const slug = getJabatanSlug(label)
+            const summaryData = summaries[label]
+            const isActive = selectedJabatan === label
             return (
               <button
                 type="button"
-                key={slug}
+                key={label}
                 id={`jabatan-pill-${slug}`}
                 className={`jabatan-pill jabatan-pill--${slug}${isActive ? ' jabatan-pill--active' : ''}`}
-                onClick={() => setSelectedJabatan(slug)}
+                onClick={() => setSelectedJabatan(label)}
                 aria-pressed={isActive}
               >
                 {label}

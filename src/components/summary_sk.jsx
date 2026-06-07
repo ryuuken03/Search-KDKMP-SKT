@@ -1,381 +1,292 @@
 import React from 'react';
-import {
-  PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer,
-  BarChart, Bar, XAxis, YAxis
-} from 'recharts';
-import KnmpJabatanFilter from './knmp_jabatan_filter';
+import { getJabatanSlug } from '../hooks/useSKSearch';
 
 function fmtNum(value) {
-  if (value == null || value === '') return '—'
-  const n = Number(String(value).replace(',', '.'))
-  if (Number.isNaN(n)) return String(value)
-  if (String(value).includes('.')) return n.toLocaleString('id-ID', { minimumFractionDigits: 1, maximumFractionDigits: 1 })
-  return n.toLocaleString('id-ID')
+  if (value == null || value === '') return '—';
+  const n = Number(String(value).replace(',', '.'));
+  if (Number.isNaN(n)) return String(value);
+  return n.toLocaleString('id-ID');
 }
 
-export default function SummarySK({ summary, isKnmp, selectedJabatan, setSelectedJabatan, knmpSummaries }) {
-  if (!summary) {
-    return <p className="page1-info__empty">Data rekap halaman 1 tidak ditemukan.</p>;
+const ROW_ICONS = {
+  pelamar: (
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+      stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+      className="stat-table__row-icon stat-table__row-icon--pelamar" aria-hidden="true">
+      <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+      <circle cx="9" cy="7" r="4" />
+      <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+      <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+    </svg>
+  ),
+  lulus: (
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+      stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"
+      className="stat-table__row-icon stat-table__row-icon--lulus" aria-hidden="true">
+      <polyline points="20 6 9 17 4 12" />
+    </svg>
+  ),
+  tidakLulus: (
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+      stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"
+      className="stat-table__row-icon stat-table__row-icon--tidak-lulus" aria-hidden="true">
+      <line x1="18" y1="6" x2="6" y2="18" />
+      <line x1="6" y1="6" x2="18" y2="18" />
+    </svg>
+  ),
+  tidakHadir: (
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+      stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+      className="stat-table__row-icon stat-table__row-icon--tidak-hadir" aria-hidden="true">
+      <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
+      <line x1="12" y1="9" x2="12" y2="13" />
+      <line x1="12" y1="17" x2="12.01" y2="17" />
+    </svg>
+  ),
+};
+
+// Baris statistik yang ditampilkan
+const ROW_DEFS = [
+  { 
+    key: 'formasi', 
+    label: 'Jumlah Formasi', 
+    icon: 'pelamar', 
+    colorClass: '', 
+    field: (s) => {
+      if (s?.source?.jumlahFormasi) return Number(s.source.jumlahFormasi);
+      if (s?.jabatan) {
+        return Object.values(s.jabatan).reduce((sum, j) => sum + (Number(j?.source?.jumlahFormasi) || 0), 0);
+      }
+      return 0;
+    }
+  },
+  { key: 'total', label: 'Total Peserta', icon: 'pelamar', colorClass: '', field: (s) => s?.totalRows || 0 },
+  { key: 'pl', label: 'Lulus (P/L)', icon: 'lulus', colorClass: 'stat-table__row--lulus', field: (s) => Number(s?.statusCounts?.['P/L']) || 0 },
+  { key: 'p1l', label: 'Lulus (P1/L)', icon: 'lulus', colorClass: 'stat-table__row--lulus', field: (s) => Number(s?.statusCounts?.['P1/L']) || 0 },
+  { key: 'p2l', label: 'Lulus (P2/L)', icon: 'lulus', colorClass: 'stat-table__row--lulus', field: (s) => Number(s?.statusCounts?.['P2/L']) || 0 },
+  { key: 'tl', label: 'TL', icon: 'tidakLulus', colorClass: 'stat-table__row--tidak-lulus', field: (s) => Number(s?.statusCounts?.['TL']) || 0 },
+  { key: 'th', label: 'TH', icon: 'tidakHadir', colorClass: 'stat-table__row--tidak-hadir', field: (s) => Number(s?.statusCounts?.['TH']) || 0 },
+  { key: 'tms', label: 'TMS', icon: 'tidakLulus', colorClass: 'stat-table__row--tms', field: (s) => Number(s?.statusCounts?.['TMS']) || 0 },
+  { key: 'aps', label: 'APS', icon: 'tidakLulus', colorClass: 'stat-table__row--aps', field: (s) => Number(s?.statusCounts?.['APS']) || 0 },
+];
+
+const STATUS_LEGEND = [
+  { key: 'lulus', color: '#10b981', label: 'P/P1/P2/L = Lulus' },
+  { key: 'tl', color: '#f43f5e', label: 'TL = Tidak Lulus' },
+  { key: 'th', color: '#eab308', label: 'TH = Tidak Hadir' },
+  { key: 'lainnya', color: '#6b7280', label: 'TMS/APS = Lainnya' },
+];
+
+// Grup dan urutan kolom jabatan yang ditampilkan
+const JABATAN_GROUPS = [
+  {
+    label: 'KDKMP',
+    cols: [
+      { key: 'KDKMP - Manajer', label: 'Manajer' }
+    ]
+  },
+  {
+    label: 'KNMP',
+    cols: [
+      { key: 'KNMP - Manajer Operasional', label: 'Manajer Operasional' },
+      { key: 'KNMP - Kepala Produksi', label: 'Kepala Produksi' },
+      { key: 'KNMP - Penjamin Mutu', label: 'Penjamin Mutu' },
+      { key: 'KNMP - Administrasi Keuangan', label: 'Administrasi Keuangan' },
+    ]
   }
+];
 
-  const [isExpanded, setIsExpanded] = React.useState(false);
+/**
+ * SummarySK — Tabel statistik kelulusan gabungan.
+ *
+ * Props:
+ *   summary — dari combined/sk/summary.json
+ *     {
+ *       totalRows,
+ *       statusCounts,
+ *       jabatan: {
+ *         [label]: { label, totalRows, statusCounts, source }
+ *       }
+ *     }
+ */
+export default function SummarySK({ summary }) {
+  const [isVisible, setIsVisible] = React.useState(false);
 
-  const totalPeserta = Number(summary.jumlahPeserta) || 0;
-  const jumlahFormasi = Number(summary.jumlahFormasi) || 0;
+  if (!summary) return null;
 
-  // Section 1: Kelulusan dan Tidak Lulus
-  const lulus = Number(summary.kelulusan?.jumlah) || 0;
-  const tidakLulus = Math.max(0, totalPeserta - lulus);
-  const lulusPersen = summary.kelulusan?.persen != null
-    ? Number(summary.kelulusan.persen)
-    : totalPeserta > 0 ? (lulus / totalPeserta) * 100 : 0;
-  const tidakLulusPersen = Math.max(0, 100 - lulusPersen);
+  // Ambil data per jabatan sesuai urutan (flattened untuk baris tabel)
+  const jabatanCols = JABATAN_GROUPS
+    .flatMap(group => group.cols.map(col => ({
+      ...col,
+      groupLabel: group.label,
+      data: summary.jabatan?.[col.key] ?? null,
+    })))
+    .filter(col => col.data !== null);
 
-  const kelulusanData = [
-    { name: 'Lulus', value: lulus },
-    { name: 'Tidak Lulus', value: tidakLulus }
-  ];
-  const KELULUSAN_COLORS = ['#6366f1', '#64748b']; // Indigo and Slate
+  // Buat struktur grup dinamis berdasarkan kolom yang datanya tersedia
+  const activeGroups = JABATAN_GROUPS.map(group => {
+    const activeCols = group.cols.filter(col => jabatanCols.some(jc => jc.key === col.key));
+    return { ...group, cols: activeCols };
+  }).filter(group => group.cols.length > 0);
 
-  // Section 2: Kehadiran (Hadir dan Tidak Hadir)
-  const hadir = Number(summary.kehadiran?.hadir) || 0;
-  const tidakHadir = Number(summary.kehadiran?.tidakHadir) || 0;
-  const totalKehadiran = hadir + tidakHadir || totalPeserta;
-  const hadirPersen = totalKehadiran > 0 ? (hadir / totalKehadiran) * 100 : 0;
-  const tidakHadirPersen = totalKehadiran > 0 ? (tidakHadir / totalKehadiran) * 100 : 0;
-
-  const kehadiranData = [
-    { name: 'Hadir', value: hadir },
-    { name: 'Tidak Hadir', value: tidakHadir }
-  ];
-  const KEHADIRAN_COLORS = ['#10b981', '#f43f5e']; // Emerald/Green and Rose/Red
-
-  // Section 3: Statistik Nilai
-  const kognitifTinggi = Number(summary.nilaiKognitif?.tertinggi) || 0;
-  const kognitifRendah = Number(summary.nilaiKognitif?.terendah) || 0;
-  const substansiTinggi = Number(summary.nilaiSubstansi?.tertinggi) || 0;
-  const substansiRendah = Number(summary.nilaiSubstansi?.terendah) || 0;
-
-  // Let's assume max scores for Kognitif is 200 and Substansi is 100
-  const kognitifMax = 200;
-  const kognitifStartPct = Math.min(100, Math.max(0, (kognitifRendah / kognitifMax) * 100));
-  const kognitifWidthPct = Math.min(100, Math.max(0, ((kognitifTinggi - kognitifRendah) / kognitifMax) * 100));
-
-  const substansiMax = 100;
-  const substansiStartPct = Math.min(100, Math.max(0, (substansiRendah / substansiMax) * 100));
-  const substansiWidthPct = Math.min(100, Math.max(0, ((substansiTinggi - substansiRendah) / substansiMax) * 100));
-
-  // Section 4: Rekapitulasi Status Kelulusan & Legend
-  const plCount = Number(summary.statusCounts?.['P/L']) || 0;
-  const p1lCount = Number(summary.statusCounts?.['P1/L']) || 0;
-  const p2lCount = Number(summary.statusCounts?.['P2/L']) || 0;
-  const tlCount = Number(summary.statusCounts?.['TL']) || 0;
-  const thCount = Number(summary.statusCounts?.['TH']) || 0;
-  const tmsCount = Number(summary.statusCounts?.['TMS']) || 0;
-  const apsCount = Number(summary.statusCounts?.['APS']) || 0;
-
-  const statusData = [
-    { name: 'P/L', value: plCount, label: 'P/L', description: 'Peserta seleksi kompetensi memenuhi NAB sub tes kognitif ≥ 110 dan mengikuti seleksi kompetensi tambahan' },
-    { name: 'P1/L', value: p1lCount, label: 'P1/L', description: 'Peserta seleksi kompetensi memenuhi NAB sub tes kognitif ≥ 100 dan mengikuti seleksi kompetensi tambahan' },
-    { name: 'P2/L', value: p2lCount, label: 'P2/L', description: 'Peserta seleksi kompetensi memenuhi NAB sub tes kognitif ≥ 90 dan sub tes substansi ≥ 71 serta mengikuti seleksi kompetensi tambahan' },
-    { name: 'TL', value: tlCount, label: 'TL', description: 'Peserta Hadir Tidak Lulus' },
-    { name: 'TH', value: thCount, label: 'TH', description: 'Peserta Tidak Hadir' },
-    { name: 'TMS', value: tmsCount, label: 'TMS', description: 'Gugur dikarenakan tidak memenuhi syarat yang ditentukan oleh panselnas' },
-    { name: 'APS', value: apsCount, label: 'APS', description: 'Peserta yang mengajukan pengunduran diri atas permintaan sendiri' }
-  ];
-
-  const STATUS_COLORS = [
-    '#6366f1', // Indigo for P/L
-    '#3b82f6', // Blue for P1/L
-    '#06b6d4', // Cyan for P2/L
-    '#f43f5e', // Rose for TL
-    '#eab308', // Amber/Yellow for TH
-    '#f97316', // Orange for TMS
-    '#a855f7'  // Purple for APS
-  ];
+  // Tentukan baris statistik yang akan ditampilkan (sembunyikan yang bernilai 0 di semua kolom, kecuali beberapa field yang wajib)
+  const visibleRows = ROW_DEFS.filter(({ key, field }) => {
+    if (key === 'formasi' || key === 'total' || key === 'tms' || key === 'aps') return true;
+    const totalVal = field(summary);
+    if (totalVal > 0) return true;
+    return jabatanCols.some(col => field(col.data) > 0);
+  });
 
   return (
-    <div className="summary-dashboard">
-      {/* Mobile Toggle Button */}
-      <button
-        type="button"
-        className={`summary-dashboard__toggle-btn ${isExpanded ? 'summary-dashboard__toggle-btn--expanded' : ''}`}
-        onClick={() => setIsExpanded(!isExpanded)}
-        aria-expanded={isExpanded}
-        aria-controls="summary-dashboard-content"
-      >
-        <span>{isExpanded ? 'Sembunyikan Ringkasan Seleksi' : 'Tampilkan Ringkasan Seleksi'}</span>
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2.5"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          className="summary-dashboard__toggle-icon"
+    <div className="stat-summary" style={{ marginBottom: 10 }}>
+      {/* Tombol toggle */}
+      <div className="stat-summary__toggle-row">
+        <button
+          type="button"
+          className="stat-summary__toggle-btn"
+          onClick={() => setIsVisible(v => !v)}
+          aria-expanded={isVisible}
+          aria-controls="stat-summary-panel"
         >
-          <polyline points="6 9 12 15 18 9"></polyline>
-        </svg>
-      </button>
-
-      {/* Main Content Area */}
-      <div
-        id="summary-dashboard-content"
-        className={`summary-dashboard__content ${isExpanded ? 'summary-dashboard__content--expanded' : ''}`}
-      >
-        {/* KNMP: Filter jabatan compact — di bawah judul / di atas KPI Cards */}
-        {isKnmp && selectedJabatan && setSelectedJabatan && (
-          <KnmpJabatanFilter
-            selectedJabatan={selectedJabatan}
-            setSelectedJabatan={setSelectedJabatan}
-            knmpSummaries={knmpSummaries || {}}
-          />
-        )}
-
-        {/* KPI Cards: Jumlah Peserta & Jumlah Formasi */}
-        <div className="summary-dashboard__kpis">
-          <div className="summary-dashboard__kpi-card">
-            <div className="summary-dashboard__kpi-header">
-              <span className="summary-dashboard__kpi-title">Jumlah Peserta</span>
-              <div className="summary-dashboard__kpi-icon-wrapper">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="summary-dashboard__kpi-icon">
-                  <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-                  <circle cx="9" cy="7" r="4" />
-                  <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
-                  <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-                </svg>
-              </div>
-            </div>
-            <div className="summary-dashboard__kpi-value-container">
-              <h2 className="summary-dashboard__kpi-value">{fmtNum(totalPeserta)}</h2>
-              <span className="summary-dashboard__kpi-badge">Peserta Terdaftar</span>
-            </div>
-          </div>
-
-          <div className="summary-dashboard__kpi-card">
-            <div className="summary-dashboard__kpi-header">
-              <span className="summary-dashboard__kpi-title">Jumlah Formasi</span>
-              <div className="summary-dashboard__kpi-icon-wrapper">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="summary-dashboard__kpi-icon">
-                  <rect x="2" y="7" width="20" height="14" rx="2" ry="2" />
-                  <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" />
-                </svg>
-              </div>
-            </div>
-            <div className="summary-dashboard__kpi-value-container">
-              <h2 className="summary-dashboard__kpi-value">{fmtNum(jumlahFormasi)}</h2>
-              <span className="summary-dashboard__kpi-badge">Kuota Formasi</span>
-            </div>
-          </div>
-        </div>
-
-        <div className="summary-dashboard__grid">
-          {/* Section 1: Kelulusan dan Tidak Lulus */}
-          <div className="summary-dashboard__card">
-            <h3 className="summary-dashboard__card-title">1. Lulus & Tidak Lulus</h3>
-            <div className="summary-dashboard__chart-container">
-              {kelulusanData[0].value === 0 && kelulusanData[1].value === 0 ? (
-                <span className="summary-dashboard__empty-chart">Data tidak tersedia</span>
-              ) : (
-                <ResponsiveContainer width="100%" height={250}>
-                  <PieChart>
-                    <Pie
-                      data={kelulusanData}
-                      cx="50%"
-                      cy="43%"
-                      innerRadius={50}
-                      outerRadius={80}
-                      paddingAngle={5}
-                      dataKey="value"
-                    >
-                      {kelulusanData.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={KELULUSAN_COLORS[index % KELULUSAN_COLORS.length]} />
-                      ))}
-                    </Pie>
-                    <Tooltip
-                      formatter={(value) => fmtNum(value)}
-                      contentStyle={{ backgroundColor: 'hsl(var(--card))', borderColor: 'hsl(var(--border))', color: 'hsl(var(--foreground))', borderRadius: '8px' }}
-                      itemStyle={{ color: 'hsl(var(--foreground))' }}
-                    />
-                    <Legend wrapperStyle={{ marginTop: '40px' }} />
-                  </PieChart>
-                </ResponsiveContainer>
-              )}
-            </div>
-            <div className="summary-dashboard__stats-list">
-              <div className="summary-dashboard__stat-row">
-                <span className="summary-dashboard__stat-label">Lulus</span>
-                <span className="summary-dashboard__stat-value">
-                  {fmtNum(lulus)} ({fmtNum(lulusPersen)}%)
-                </span>
-              </div>
-              <div className="summary-dashboard__stat-row">
-                <span className="summary-dashboard__stat-label">Tidak Lulus</span>
-                <span className="summary-dashboard__stat-value">
-                  {fmtNum(tidakLulus)} ({fmtNum(tidakLulusPersen)}%)
-                </span>
-              </div>
-            </div>
-          </div>
-
-          {/* Section 2: Hadir dan Tidak Hadir */}
-          <div className="summary-dashboard__card">
-            <h3 className="summary-dashboard__card-title">2. Kehadiran & Ketidakhadiran</h3>
-            <div className="summary-dashboard__chart-container">
-              {kehadiranData[0].value === 0 && kehadiranData[1].value === 0 ? (
-                <span className="summary-dashboard__empty-chart">Data tidak tersedia</span>
-              ) : (
-                <ResponsiveContainer width="100%" height={250}>
-                  <PieChart>
-                    <Pie
-                      data={kehadiranData}
-                      cx="50%"
-                      cy="43%"
-                      innerRadius={50}
-                      outerRadius={80}
-                      paddingAngle={5}
-                      dataKey="value"
-                    >
-                      {kehadiranData.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={KEHADIRAN_COLORS[index % KEHADIRAN_COLORS.length]} />
-                      ))}
-                    </Pie>
-                    <Tooltip
-                      formatter={(value) => fmtNum(value)}
-                      contentStyle={{ backgroundColor: 'hsl(var(--card))', borderColor: 'hsl(var(--border))', color: 'hsl(var(--foreground))', borderRadius: '8px' }}
-                      itemStyle={{ color: 'hsl(var(--foreground))' }}
-                    />
-                    <Legend wrapperStyle={{ marginTop: '40px' }} />
-                  </PieChart>
-                </ResponsiveContainer>
-              )}
-            </div>
-            <div className="summary-dashboard__stats-list">
-              <div className="summary-dashboard__stat-row">
-                <span className="summary-dashboard__stat-label">Hadir</span>
-                <span className="summary-dashboard__stat-value">
-                  {fmtNum(hadir)} ({fmtNum(hadirPersen)}%)
-                </span>
-              </div>
-              <div className="summary-dashboard__stat-row">
-                <span className="summary-dashboard__stat-label">Tidak Hadir</span>
-                <span className="summary-dashboard__stat-value">
-                  {fmtNum(tidakHadir)} ({fmtNum(tidakHadirPersen)}%)
-                </span>
-              </div>
-            </div>
-          </div>
-
-          {/* Section 3: Statistik Nilai */}
-          <div className="summary-dashboard__card">
-            <h3 className="summary-dashboard__card-title">3. Statistik Nilai</h3>
-            <div className="summary-dashboard__nilai-container">
-
-              {/* Nilai Kognitif */}
-              <div className="summary-dashboard__range-container">
-                <div className="summary-dashboard__range-header">
-                  <span className="summary-dashboard__range-title">Nilai Kognitif</span>
-                  <span className="summary-dashboard__range-span">{fmtNum(kognitifRendah)} - {fmtNum(kognitifTinggi)}</span>
-                </div>
-                <div className="summary-dashboard__range-track-wrapper">
-                  <span className="summary-dashboard__range-min-val">0</span>
-                  <div className="summary-dashboard__range-track">
-                    <div
-                      className="summary-dashboard__range-fill"
-                      style={{ left: `${kognitifStartPct}%`, width: `${kognitifWidthPct}%` }}
-                    />
-                  </div>
-                  <span className="summary-dashboard__range-max-val">200</span>
-                </div>
-                <div className="summary-dashboard__range-details">
-                  <div className="summary-dashboard__range-detail-item">
-                    <span className="summary-dashboard__range-detail-label">Terendah</span>
-                    <span className="summary-dashboard__range-detail-value">{fmtNum(kognitifRendah)}</span>
-                  </div>
-                  <div className="summary-dashboard__range-detail-item">
-                    <span className="summary-dashboard__range-detail-label">Tertinggi</span>
-                    <span className="summary-dashboard__range-detail-value">{fmtNum(kognitifTinggi)}</span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Nilai Substansi */}
-              <div className="summary-dashboard__range-container">
-                <div className="summary-dashboard__range-header">
-                  <span className="summary-dashboard__range-title">Nilai Substansi</span>
-                  <span className="summary-dashboard__range-span">{fmtNum(substansiRendah)} - {fmtNum(substansiTinggi)}</span>
-                </div>
-                <div className="summary-dashboard__range-track-wrapper">
-                  <span className="summary-dashboard__range-min-val">0</span>
-                  <div className="summary-dashboard__range-track">
-                    <div
-                      className="summary-dashboard__range-fill summary-dashboard__range-fill--substansi"
-                      style={{ left: `${substansiStartPct}%`, width: `${substansiWidthPct}%` }}
-                    />
-                  </div>
-                  <span className="summary-dashboard__range-max-val">100</span>
-                </div>
-                <div className="summary-dashboard__range-details">
-                  <div className="summary-dashboard__range-detail-item">
-                    <span className="summary-dashboard__range-detail-label">Terendah</span>
-                    <span className="summary-dashboard__range-detail-value">{fmtNum(substansiRendah)}</span>
-                  </div>
-                  <div className="summary-dashboard__range-detail-item">
-                    <span className="summary-dashboard__range-detail-label">Tertinggi</span>
-                    <span className="summary-dashboard__range-detail-value">{fmtNum(substansiTinggi)}</span>
-                  </div>
-                </div>
-              </div>
-
-            </div>
-          </div>
-
-          {/* Section 4: Rekapitulasi Status Kelulusan & Legend */}
-          <div className="summary-dashboard__card summary-dashboard__card--full">
-            <h3 className="summary-dashboard__card-title">4. Rekapitulasi Status Kelulusan & Legend</h3>
-            <div className="summary-dashboard__section4-content">
-              <div className="summary-dashboard__section4-chart">
-                <ResponsiveContainer width="100%" height={260}>
-                  <BarChart data={statusData} margin={{ top: 20, right: 10, left: -15, bottom: 5 }}>
-                    <XAxis dataKey="name" stroke="currentColor" fontSize={11} tickLine={false} />
-                    <YAxis stroke="currentColor" fontSize={11} tickLine={false} width={40} tickFormatter={(val) => val >= 1000 ? `${(val / 1000).toFixed(0)}k` : val} />
-                    <Tooltip
-                      formatter={(value) => fmtNum(value)}
-                      contentStyle={{ backgroundColor: 'hsl(var(--card))', borderColor: 'hsl(var(--border))', color: 'hsl(var(--foreground))', borderRadius: '8px' }}
-                      itemStyle={{ color: 'hsl(var(--foreground))' }}
-                    />
-                    <Bar dataKey="value" radius={[4, 4, 0, 0]}>
-                      {statusData.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={STATUS_COLORS[index % STATUS_COLORS.length]} />
-                      ))}
-                    </Bar>
-                  </BarChart>
-                </ResponsiveContainer>
-              </div>
-
-              <div className="summary-dashboard__section4-legend" >
-                <div className="summary-dashboard__legend-grid">
-                  {statusData.map((item, idx) => (
-                    <div key={idx} className="summary-dashboard__legend-item">
-                      <div className="summary-dashboard__legend-header-row">
-                        <span className="summary-dashboard__legend-badge" style={{ backgroundColor: STATUS_COLORS[idx % STATUS_COLORS.length] }}>
-                          {item.label}
-                        </span>
-                        <span className="summary-dashboard__legend-count">
-                          <strong>{fmtNum(item.value)}</strong> ({totalPeserta > 0 ? ((item.value / totalPeserta) * 100).toFixed(1) : 0}%)
-                        </span>
-                      </div>
-                      <p className="summary-dashboard__legend-desc">{item.description}</p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </div>
-
-        </div>
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+            className="stat-summary__btn-icon" aria-hidden="true">
+            <rect x="3" y="3" width="18" height="18" rx="2" />
+            <path d="M3 9h18M3 15h18M9 3v18" />
+          </svg>
+          Statistik Kelulusan
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"
+            className={`stat-summary__chevron${isVisible ? ' stat-summary__chevron--up' : ''}`}
+            aria-hidden="true">
+            <polyline points="6 9 12 15 18 9" />
+          </svg>
+        </button>
       </div>
+
+      {/* Panel tabel */}
+      {isVisible && (
+        <div id="stat-summary-panel" className="stat-summary__panel">
+          <div className="stat-table-wrapper">
+            <table className="stat-table" aria-label="Statistik kelulusan seleksi">
+              <thead>
+                <tr>
+                  <th className="stat-table__th stat-table__th--kategori" scope="col" rowSpan={2} style={{ verticalAlign: 'middle' }}>KATEGORI</th>
+                  <th className="stat-table__th stat-table__th--total" scope="col" rowSpan={2} style={{ verticalAlign: 'middle' }}>TOTAL</th>
+                  {activeGroups.map((group) => (
+                    <th
+                      key={group.label}
+                      className="stat-table__th stat-table__th--jabatan-group"
+                      scope="colgroup"
+                      colSpan={group.cols.length}
+                      style={{ textAlign: 'center', borderBottom: '1px solid #e5e7eb' }}
+                    >
+                      {group.label}
+                    </th>
+                  ))}
+                </tr>
+                <tr>
+                  {jabatanCols.map(({ key, label }) => (
+                    <th
+                      key={key}
+                      className={`stat-table__th stat-table__th--jabatan stat-table__th--${getJabatanSlug(key)}`}
+                      scope="col"
+                    >
+                      {label}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {visibleRows.map(({ key, label, icon, colorClass, field }) => {
+                  const totalVal = field(summary)
+                  return (
+                    <tr key={key} className={`stat-table__row ${colorClass}`}>
+                      <td className="stat-table__td stat-table__td--kategori">
+                        {ROW_ICONS[icon]}
+                        <span>{label}</span>
+                      </td>
+                      <td className="stat-table__td stat-table__td--num stat-table__td--total">
+                        {fmtNum(totalVal)}
+                      </td>
+                      {jabatanCols.map(({ key, data }) => (
+                        <td key={key} className="stat-table__td stat-table__td--num">
+                          {data ? fmtNum(field(data)) : '—'}
+                        </td>
+                      ))}
+                    </tr>
+                  )
+                })}
+              </tbody>
+            </table>
+          </div>
+
+          {/* Tampilan Card untuk Mobile (Sembunyi di Desktop) */}
+          <div className="stat-cards-wrapper">
+            {/* Card Total */}
+            <div className="stat-card">
+              <div className="stat-card__header">
+                <div className="stat-card__title">Total Seluruh Peserta</div>
+                <div className="stat-card__total-pill">
+                  Total: <strong>{fmtNum(summary?.totalRows)}</strong>
+                </div>
+              </div>
+              <div className="stat-card__body">
+                {visibleRows.filter(r => r.key !== 'total').map(({ key, label, icon, colorClass, field }) => {
+                  const val = field(summary);
+                  const shortLabel = label.replace('Lulus ', '').replace(/[()]/g, '');
+                  return (
+                    <div key={key} className={`stat-card__stat-item ${colorClass.replace('stat-table__row', 'stat-card__row')}`}>
+                      <div className="stat-card__stat-label">
+                        <span className="stat-card__icon-wrapper">{ROW_ICONS[icon]}</span>
+                        <span>{shortLabel}</span>
+                      </div>
+                      <span className="stat-card__value">{fmtNum(val)}</span>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Cards per Jabatan */}
+            {jabatanCols.map(({ key: jKey, label: jLabel, groupLabel, data }) => (
+              <div key={jKey} className="stat-card">
+                <div className="stat-card__header">
+                  <div className="stat-card__title">{groupLabel} - {jLabel}</div>
+                  <div className="stat-card__total-pill">
+                    Total: <strong>{fmtNum(data?.totalRows || 0)}</strong>
+                  </div>
+                </div>
+                <div className="stat-card__body">
+                  {visibleRows.filter(r => r.key !== 'total').map(({ key, label, icon, colorClass, field }) => {
+                    const val = data ? field(data) : 0;
+                    const shortLabel = label.replace('Lulus ', '').replace(/[()]/g, '');
+                    return (
+                      <div key={key} className={`stat-card__stat-item ${colorClass.replace('stat-table__row', 'stat-card__row')}`}>
+                        <div className="stat-card__stat-label">
+                          <span className="stat-card__icon-wrapper">{ROW_ICONS[icon]}</span>
+                          <span>{shortLabel}</span>
+                        </div>
+                        <span className="stat-card__value">{fmtNum(val)}</span>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Keterangan legend */}
+          <div className="stat-legend">
+            {STATUS_LEGEND.map(({ key, color, label }) => (
+              <span key={key} className="stat-legend__item">
+                <span className="stat-legend__dot" style={{ backgroundColor: color }}></span>
+                {label}
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

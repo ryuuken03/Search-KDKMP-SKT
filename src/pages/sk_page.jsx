@@ -3,9 +3,9 @@ import SummarySK from '../components/summary_sk'
 import { useSKSearch } from '../hooks/useSKSearch'
 import SKSearchControls from '../components/sk_search_controls'
 import SKResultsTable from '../components/sk_results_table'
-import KnmpJabatanFilter from '../components/knmp_jabatan_filter'
+import JabatanFilter from '../components/knmp_jabatan_filter'
 
-export default function SKPage({ isKnmp }) {
+export default function SKPage() {
   const {
     query,
     setQuery,
@@ -16,7 +16,7 @@ export default function SKPage({ isKnmp }) {
     requestSort,
     loading,
     progress,
-    page1Info,
+    summary,
     hasSearched,
     currentPage,
     setCurrentPage,
@@ -30,39 +30,22 @@ export default function SKPage({ isKnmp }) {
     indexOfFirstItem,
     currentChunk,
     displayItems,
-    // KNMP jabatan
     selectedJabatan,
     setSelectedJabatan,
-    knmpSummaries,
-  } = useSKSearch(isKnmp)
+  } = useSKSearch()
 
   return (
     <div className="sk-page">
-      {page1Info && (
-        <section className="page1-info" aria-label="Rekapitulasi halaman 1 PDF">
-          <div className="page1-info__content">
-            <p className="page1-info__badge">Ringkasan Seleksi</p>
-            {page1Info.title && <h2 className="page1-info__title">{page1Info.title}</h2>}
-            {page1Info.subtitle && (
-              <p className="page1-info__subtitle">{page1Info.subtitle}</p>
-            )}
-            <SummarySK
-              summary={page1Info.summary}
-              isKnmp={isKnmp}
-              selectedJabatan={selectedJabatan}
-              setSelectedJabatan={setSelectedJabatan}
-              knmpSummaries={knmpSummaries}
-            />
-          </div>
-        </section>
+      {summary && (
+        <SummarySK summary={summary} />
       )}
 
-      {/* ── KNMP Jabatan Filter (standalone, di luar summary panel) ────── */}
-      {isKnmp && (
-        <KnmpJabatanFilter
+      {/* Tampilkan filter jabatan di atas search bar saat belum search */}
+      {!hasSearched && summary && (
+        <JabatanFilter
           selectedJabatan={selectedJabatan}
           setSelectedJabatan={setSelectedJabatan}
-          knmpSummaries={knmpSummaries}
+          summaries={summary.jabatan}
         />
       )}
 
@@ -116,7 +99,6 @@ export default function SKPage({ isKnmp }) {
             ITEMS_PER_PAGE={ITEMS_PER_PAGE}
             sortConfig={sortConfig}
             requestSort={requestSort}
-            isKnmp={isKnmp}
           />
         </section>
       </div>

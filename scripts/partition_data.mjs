@@ -115,7 +115,7 @@ function partitionDataset(type) {
 
 try {
   partitionDataset('kdkmp');
-  partitionDataset('knmp');
+  // partitionDataset('knmp');
   console.log('\nAll datasets partitioned successfully!');
 } catch (e) {
   console.error('Error during partitioning:', e);
