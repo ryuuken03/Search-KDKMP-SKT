@@ -30,7 +30,7 @@ function ThemeToggle({ isDark, onToggle }) {
 }
 
 export default function App() {
-  const [activeTab, setActiveTab] = useState('sk')
+  const [activeTab, setActiveTab] = useState('skt')
   const { isDark, toggleTheme } = useTheme()
 
   return (

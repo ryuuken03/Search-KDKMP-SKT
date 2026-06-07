@@ -164,9 +164,9 @@ body {
 }
 
 .app-tabs__btn--active {
-  background: hsl(var(--card));
-  color: hsl(var(--foreground));
-  box-shadow: 0 1px 3px rgb(0 0 0 / 0.12);
+  background: hsl(var(--brand));
+  color: hsl(var(--btn-search-fg));
+  box-shadow: 0 2px 6px rgb(0 0 0 / 0.15);
 }
 
 .app-tab-panel {
@@ -1429,6 +1429,12 @@ body {
   flex-wrap: wrap;
 }
 
+.jabatan-filter__header {
+  display: flex;
+  align-items: center;
+  width: auto;
+}
+
 .jabatan-filter__label {
   display: inline-flex;
   align-items: center;
@@ -1441,6 +1447,37 @@ body {
   white-space: nowrap;
   flex-shrink: 0;
 }
+
+.jabatan-filter__toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 10px 14px;
+  background: hsl(var(--background));
+  border: 1px solid hsl(var(--border));
+  border-radius: var(--radius);
+  color: hsl(var(--foreground));
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.jabatan-filter__toggle:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px hsl(var(--ring) / 0.3);
+}
+
+.jabatan-filter__toggle-icon {
+  width: 16px;
+  height: 16px;
+  color: hsl(var(--muted-foreground));
+  transition: transform 0.2s ease;
+}
+
+.desktop-only { display: inline-flex; }
+.mobile-only { display: none; }
 
 .jabatan-filter__icon {
   width: 14px;
@@ -1684,10 +1721,18 @@ html.dark .jabatan-badge--kdkmp {
 
 /* ─── Mobile adjustments for jabatan filter ──────────────────────────────── */
 @media (max-width: 720px) {
+  .desktop-only { display: none; }
+  .mobile-only { display: flex; }
+  .mobile-hidden { display: none !important; }
+
   .jabatan-filter__inner {
     flex-direction: column;
     align-items: flex-start;
     gap: 10px;
+  }
+
+  .jabatan-filter__header {
+    width: 100%;
   }
 
   .jabatan-filter__pills {

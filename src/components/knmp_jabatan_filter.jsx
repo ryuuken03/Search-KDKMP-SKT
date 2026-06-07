@@ -16,6 +16,8 @@ export default function JabatanFilter({
   summaries = {},
   compact = false,
 }) {
+  const [isCollapsed, setIsCollapsed] = React.useState(true);
+
   return (
     <div
       className={compact ? 'jabatan-filter jabatan-filter--compact' : 'jabatan-filter'}
@@ -23,25 +25,48 @@ export default function JabatanFilter({
     >
       <div className="jabatan-filter__inner">
         {!compact && (
-          <span className="jabatan-filter__label">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              className="jabatan-filter__icon"
-              aria-hidden="true"
+          <div className="jabatan-filter__header">
+            <span className="jabatan-filter__label desktop-only">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="jabatan-filter__icon"
+                aria-hidden="true"
+              >
+                <path d="M4 6h16M7 12h10M10 18h4" />
+              </svg>
+              Jabatan
+            </span>
+            <button
+              type="button"
+              className="jabatan-filter__toggle mobile-only"
+              onClick={() => setIsCollapsed(!isCollapsed)}
+              aria-expanded={!isCollapsed}
             >
-              <path d="M4 6h16M7 12h10M10 18h4" />
-            </svg>
-            Jabatan
-          </span>
+              <span>{selectedJabatan}</span>
+              <svg 
+                xmlns="http://www.w3.org/2000/svg" 
+                viewBox="0 0 24 24" 
+                fill="none" 
+                stroke="currentColor" 
+                strokeWidth="2" 
+                strokeLinecap="round" 
+                strokeLinejoin="round" 
+                className="jabatan-filter__toggle-icon"
+                style={{ transform: isCollapsed ? 'rotate(0deg)' : 'rotate(180deg)' }}
+              >
+                <polyline points="6 9 12 15 18 9" />
+              </svg>
+            </button>
+          </div>
         )}
 
-        <div className="jabatan-filter__pills" role="group" aria-label="Pilih jabatan">
+        <div className={`jabatan-filter__pills${isCollapsed && !compact ? ' mobile-hidden' : ''}`} role="group" aria-label="Pilih jabatan">
           {JABATAN_LABELS.map((label) => {
             const slug = getJabatanSlug(label)
             const summaryData = summaries[label]
