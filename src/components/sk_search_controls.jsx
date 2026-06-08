@@ -15,7 +15,7 @@ export default function SKSearchControls({
         <input
           id="search-query"
           type="text"
-          placeholder="Nama/Nomor Peserta/Peringkat"
+          placeholder="Cari Nama/Nomor Peserta/Peringkat"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
