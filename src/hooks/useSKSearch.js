@@ -358,7 +358,15 @@ export function useSKSearch() {
   })
 
   // ── Pagination ────────────────────────────────────────────────────────────
-  const ITEMS_PER_PAGE = 25
+  const getItemsPerPage = () => typeof window !== 'undefined' && window.innerWidth < 768 ? 10 : 20;
+  const [ITEMS_PER_PAGE, setItemsPerPage] = useState(getItemsPerPage());
+
+  useEffect(() => {
+    const handleResize = () => setItemsPerPage(getItemsPerPage());
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   const isFilteringJabatan = !hasSearched && selectedJabatan !== null
 
   const totalItems = hasSearched 
@@ -366,6 +374,13 @@ export function useSKSearch() {
     : (isFilteringJabatan ? (summary?.jabatan?.[selectedJabatan]?.totalRows || 0) : totalRows)
 
   const totalPages     = Math.ceil(totalItems / ITEMS_PER_PAGE)
+  
+  useEffect(() => {
+    if (currentPage > totalPages && totalPages > 0) {
+      setCurrentPage(totalPages);
+    }
+  }, [totalPages, currentPage]);
+
   const indexOfLastItem  = currentPage * ITEMS_PER_PAGE
   const indexOfFirstItem = indexOfLastItem - ITEMS_PER_PAGE
 
@@ -422,10 +437,14 @@ export function useSKSearch() {
       })
     : (() => {
         if (!currentChunk) return [];
-        let items = currentChunk.slice(relativeStart, relativeStart + ITEMS_PER_PAGE);
+        
+        // Batasi jumlah item agar tidak mengambil data dari jabatan berikutnya
+        const maxItems = Math.max(0, Math.min(ITEMS_PER_PAGE, totalItems - indexOfFirstItem));
+        
+        let items = currentChunk.slice(relativeStart, relativeStart + maxItems);
         // Handle chunk boundary crossing
-        if (items.length < ITEMS_PER_PAGE && nextChunk) {
-           const remaining = ITEMS_PER_PAGE - items.length;
+        if (items.length < maxItems && nextChunk) {
+           const remaining = maxItems - items.length;
            items = items.concat(nextChunk.slice(0, remaining));
         }
         return items.map(row => ({
