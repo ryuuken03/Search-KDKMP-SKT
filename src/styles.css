@@ -282,7 +282,7 @@ body {
   align-items: center;
   justify-content: center;
   transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
 }
 
 .theme-switch--dark .theme-switch__thumb {
@@ -708,7 +708,8 @@ body {
     height: 48px;
     padding-top: 12px;
     padding-bottom: 12px;
-    font-size: 16px; /* mencegah auto-zoom di iOS */
+    font-size: 16px;
+    /* mencegah auto-zoom di iOS */
   }
 
   .controls select {
@@ -816,23 +817,32 @@ body {
     font-size: 15px;
     font-weight: 600;
     margin-bottom: 4px;
-    margin-right: 100px; /* space for status pill */
+    margin-right: 100px;
+    /* space for status pill */
   }
-  .data-table tbody td:nth-child(3)::before { content: none; }
-  .data-table tbody td:nth-child(3) span { 
-    font-weight: 600; 
+
+  .data-table tbody td:nth-child(3)::before {
+    content: none;
+  }
+
+  .data-table tbody td:nth-child(3) span {
+    font-weight: 600;
     color: hsl(var(--foreground));
   }
 
   /* 6 = Status */
   .data-table tbody td:nth-child(6) {
-    order: 2; /* doesn't really matter as it's absolute */
+    order: 2;
+    /* doesn't really matter as it's absolute */
     position: absolute;
     top: 14px;
     right: 14px;
     margin: 0;
   }
-  .data-table tbody td:nth-child(6)::before { content: none; }
+
+  .data-table tbody td:nth-child(6)::before {
+    content: none;
+  }
 
   /* 2 = No Peserta */
   .data-table tbody td:nth-child(2) {
@@ -840,24 +850,36 @@ body {
     width: 100%;
     margin-bottom: 12px;
   }
-  .data-table tbody td:nth-child(2)::before { content: none; }
-  .data-table tbody td:nth-child(2) span { color: hsl(var(--muted-foreground)); }
+
+  .data-table tbody td:nth-child(2)::before {
+    content: none;
+  }
+
+  .data-table tbody td:nth-child(2) span {
+    color: hsl(var(--muted-foreground));
+  }
 
   /* 7 = Jabatan (Formasi) */
   .data-table tbody td:nth-child(7) {
     order: 4;
     width: 100%;
     margin-bottom: 6px;
-    display: flex !important; /* ensure it's visible */
+    display: flex !important;
+    /* ensure it's visible */
   }
-  .data-table tbody td:nth-child(7)::before { content: "Formasi: "; }
+
+  .data-table tbody td:nth-child(7)::before {
+    content: "Formasi: ";
+  }
 
   /* 4 = Kognitif */
   .data-table tbody td:nth-child(4) {
     order: 5;
   }
+
   .data-table tbody td:nth-child(4) span {
-    color: #16a34a; /* green */
+    color: #16a34a;
+    /* green */
     font-weight: 500;
   }
 
@@ -865,14 +887,21 @@ body {
   .data-table tbody td:nth-child(1) {
     order: 6;
   }
-  .data-table tbody td:nth-child(1)::before { content: "Peringkat Nasional: "; }
-  .data-table tbody td:nth-child(1) span::before { content: "#"; }
+
+  .data-table tbody td:nth-child(1)::before {
+    content: "Peringkat Nasional: ";
+  }
+
+  .data-table tbody td:nth-child(1) span::before {
+    content: "#";
+  }
 
   /* 5 = Substansi */
   .data-table tbody td:nth-child(5) {
     order: 7;
     width: 100%;
   }
+
   .data-table tbody td:nth-child(5) span {
     color: #16a34a;
     font-weight: 500;
@@ -1300,6 +1329,7 @@ body {
     grid-template-columns: 1fr;
     gap: 12px;
   }
+
   .summary-dashboard__grid {
     grid-template-columns: 1fr;
     gap: 16px;
@@ -1444,6 +1474,7 @@ body {
     opacity: 0;
     transform: translateY(-8px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -1532,8 +1563,13 @@ body {
   transition: transform 0.2s ease;
 }
 
-.desktop-only { display: inline-flex; }
-.mobile-only { display: none; }
+.desktop-only {
+  display: inline-flex;
+}
+
+.mobile-only {
+  display: none;
+}
 
 .jabatan-filter__icon {
   width: 14px;
@@ -1594,7 +1630,7 @@ body {
 /* Active pill — default "Semua" */
 .jabatan-pill--active {
   border-color: transparent;
-  box-shadow: 0 0 0 2px hsl(var(--ring) / 0.4), 0 2px 6px rgb(0 0 0 / 0.08);
+  /* box-shadow: 0 0 0 2px hsl(var(--ring) / 0.4), 0 2px 6px rgb(0 0 0 / 0.08); */
 }
 
 /* Per-jabatan color theming — pill active states */
@@ -1602,6 +1638,7 @@ body {
   background: hsl(var(--brand));
   color: hsl(var(--btn-search-fg));
 }
+
 .jabatan-pill--active:not([class*="jabatan-pill--manajer"]):not([class*="jabatan-pill--kepala"]):not([class*="jabatan-pill--penjamin"]):not([class*="jabatan-pill--administrasi"]):not([class*="jabatan-pill--kdkmp"]) .jabatan-pill__count {
   background: hsl(var(--btn-search-fg) / 0.2);
   color: hsl(var(--btn-search-fg));
@@ -1611,14 +1648,26 @@ body {
 .jabatan-pill--manajer_operasional {
   color: hsl(239 84% 50%);
 }
+html[data-theme='dark'] .jabatan-pill--manajer_operasional,
+html.dark .jabatan-pill--manajer_operasional {
+  color: hsl(239 84% 80%);
+}
+
 .jabatan-pill--manajer_operasional.jabatan-pill--active {
   background: hsl(239 84% 67% / 0.15);
   border-color: hsl(239 84% 67% / 0.3);
 }
+
 .jabatan-pill--manajer_operasional.jabatan-pill--active .jabatan-pill__count {
   background: hsl(239 84% 50% / 0.15);
   color: hsl(239 84% 50%);
 }
+html[data-theme='dark'] .jabatan-pill--manajer_operasional.jabatan-pill--active .jabatan-pill__count,
+html.dark .jabatan-pill--manajer_operasional.jabatan-pill--active .jabatan-pill__count {
+  background: hsl(239 84% 80% / 0.15);
+  color: hsl(239 84% 80%);
+}
+
 .jabatan-pill--manajer_operasional:not(.jabatan-pill--active):hover {
   border-color: hsl(239 84% 67% / 0.5);
 }
@@ -1627,14 +1676,26 @@ body {
 .jabatan-pill--kepala_produksi {
   color: hsl(160 70% 35%);
 }
+html[data-theme='dark'] .jabatan-pill--kepala_produksi,
+html.dark .jabatan-pill--kepala_produksi {
+  color: hsl(160 70% 65%);
+}
+
 .jabatan-pill--kepala_produksi.jabatan-pill--active {
   background: hsl(160 84% 39% / 0.12);
   border-color: hsl(160 84% 39% / 0.25);
 }
+
 .jabatan-pill--kepala_produksi.jabatan-pill--active .jabatan-pill__count {
   background: hsl(160 70% 35% / 0.15);
   color: hsl(160 70% 35%);
 }
+html[data-theme='dark'] .jabatan-pill--kepala_produksi.jabatan-pill--active .jabatan-pill__count,
+html.dark .jabatan-pill--kepala_produksi.jabatan-pill--active .jabatan-pill__count {
+  background: hsl(160 70% 65% / 0.15);
+  color: hsl(160 70% 65%);
+}
+
 .jabatan-pill--kepala_produksi:not(.jabatan-pill--active):hover {
   border-color: hsl(160 84% 39% / 0.5);
 }
@@ -1643,14 +1704,26 @@ body {
 .jabatan-pill--penjamin_mutu {
   color: hsl(36 80% 35%);
 }
+html[data-theme='dark'] .jabatan-pill--penjamin_mutu,
+html.dark .jabatan-pill--penjamin_mutu {
+  color: hsl(43 90% 70%);
+}
+
 .jabatan-pill--penjamin_mutu.jabatan-pill--active {
   background: hsl(43 96% 56% / 0.15);
   border-color: hsl(43 96% 56% / 0.3);
 }
+
 .jabatan-pill--penjamin_mutu.jabatan-pill--active .jabatan-pill__count {
   background: hsl(36 80% 35% / 0.15);
   color: hsl(36 80% 35%);
 }
+html[data-theme='dark'] .jabatan-pill--penjamin_mutu.jabatan-pill--active .jabatan-pill__count,
+html.dark .jabatan-pill--penjamin_mutu.jabatan-pill--active .jabatan-pill__count {
+  background: hsl(43 90% 70% / 0.15);
+  color: hsl(43 90% 70%);
+}
+
 .jabatan-pill--penjamin_mutu:not(.jabatan-pill--active):hover {
   border-color: hsl(43 96% 56% / 0.5);
 }
@@ -1659,14 +1732,26 @@ body {
 .jabatan-pill--administrasi_keuangan {
   color: hsl(347 65% 40%);
 }
+html[data-theme='dark'] .jabatan-pill--administrasi_keuangan,
+html.dark .jabatan-pill--administrasi_keuangan {
+  color: hsl(347 70% 75%);
+}
+
 .jabatan-pill--administrasi_keuangan.jabatan-pill--active {
   background: hsl(347 77% 50% / 0.12);
   border-color: hsl(347 77% 50% / 0.25);
 }
+
 .jabatan-pill--administrasi_keuangan.jabatan-pill--active .jabatan-pill__count {
   background: hsl(347 65% 40% / 0.15);
   color: hsl(347 65% 40%);
 }
+html[data-theme='dark'] .jabatan-pill--administrasi_keuangan.jabatan-pill--active .jabatan-pill__count,
+html.dark .jabatan-pill--administrasi_keuangan.jabatan-pill--active .jabatan-pill__count {
+  background: hsl(347 70% 75% / 0.15);
+  color: hsl(347 70% 75%);
+}
+
 .jabatan-pill--administrasi_keuangan:not(.jabatan-pill--active):hover {
   border-color: hsl(347 77% 50% / 0.5);
 }
@@ -1675,14 +1760,26 @@ body {
 .jabatan-pill--kdkmp {
   color: hsl(210 70% 35%);
 }
+html[data-theme='dark'] .jabatan-pill--kdkmp,
+html.dark .jabatan-pill--kdkmp {
+  color: hsl(210 70% 75%);
+}
+
 .jabatan-pill--kdkmp.jabatan-pill--active {
   background: hsl(210 80% 50% / 0.12);
   border-color: hsl(210 80% 50% / 0.25);
 }
+
 .jabatan-pill--kdkmp.jabatan-pill--active .jabatan-pill__count {
   background: hsl(210 70% 35% / 0.15);
   color: hsl(210 70% 35%);
 }
+html[data-theme='dark'] .jabatan-pill--kdkmp.jabatan-pill--active .jabatan-pill__count,
+html.dark .jabatan-pill--kdkmp.jabatan-pill--active .jabatan-pill__count {
+  background: hsl(210 70% 75% / 0.15);
+  color: hsl(210 70% 75%);
+}
+
 .jabatan-pill--kdkmp:not(.jabatan-pill--active):hover {
   border-color: hsl(210 80% 50% / 0.5);
 }
@@ -1720,6 +1817,7 @@ body {
   color: hsl(239 84% 50%);
   border: 1px solid hsl(239 84% 67% / 0.3);
 }
+
 html[data-theme='dark'] .jabatan-badge--manajer_operasional,
 html.dark .jabatan-badge--manajer_operasional {
   background: hsl(239 84% 67% / 0.18);
@@ -1732,6 +1830,7 @@ html.dark .jabatan-badge--manajer_operasional {
   color: hsl(160 70% 35%);
   border: 1px solid hsl(160 84% 39% / 0.25);
 }
+
 html[data-theme='dark'] .jabatan-badge--kepala_produksi,
 html.dark .jabatan-badge--kepala_produksi {
   background: hsl(160 84% 39% / 0.18);
@@ -1744,6 +1843,7 @@ html.dark .jabatan-badge--kepala_produksi {
   color: hsl(36 80% 35%);
   border: 1px solid hsl(43 96% 56% / 0.3);
 }
+
 html[data-theme='dark'] .jabatan-badge--penjamin_mutu,
 html.dark .jabatan-badge--penjamin_mutu {
   background: hsl(43 96% 56% / 0.18);
@@ -1756,6 +1856,7 @@ html.dark .jabatan-badge--penjamin_mutu {
   color: hsl(347 65% 40%);
   border: 1px solid hsl(347 77% 50% / 0.25);
 }
+
 html[data-theme='dark'] .jabatan-badge--administrasi_keuangan,
 html.dark .jabatan-badge--administrasi_keuangan {
   background: hsl(347 77% 50% / 0.18);
@@ -1768,6 +1869,7 @@ html.dark .jabatan-badge--administrasi_keuangan {
   color: hsl(210 70% 35%);
   border: 1px solid hsl(210 80% 50% / 0.25);
 }
+
 html[data-theme='dark'] .jabatan-badge--kdkmp,
 html.dark .jabatan-badge--kdkmp {
   background: hsl(210 80% 50% / 0.18);
@@ -1777,9 +1879,17 @@ html.dark .jabatan-badge--kdkmp {
 
 /* ─── Mobile adjustments for jabatan filter ──────────────────────────────── */
 @media (max-width: 720px) {
-  .desktop-only { display: none; }
-  .mobile-only { display: flex; }
-  .mobile-hidden { display: none !important; }
+  .desktop-only {
+    display: none;
+  }
+
+  .mobile-only {
+    display: flex;
+  }
+
+  .mobile-hidden {
+    display: none !important;
+  }
 
   .jabatan-filter__inner {
     flex-direction: column;
@@ -1914,6 +2024,7 @@ html.dark .jabatan-badge--kdkmp {
   .stat-table-wrapper {
     display: none;
   }
+
   .stat-cards-wrapper {
     display: flex;
     flex-direction: column;
@@ -1926,7 +2037,7 @@ html.dark .jabatan-badge--kdkmp {
   border: 1px solid hsl(var(--border) / 0.6);
   border-radius: 10px;
   padding: 14px 16px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
 
 .stat-card__header {
@@ -1961,6 +2072,7 @@ html.dark .jabatan-badge--kdkmp {
   gap: 4px;
   border: 1px solid hsl(var(--border) / 0.4);
 }
+
 .stat-card__total-pill strong {
   color: hsl(var(--foreground));
   font-size: 12px;
@@ -1995,6 +2107,7 @@ html.dark .jabatan-badge--kdkmp {
   width: 15px;
   height: 15px;
 }
+
 .stat-card__icon-wrapper svg {
   width: 100%;
   height: 100%;
@@ -2007,11 +2120,30 @@ html.dark .jabatan-badge--kdkmp {
 }
 
 /* Inherit colors from table classes */
-.stat-card__row--lulus .stat-card__value, .stat-card__row--lulus .stat-card__icon-wrapper { color: #10b981; }
-.stat-card__row--tidak-lulus .stat-card__value, .stat-card__row--tidak-lulus .stat-card__icon-wrapper { color: #f43f5e; }
-.stat-card__row--tidak-hadir .stat-card__value, .stat-card__row--tidak-hadir .stat-card__icon-wrapper { color: #eab308; }
-.stat-card__row--tms .stat-card__value, .stat-card__row--tms .stat-card__icon-wrapper { color: #f97316; }
-.stat-card__row--aps .stat-card__value, .stat-card__row--aps .stat-card__icon-wrapper { color: #a855f7; }
+.stat-card__row--lulus .stat-card__value,
+.stat-card__row--lulus .stat-card__icon-wrapper {
+  color: #10b981;
+}
+
+.stat-card__row--tidak-lulus .stat-card__value,
+.stat-card__row--tidak-lulus .stat-card__icon-wrapper {
+  color: #f43f5e;
+}
+
+.stat-card__row--tidak-hadir .stat-card__value,
+.stat-card__row--tidak-hadir .stat-card__icon-wrapper {
+  color: #eab308;
+}
+
+.stat-card__row--tms .stat-card__value,
+.stat-card__row--tms .stat-card__icon-wrapper {
+  color: #f97316;
+}
+
+.stat-card__row--aps .stat-card__value,
+.stat-card__row--aps .stat-card__icon-wrapper {
+  color: #a855f7;
+}
 
 .stat-table {
   width: 100%;
@@ -2139,6 +2271,7 @@ html.dark .jabatan-badge--kdkmp {
 }
 
 @media (max-width: 540px) {
+
   .stat-table__th,
   .stat-table__td {
     padding: 9px 12px;
