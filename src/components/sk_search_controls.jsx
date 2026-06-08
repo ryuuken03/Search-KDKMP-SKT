@@ -1,4 +1,5 @@
 import React from 'react'
+import { SEARCH_TEXT } from '../constants'
 
 export default function SKSearchControls({
   query,
@@ -15,7 +16,7 @@ export default function SKSearchControls({
         <input
           id="search-query"
           type="text"
-          placeholder="Cari Nama/Nomor Peserta/Peringkat"
+          placeholder={SEARCH_TEXT.PLACEHOLDER}
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
@@ -38,7 +39,7 @@ export default function SKSearchControls({
       {loading && hasSearched && (
         <div className="controls__actions">
           <button type="button" className="secondary" onClick={cancelSearch}>
-            Batal
+            {SEARCH_TEXT.CANCEL}
           </button>
         </div>
       )}

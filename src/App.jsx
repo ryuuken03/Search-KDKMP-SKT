@@ -3,6 +3,9 @@ import { useTheme } from './useTheme'
 import SKPage from './pages/sk_page'
 import SktPage from './pages/skt_page'
 import './styles.css'
+import logoKdkmp from '../assets/images/logo-kdkmp.jpg'
+import logoKnmp from '../assets/images/logo-knmp.jpg'
+import { APP_TEXT } from './constants'
 
 function ThemeToggle({ isDark, onToggle }) {
   return (
@@ -10,8 +13,8 @@ function ThemeToggle({ isDark, onToggle }) {
       type="button"
       className={`theme-switch ${isDark ? 'theme-switch--dark' : ''}`}
       onClick={onToggle}
-      aria-label={isDark ? 'Mode terang' : 'Mode gelap'}
-      title={isDark ? 'Mode terang' : 'Mode gelap'}
+      aria-label={isDark ? APP_TEXT.MODE_LIGHT : APP_TEXT.MODE_DARK}
+      title={isDark ? APP_TEXT.MODE_LIGHT : APP_TEXT.MODE_DARK}
     >
       <span className="theme-switch__thumb">
         {isDark ? (
@@ -37,9 +40,11 @@ export default function App() {
     <div className="app">
       <header className="app-header">
         <div className="app-header-title">
-          <h1 style={{ margin: 0 }}>Hasil Seleksi KDKMP &amp; KNMP</h1>
+          <h1 style={{ margin: 0 }}>{APP_TEXT.TITLE}</h1>
         </div>
-        <div className="app-header-actions">
+        <div className="app-header-actions" style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <img src={logoKdkmp} alt="Logo KDKMP" style={{ width: '60px', height: '60px', borderRadius: '50%', objectFit: 'contain', padding: '2px', backgroundColor: '#fff', border: '2px solid var(--bg-card, #fff)', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }} />
+          <img src={logoKnmp} alt="Logo KNMP" style={{ width: '60px', height: '60px', borderRadius: '50%', objectFit: 'contain', padding: '2px', backgroundColor: '#fff', border: '2px solid var(--bg-card, #fff)', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }} />
           <ThemeToggle isDark={isDark} onToggle={toggleTheme} />
         </div>
       </header>
@@ -54,7 +59,7 @@ export default function App() {
           className={`app-tabs__btn${activeTab === 'skt' ? ' app-tabs__btn--active' : ''}`}
           onClick={() => setActiveTab('skt')}
         >
-          Hasil Akhir
+          {APP_TEXT.TAB_SKT}
         </button>
         <button
           type="button"
@@ -65,7 +70,7 @@ export default function App() {
           className={`app-tabs__btn${activeTab === 'sk' ? ' app-tabs__btn--active' : ''}`}
           onClick={() => setActiveTab('sk')}
         >
-          Hasil SK
+          {APP_TEXT.TAB_SK}
         </button>
       </nav>
 

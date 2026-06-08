@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import Pagination from './pagination'
 import { getJabatanSlug } from '../hooks/useSKSearch'
+import { TABLE_TEXT, APP_TEXT } from '../constants'
 
 export default function SKResultsTable({
   displayItems,
@@ -47,8 +48,8 @@ export default function SKResultsTable({
     }
 
     const titleText = hasSearched
-      ? `Klik untuk mengurutkan berdasarkan ${label}`
-      : 'Cari Nama atau Nomor Peserta terlebih dahulu untuk mengurutkan seluruh hasil'
+      ? `${TABLE_TEXT.SORT_TIP} ${label}`
+      : TABLE_TEXT.SORT_TIP_DISABLED
 
     return (
       <th
@@ -78,13 +79,13 @@ export default function SKResultsTable({
       <table>
         <thead>
           <tr>
-            {renderHeader('peringkat', 'Peringkat')}
-            {renderHeader('noPeserta', 'No Peserta')}
-            {renderHeader('nama', 'Nama')}
-            <th>Kognitif</th>
-            <th>Substansi</th>
-            <th>Status</th>
-            {renderHeader('jabatan', 'Jabatan')}
+            {renderHeader('peringkat', TABLE_TEXT.HEADERS.PERINGKAT)}
+            {renderHeader('noPeserta', TABLE_TEXT.HEADERS.NO_PESERTA)}
+            {renderHeader('nama', TABLE_TEXT.HEADERS.NAMA)}
+            <th>{TABLE_TEXT.HEADERS.KOGNITIF}</th>
+            <th>{TABLE_TEXT.HEADERS.SUBSTANSI}</th>
+            <th>{TABLE_TEXT.HEADERS.STATUS}</th>
+            {renderHeader('jabatan', TABLE_TEXT.HEADERS.JABATAN)}
           </tr>
         </thead>
         <tbody>
@@ -124,17 +125,17 @@ export default function SKResultsTable({
           })}
           {loading && resultsLength === 0 && (
             <tr className="empty-row">
-              <td colSpan={colSpan}>Sedang mencari…</td>
+              <td colSpan={colSpan}>{TABLE_TEXT.LOADING}</td>
             </tr>
           )}
           {!loading && !hasSearched && !currentChunk && (
             <tr className="empty-row">
-              <td colSpan={colSpan}>Memuat data...</td>
+              <td colSpan={colSpan}>{TABLE_TEXT.INITIAL_LOADING}</td>
             </tr>
           )}
           {!loading && hasSearched && resultsLength === 0 && (
             <tr className="empty-row">
-              <td colSpan={colSpan}>Hasil tidak ditemukan.</td>
+              <td colSpan={colSpan}>{TABLE_TEXT.NO_RESULTS}</td>
             </tr>
           )}
         </tbody>
@@ -157,8 +158,8 @@ export default function SKResultsTable({
           type="button"
           onClick={scrollToTop}
           className="scroll-to-top-btn"
-          aria-label="Kembali ke atas"
-          title="Kembali ke atas"
+          aria-label={APP_TEXT.SCROLL_TOP}
+          title={APP_TEXT.SCROLL_TOP}
         >
           ↑
         </button>

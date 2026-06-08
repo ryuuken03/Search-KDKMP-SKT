@@ -1,5 +1,6 @@
 import React from 'react';
 import { getJabatanSlug } from '../hooks/useSKSearch';
+import { STATUS_LEGEND, SUMMARY_TEXT } from '../constants';
 
 function fmtNum(value) {
   if (value == null || value === '') return '—';
@@ -70,12 +71,7 @@ const ROW_DEFS = [
   { key: 'aps', label: 'APS', icon: 'tidakLulus', colorClass: 'stat-table__row--aps', field: (s) => Number(s?.statusCounts?.['APS']) || 0 },
 ];
 
-const STATUS_LEGEND = [
-  { key: 'lulus', color: '#10b981', label: 'P/P1/P2/L = Lulus' },
-  { key: 'tl', color: '#f43f5e', label: 'TL = Tidak Lulus' },
-  { key: 'th', color: '#eab308', label: 'TH = Tidak Hadir' },
-  { key: 'lainnya', color: '#6b7280', label: 'TMS/APS = Lainnya' },
-];
+
 
 // Grup dan urutan kolom jabatan yang ditampilkan
 const JABATAN_GROUPS = [
@@ -154,7 +150,7 @@ export default function SummarySK({ summary }) {
             <rect x="3" y="3" width="18" height="18" rx="2" />
             <path d="M3 9h18M3 15h18M9 3v18" />
           </svg>
-          Statistik Kelulusan
+          {SUMMARY_TEXT.TOGGLE_OPEN}
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
             stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"
             className={`stat-summary__chevron${isVisible ? ' stat-summary__chevron--up' : ''}`}
@@ -171,8 +167,8 @@ export default function SummarySK({ summary }) {
             <table className="stat-table" aria-label="Statistik kelulusan seleksi">
               <thead>
                 <tr>
-                  <th className="stat-table__th stat-table__th--kategori" scope="col" rowSpan={2} style={{ verticalAlign: 'middle' }}>KATEGORI</th>
-                  <th className="stat-table__th stat-table__th--total" scope="col" rowSpan={2} style={{ verticalAlign: 'middle' }}>TOTAL</th>
+                  <th className="stat-table__th stat-table__th--kategori" scope="col" rowSpan={2} style={{ verticalAlign: 'middle' }}>{SUMMARY_TEXT.TABLE_KATEGORI}</th>
+                  <th className="stat-table__th stat-table__th--total" scope="col" rowSpan={2} style={{ verticalAlign: 'middle' }}>{SUMMARY_TEXT.TABLE_TOTAL}</th>
                   {activeGroups.map((group) => (
                     <th
                       key={group.label}
@@ -226,9 +222,9 @@ export default function SummarySK({ summary }) {
             {/* Card Total */}
             <div className="stat-card">
               <div className="stat-card__header">
-                <div className="stat-card__title">Total Seluruh Peserta</div>
+                <div className="stat-card__title">{SUMMARY_TEXT.CARD_TOTAL_ALL}</div>
                 <div className="stat-card__total-pill">
-                  Total: <strong>{fmtNum(summary?.totalRows)}</strong>
+                  {SUMMARY_TEXT.CARD_TOTAL} <strong>{fmtNum(summary?.totalRows)}</strong>
                 </div>
               </div>
               <div className="stat-card__body">
@@ -254,7 +250,7 @@ export default function SummarySK({ summary }) {
                 <div className="stat-card__header">
                   <div className="stat-card__title">{groupLabel} - {jLabel}</div>
                   <div className="stat-card__total-pill">
-                    Total: <strong>{fmtNum(data?.totalRows || 0)}</strong>
+                    {SUMMARY_TEXT.CARD_TOTAL} <strong>{fmtNum(data?.totalRows || 0)}</strong>
                   </div>
                 </div>
                 <div className="stat-card__body">
@@ -284,6 +280,39 @@ export default function SummarySK({ summary }) {
                 {label}
               </span>
             ))}
+          </div>
+
+          {/* Tombol tutup di bawah */}
+          <div className="stat-summary__toggle-row" style={{ marginTop: '1rem', justifyContent: 'center' }}>
+            <button
+              type="button"
+              className="stat-summary__toggle-btn"
+              onClick={() => {
+                setIsVisible(false);
+                setTimeout(() => {
+                  const target = document.querySelector('.stat-summary');
+                  if (target) {
+                    const y = target.getBoundingClientRect().top + window.scrollY - 80;
+                    window.scrollTo({ top: y, behavior: 'smooth' });
+                  }
+                }, 50);
+              }}
+              aria-controls="stat-summary-panel"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+                className="stat-summary__btn-icon" aria-hidden="true">
+                <rect x="3" y="3" width="18" height="18" rx="2" />
+                <path d="M3 9h18M3 15h18M9 3v18" />
+              </svg>
+              {SUMMARY_TEXT.TOGGLE_CLOSE}
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"
+                className="stat-summary__chevron stat-summary__chevron--up"
+                aria-hidden="true">
+                <polyline points="6 9 12 15 18 9" />
+              </svg>
+            </button>
           </div>
         </div>
       )}

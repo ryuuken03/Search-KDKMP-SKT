@@ -10,9 +10,16 @@ function serveRootAssets() {
     configureServer(server) {
       server.middlewares.use((req, res, next) => {
         if (!req.url?.startsWith('/assets/')) return next()
+        if (req.url.includes('?import') || req.url.includes('?url')) return next() // Biarkan Vite menangani import module
+        
         const filePath = path.join(process.cwd(), req.url.replace(/^\//, '').split('?')[0])
         if (!fs.existsSync(filePath)) return next()
+        
         if (filePath.endsWith('.pdf')) res.setHeader('Content-Type', 'application/pdf')
+        else if (filePath.match(/\.jpe?g$/i)) res.setHeader('Content-Type', 'image/jpeg')
+        else if (filePath.match(/\.png$/i)) res.setHeader('Content-Type', 'image/png')
+        else if (filePath.match(/\.json$/i)) res.setHeader('Content-Type', 'application/json')
+        
         fs.createReadStream(filePath).pipe(res)
       })
     },

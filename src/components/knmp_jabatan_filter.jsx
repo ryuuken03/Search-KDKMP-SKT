@@ -1,5 +1,6 @@
 import React from 'react'
 import { JABATAN_LABELS, getJabatanSlug } from '../hooks/useSKSearch'
+import { SEARCH_TEXT } from '../constants'
 
 /**
  * JabatanFilter — pill buttons untuk filter jabatan.
@@ -40,7 +41,7 @@ export default function JabatanFilter({
               >
                 <path d="M4 6h16M7 12h10M10 18h4" />
               </svg>
-              Jabatan
+              {SEARCH_TEXT.FILTER_JABATAN}
             </span>
             <button
               type="button"
