@@ -40,11 +40,11 @@ export default function App() {
     <div className="app">
       <header className="app-header">
         <div className="app-header-title">
-          <h1 style={{ margin: 0 }}>{APP_TEXT.TITLE}</h1>
+          <h1>{APP_TEXT.TITLE}</h1>
         </div>
-        <div className="app-header-actions" style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-          <img src={logoKdkmp} alt="Logo KDKMP" style={{ width: '60px', height: '60px', borderRadius: '50%', objectFit: 'contain', padding: '2px', backgroundColor: '#fff', border: '2px solid var(--bg-card, #fff)', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }} />
-          <img src={logoKnmp} alt="Logo KNMP" style={{ width: '60px', height: '60px', borderRadius: '50%', objectFit: 'contain', padding: '2px', backgroundColor: '#fff', border: '2px solid var(--bg-card, #fff)', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }} />
+        <div className="app-header-actions">
+          <img src={logoKdkmp} alt="Logo KDKMP" className="app-header-logo" />
+          <img src={logoKnmp} alt="Logo KNMP" className="app-header-logo" />
           <ThemeToggle isDark={isDark} onToggle={toggleTheme} />
         </div>
       </header>

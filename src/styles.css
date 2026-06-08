@@ -130,8 +130,19 @@ body {
 
 .app-header-actions {
   display: flex;
-  gap: 8px;
+  gap: 12px;
   align-items: center;
+}
+
+.app-header-logo {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  object-fit: contain;
+  padding: 2px;
+  background-color: #fff;
+  border: 2px solid hsl(var(--card));
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
 .app-tabs {
@@ -1956,6 +1967,10 @@ html.dark .jabatan-badge--kdkmp {
   margin: 8px 0 0;
 }
 
+.stat-summary--legend {
+  margin-bottom: 10px;
+}
+
 .stat-summary__toggle-row {
   display: flex;
   justify-content: center;
@@ -1976,6 +1991,11 @@ html.dark .jabatan-badge--kdkmp {
   cursor: pointer;
   transition: background 0.15s, border-color 0.15s, box-shadow 0.15s;
   letter-spacing: 0.01em;
+}
+
+.stat-summary__toggle-btn--large {
+  font-size: 0.9rem;
+  padding: 0.5rem 1rem;
 }
 
 .stat-summary__toggle-btn:hover {
@@ -2368,6 +2388,10 @@ html.dark .jabatan-badge--kdkmp {
   border-radius: var(--radius);
   border: 1px solid hsl(var(--border) / 0.6);
   background: hsl(var(--muted) / 0.25);
+}
+
+.stat-legend--spaced {
+  margin-top: 10px;
 }
 
 .stat-legend__item {
