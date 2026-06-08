@@ -1,6 +1,6 @@
 import React from 'react';
-import { getJabatanSlug } from '../utils/searchUtils';
-import { fmtNum } from '../utils/format';
+import { getJabatanSlug } from '../../utils/searchUtils';
+import { fmtNum } from '../../utils/format';
 
 export default function StatTable({ summary, activeGroups, jabatanCols, visibleRows, summaryText, rowIcons }) {
   return (

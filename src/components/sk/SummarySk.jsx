@@ -1,10 +1,10 @@
 import React from 'react';
-import { SUMMARY_TEXT } from '../constants';
-import { ROW_ICONS } from './icons';
-import StatCard from './stat_card';
-import StatTable from './stat_table';
-import StatToggleBtn from './stat_toggle_btn';
-import StatLegend from './stat_legend';
+import { SUMMARY_TEXT } from '../../config/constants';
+import { ROW_ICONS } from '../common/Icons';
+import StatCard from '../stats/StatCard';
+import StatTable from '../stats/StatTable';
+import StatToggleBtn from '../stats/StatToggleBtn';
+import StatLegend from '../stats/StatLegend';
 
 // Baris statistik yang ditampilkan
 const ROW_DEFS = [

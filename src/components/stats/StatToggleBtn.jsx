@@ -1,5 +1,5 @@
 import React from 'react';
-import { IconPanel, IconChevron } from './icons';
+import { IconPanel, IconChevron } from '../common/Icons';
 
 export default function StatToggleBtn({ isOpen, onClick, label, isBottom = false }) {
   return (

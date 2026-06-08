@@ -1,5 +1,5 @@
-import { SEARCH_TEXT } from '../constants'
-import { IconClose } from './icons'
+import { SEARCH_TEXT } from '../../config/constants'
+import { IconClose } from '../common/Icons'
 
 export default function SKSearchControls({
   query,

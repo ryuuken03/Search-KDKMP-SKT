@@ -1,28 +1,12 @@
 import React, { useState } from 'react'
-import { useTheme } from './useTheme'
-import SKPage from './pages/sk_page'
-import SktPage from './pages/skt_page'
+import { useTheme } from './hooks/useTheme'
+import SKPage from './pages/SkPage'
+import SktPage from './pages/SktPage'
 import './styles.css'
 import logoKdkmp from '../assets/images/logo-kdkmp.jpg'
 import logoKnmp from '../assets/images/logo-knmp.jpg'
-import { APP_TEXT } from './constants'
-import { IconMoon, IconSun } from './components/icons'
-
-function ThemeToggle({ isDark, onToggle }) {
-  return (
-    <button
-      type="button"
-      className={`theme-switch ${isDark ? 'theme-switch--dark' : ''}`}
-      onClick={onToggle}
-      aria-label={isDark ? APP_TEXT.MODE_LIGHT : APP_TEXT.MODE_DARK}
-      title={isDark ? APP_TEXT.MODE_LIGHT : APP_TEXT.MODE_DARK}
-    >
-      <span className="theme-switch__thumb">
-        {isDark ? <IconMoon className="theme-switch__icon" /> : <IconSun className="theme-switch__icon" />}
-      </span>
-    </button>
-  )
-}
+import { APP_TEXT } from './config/constants'
+import ThemeToggle from './components/common/ThemeToggle'
 
 export default function App() {
   const [activeTab, setActiveTab] = useState('skt')

@@ -1,7 +1,7 @@
 import React from 'react'
-import { JABATAN_LABELS, getJabatanSlug } from '../utils/searchUtils'
-import { SEARCH_TEXT } from '../constants'
-import { IconFilter, IconChevron } from './icons'
+import { JABATAN_LABELS, getJabatanSlug } from '../../utils/searchUtils'
+import { SEARCH_TEXT } from '../../config/constants'
+import { IconFilter, IconChevron } from '../common/Icons'
 
 /**
  * JabatanFilter — pill buttons untuk filter jabatan.

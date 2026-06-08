@@ -1,5 +1,5 @@
 import React from 'react'
-import { SUMMARY_TEXT } from '../constants'
+import { SUMMARY_TEXT } from '../../config/constants'
 
 export default function SmartFallbackHint({ hasSearched, searchMode, lastSearchedQuery, handleSearch, loading }) {
   if (!(hasSearched && searchMode === 'Peringkat' && /^\d+$/.test(lastSearchedQuery))) {

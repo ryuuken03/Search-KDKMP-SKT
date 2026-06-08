@@ -1,5 +1,6 @@
-import { SUMMARY_TEXT, STATUS_LEGEND } from '../constants'
-import { IconInfo, IconChevron } from './icons'
+import React, { useState } from 'react'
+import { SUMMARY_TEXT, STATUS_LEGEND } from '../../config/constants'
+import { IconInfo, IconChevron } from '../common/Icons'
 
 export default function SKLegendSection() {
   const [isLegendVisible, setIsLegendVisible] = useState(false)

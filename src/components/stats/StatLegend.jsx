@@ -1,5 +1,5 @@
 import React from 'react';
-import { STATUS_LEGEND } from '../constants';
+import { STATUS_LEGEND } from '../../config/constants';
 
 export default function StatLegend() {
   return (

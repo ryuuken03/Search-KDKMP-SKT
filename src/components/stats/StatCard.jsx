@@ -1,5 +1,5 @@
 import React from 'react';
-import { fmtNum } from '../utils/format';
+import { fmtNum } from '../../utils/format';
 
 export default function StatCard({ title, total, data, visibleRows, rowIcons, summaryText }) {
   return (

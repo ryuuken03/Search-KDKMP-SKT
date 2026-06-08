@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
-import Pagination from './pagination'
-import { getJabatanSlug } from '../utils/searchUtils'
-import { TABLE_TEXT, APP_TEXT } from '../constants'
+import Pagination from '../common/Pagination'
+import { getJabatanSlug } from '../../utils/searchUtils'
+import { TABLE_TEXT, APP_TEXT } from '../../config/constants'
 
 const formatRowData = (r, i, indexOfFirstItem) => {
   const raw = r.contextItems || []

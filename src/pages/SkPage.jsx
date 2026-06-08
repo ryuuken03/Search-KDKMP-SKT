@@ -1,12 +1,12 @@
 import React from 'react'
-import SummarySK from '../components/summary_sk'
+import SummarySK from '../components/sk/SummarySk'
 import { useSKSearch } from '../hooks/useSKSearch'
-import SKSearchControls from '../components/sk_search_controls'
-import SKResultsTable from '../components/sk_results_table'
-import JabatanFilter from '../components/knmp_jabatan_filter'
-import SmartFallbackHint from '../components/smart_fallback_hint'
-import SKLegendSection from '../components/sk_legend_section'
-import { SUMMARY_TEXT } from '../constants'
+import SKSearchControls from '../components/sk/SkSearchControls'
+import SKResultsTable from '../components/sk/SkResultsTable'
+import JabatanFilter from '../components/sk/KnmpJabatanFilter'
+import SmartFallbackHint from '../components/common/SmartFallbackHint'
+import SKLegendSection from '../components/sk/SkLegendSection'
+import { SUMMARY_TEXT } from '../config/constants'
 
 export default function SKPage() {
   const {
