@@ -1,6 +1,7 @@
 import React from 'react'
 import { JABATAN_LABELS, getJabatanSlug } from '../utils/searchUtils'
 import { SEARCH_TEXT } from '../constants'
+import { IconFilter, IconChevron } from './icons'
 
 /**
  * JabatanFilter — pill buttons untuk filter jabatan.
@@ -28,19 +29,7 @@ export default function JabatanFilter({
         {!compact && (
           <div className="jabatan-filter__header">
             <span className="jabatan-filter__label desktop-only">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                className="jabatan-filter__icon"
-                aria-hidden="true"
-              >
-                <path d="M4 6h16M7 12h10M10 18h4" />
-              </svg>
+              <IconFilter className="jabatan-filter__icon" />
               {SEARCH_TEXT.FILTER_JABATAN}
             </span>
             <button
@@ -50,19 +39,11 @@ export default function JabatanFilter({
               aria-expanded={!isCollapsed}
             >
               <span>{selectedJabatan}</span>
-              <svg 
-                xmlns="http://www.w3.org/2000/svg" 
-                viewBox="0 0 24 24" 
-                fill="none" 
-                stroke="currentColor" 
+              <IconChevron 
                 strokeWidth="2" 
-                strokeLinecap="round" 
-                strokeLinejoin="round" 
-                className="jabatan-filter__toggle-icon"
-                style={{ transform: isCollapsed ? 'rotate(0deg)' : 'rotate(180deg)' }}
-              >
-                <polyline points="6 9 12 15 18 9" />
-              </svg>
+                className="jabatan-filter__toggle-icon" 
+                style={{ transform: isCollapsed ? 'rotate(0deg)' : 'rotate(180deg)' }} 
+              />
             </button>
           </div>
         )}

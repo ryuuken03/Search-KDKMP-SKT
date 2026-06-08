@@ -3,6 +3,21 @@ import Pagination from './pagination'
 import { getJabatanSlug } from '../utils/searchUtils'
 import { TABLE_TEXT, APP_TEXT } from '../constants'
 
+const formatRowData = (r, i, indexOfFirstItem) => {
+  const raw = r.contextItems || []
+  const vals = raw.map((v) => String(v || '').trim()).filter((v) => v.length > 0)
+  return {
+    noCol: vals[0] ?? (indexOfFirstItem + i + 1),
+    peserta: vals[1] ?? r.firstCol ?? '',
+    nama: vals[2] ?? r.matchText ?? '',
+    kognitif: vals[3] ?? '',
+    substansi: vals[4] ?? '',
+    status: vals[5] ?? r.lastCol ?? '',
+    jabatan: r.jabatan ?? '',
+    error: r.error
+  }
+}
+
 export default function SKResultsTable({
   displayItems,
   loading,
@@ -90,20 +105,12 @@ export default function SKResultsTable({
         </thead>
         <tbody>
           {displayItems.map((r, i) => {
-            const raw = r.contextItems || []
-            const vals = raw.map((v) => String(v || '').trim()).filter((v) => v.length > 0)
-            const noCol    = vals[0] ?? (indexOfFirstItem + i + 1)
-            const peserta  = vals[1] ?? r.firstCol ?? ''
-            const nama     = vals[2] ?? r.matchText ?? ''
-            const kognitif = vals[3] ?? ''
-            const substansi = vals[4] ?? ''
-            const status   = vals[5] ?? r.lastCol ?? ''
-            const jabatan  = r.jabatan ?? ''
+            const { error, noCol, peserta, nama, kognitif, substansi, status, jabatan } = formatRowData(r, i, indexOfFirstItem)
 
-            if (r.error) {
+            if (error) {
               return (
                 <tr key={i} className="empty-row">
-                  <td colSpan={colSpan}>{r.error}</td>
+                  <td colSpan={colSpan}>{error}</td>
                 </tr>
               )
             }

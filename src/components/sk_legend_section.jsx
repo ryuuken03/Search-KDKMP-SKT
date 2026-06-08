@@ -1,5 +1,5 @@
-import React, { useState } from 'react'
 import { SUMMARY_TEXT, STATUS_LEGEND } from '../constants'
+import { IconInfo, IconChevron } from './icons'
 
 export default function SKLegendSection() {
   const [isLegendVisible, setIsLegendVisible] = useState(false)
@@ -13,15 +13,9 @@ export default function SKLegendSection() {
           onClick={() => setIsLegendVisible(v => !v)}
           aria-expanded={isLegendVisible}
         >
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="stat-summary__btn-icon" aria-hidden="true">
-            <circle cx="12" cy="12" r="10"></circle>
-            <line x1="12" y1="16" x2="12" y2="12"></line>
-            <line x1="12" y1="8" x2="12.01" y2="8"></line>
-          </svg>
+          <IconInfo className="stat-summary__btn-icon" />
           {SUMMARY_TEXT.PAGE_LEGEND}
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className={`stat-summary__chevron${isLegendVisible ? ' stat-summary__chevron--up' : ''}`} aria-hidden="true">
-            <polyline points="6 9 12 15 18 9" />
-          </svg>
+          <IconChevron className={`stat-summary__chevron${isLegendVisible ? ' stat-summary__chevron--up' : ''}`} />
         </button>
       </div>
       {isLegendVisible && (
