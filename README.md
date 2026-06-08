@@ -1,15 +1,28 @@
 # PDF JSON Search Indexer & Dashboard (Vite + React)
 
-Aplikasi pencarian data hasil seleksi KDKMP yang super cepat dan responsif. Awalnya aplikasi ini memproses file PDF sebesar 97MB (12.473 halaman) di browser, namun sekarang telah dioptimalkan dengan **metode indexing JSON** sehingga dapat dimuat dan mencari data secara instan (< 0.5 detik).
+Aplikasi pencarian data hasil seleksi KDKMP yang super cepat dan responsif. Aplikasi ini menggunakan **metode indexing JSON** sehingga dapat memuat dan mencari data secara instan (< 0.5 detik).
 
 ---
 
 ## 🚀 Fitur Utama & Optimalisasi Performa
 
-1. **Pencarian Instan (< 0.5 detik)**: Pencarian nama langsung memindai array JSON lokal, tidak lagi memilah file PDF 97MB di sisi client.
-2. **Dashboard Ringkasan Instan**: Dashboard statistik dimuat seketika karena membaca file `assets/kdkmp/sk/summary.json` kecil (250 bytes) saat halaman pertama dibuka.
-3. **Optimasi Bundle JavaScript**: Pustaka PDF.js yang berat tidak lagi dimuat di browser pengguna, mengurangi ukuran JS bundle dari **2.28 MB menjadi hanya 523 KB** (hanya 158 KB setelah gzip).
-4. **Bypass Batas Ukuran File Vercel**: File PDF asli (`assets/kdkmp/sk/source.pdf`) tidak ikut disertakan ke dalam berkas build produksi, sehingga aman dari batas ukuran file Vercel Hobby (max 50MB).
+1. **Pencarian Instan (< 0.5 detik)**: Pencarian nama langsung memindai array JSON lokal, menjadikannya sangat cepat.
+2. **Dashboard Ringkasan Instan**: Dashboard statistik interaktif dengan grafik (menggunakan *Recharts*) yang dimuat seketika.
+3. **Clean Architecture**: Kode terstruktur dengan baik (hooks, components, utils, config) untuk maintainability dan reusability yang tinggi.
+4. **Optimasi Bundle JavaScript**: Pustaka PDF.js yang berat tidak lagi dimuat di browser pengguna, mengurangi ukuran JS bundle dari 2.28 MB menjadi hanya ~523 KB.
+5. **Bypass Batas Ukuran File Vercel**: File PDF asli tidak ikut disertakan ke dalam berkas build produksi, aman dari batas ukuran Vercel Hobby.
+
+---
+
+## 🏗️ Struktur Proyek
+
+Proyek ini telah direfaktor menggunakan prinsip-prinsip arsitektur yang bersih (*Clean Code Architecture*):
+
+- `src/components/`: Komponen UI modular dan *reusable* (termasuk filter pencarian, tabel hasil, dan *card* statistik).
+- `src/hooks/`: Kustom React Hooks (seperti `useSKSearch`) untuk mengoptimalkan performa re-render dan memisahkan logika state dari UI.
+- `src/utils/`: Fungsi utilitas pendukung (pemrosesan string, format angka, dll).
+- `src/config/`: Konfigurasi terpusat (contohnya konstanta warna dan status legenda di `skConstants.js`).
+- `src/pages/`: Komponen representasi halaman (seperti `SkPage.jsx`).
 
 ---
 
@@ -23,7 +36,7 @@ Sebelum menjalankan aplikasi, pastikan Anda telah menginstal perkakas berikut pa
 
 ## 💻 Cara Menjalankan Aplikasi secara Lokal
 
-### 1. Kloning/Masuk ke folder projek
+### 1. Kloning / Masuk ke folder projek
 Buka terminal dan masuk ke folder projek ini:
 ```bash
 cd "Search KDKMP SKT"
@@ -42,7 +55,7 @@ Jika ada pembaruan pada berkas PDF hasil seleksi:
    ```bash
    node scripts/extract_kdkmp.mjs
    ```
-   *(Script ini akan membaca 12.473 halaman secara lokal dan menghasilkan file `assets/kdkmp/sk/data.json` serta `assets/kdkmp/sk/summary.json` secara otomatis).*
+   *(Script ini akan memproses dokumen secara lokal dan menghasilkan file `assets/kdkmp/sk/data.json` serta `assets/kdkmp/sk/summary.json` secara otomatis).*
 
 ### 4. Jalankan Aplikasi (Mode Development)
 Jalankan aplikasi di browser lokal:
@@ -55,9 +68,9 @@ Buka browser Anda dan akses:
 
 ---
 
-## 📦 Build untuk Produksi & Deploy (Vercel)
+## 📦 Build untuk Produksi & Deploy (Vercel / Netlify)
 
-Untuk mengompilasi aplikasi ke versi produksi yang siap di-deploy ke hosting (seperti Vercel, Netlify, atau GitHub Pages):
+Untuk mengompilasi aplikasi ke versi produksi yang siap di-deploy ke hosting:
 
 ```bash
 npm run build
