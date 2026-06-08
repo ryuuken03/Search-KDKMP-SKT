@@ -712,6 +712,11 @@ body {
     /* mencegah auto-zoom di iOS */
   }
 
+  .controls input[type="text"]::placeholder,
+  .controls input[type="number"]::placeholder {
+    font-size: 14px;
+  }
+
   .controls select {
     flex: 1;
     min-width: 0;
@@ -2387,4 +2392,31 @@ html.dark .jabatan-badge--kdkmp {
     justify-content: flex-start;
     gap: 12px 16px;
   }
+}
+
+/* ─── Search Clear Button (embedded in input) ────────────────────────────── */
+.search-clear-btn {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent !important;
+  border: none;
+  color: #000;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border-radius: 50%;
+  transition: color 0.2s, opacity 0.2s;
+}
+
+html[data-theme='dark'] .search-clear-btn,
+html.dark .search-clear-btn {
+  color: #fff;
+}
+
+.search-clear-btn:hover {
+  opacity: 0.7;
 }

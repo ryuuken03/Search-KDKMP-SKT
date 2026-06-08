@@ -11,46 +11,37 @@ export default function SKSearchControls({
 }) {
   return (
     <div className="controls">
-      <div className="controls__fields">
+      <div className="controls__fields" style={{ position: 'relative', width: '100%', display: 'flex' }}>
         <input
           id="search-query"
           type="text"
-          placeholder="Cari Nama/sNomor Peserta/Peringkat..."
+          placeholder="Nama/Nomor Peserta/Peringkat"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+          style={{ width: '100%', paddingRight: query ? '40px' : undefined }}
         />
-      </div>
-      <div className="controls__actions">
-        <button onClick={() => handleSearch()} disabled={loading} aria-label="Cari">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="16"
-            height="16"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            style={{ marginRight: 8 }}
+        {query && (
+          <button
+            type="button"
+            onClick={handleClear}
+            className="search-clear-btn"
+            aria-label="Clear search"
           >
-            <circle cx="11" cy="11" r="7" />
-            <line x1="21" y1="21" x2="16.65" y2="16.65" />
-          </svg>
-          Cari
-        </button>
-        {loading && hasSearched && (
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </button>
+        )}
+      </div>
+      {loading && hasSearched && (
+        <div className="controls__actions">
           <button type="button" className="secondary" onClick={cancelSearch}>
             Batal
           </button>
-        )}
-        {!loading && hasSearched && (
-          <button type="button" className="secondary" onClick={handleClear} aria-label="Clear">
-            Clear
-          </button>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   )
 }

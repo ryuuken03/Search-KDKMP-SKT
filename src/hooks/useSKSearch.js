@@ -93,6 +93,30 @@ export function useSKSearch() {
   useEffect(() => {
     setCurrentPage(1)
   }, [selectedJabatan])
+  // ── Debounce Live Search ──────────────────────────────────────────────────
+  useEffect(() => {
+    const trimmed = query.trim()
+    
+    if (!trimmed) {
+      if (hasSearched) handleClear()
+      return
+    }
+
+    const isNumberFirst = /^\d/.test(trimmed) || /^[pP]?\d+$/.test(trimmed)
+
+    // Jika mulai huruf, minimal 3 karakter
+    if (!isNumberFirst && trimmed.length < 3) return
+
+    // Jika sama dengan pencarian terakhir, jangan cari ulang
+    if (trimmed === lastSearchedQuery) return
+
+    const timer = setTimeout(() => {
+      cancelSearch() // batalkan pencarian sebelumnya jika ada
+      handleSearch()
+    }, 500)
+
+    return () => clearTimeout(timer)
+  }, [query])
 
 
   async function handleSearch(overrideMode) {
