@@ -42,9 +42,9 @@ export default function SKPage() {
   ];
   return (
     <div className="sk-page">
-      {summary && (
-        <SummarySK summary={summary} />
-      )}
+      {/* {summary && ( */}
+      <SummarySK summary={summary} />
+      {/* )} */}
 
       {/* Tampilkan filter jabatan di atas search bar saat belum search */}
       {!hasSearched && (

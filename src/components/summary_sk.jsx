@@ -47,11 +47,11 @@ const ROW_ICONS = {
 
 // Baris statistik yang ditampilkan
 const ROW_DEFS = [
-  { 
-    key: 'formasi', 
-    label: 'Jumlah Formasi', 
-    icon: 'pelamar', 
-    colorClass: '', 
+  {
+    key: 'formasi',
+    label: 'Jumlah Formasi',
+    icon: 'pelamar',
+    colorClass: '',
     field: (s) => {
       if (s?.source?.jumlahFormasi) return Number(s.source.jumlahFormasi);
       if (s?.jabatan) {
@@ -112,16 +112,15 @@ const JABATAN_GROUPS = [
 export default function SummarySK({ summary }) {
   const [isVisible, setIsVisible] = React.useState(false);
 
-  if (!summary) return null;
+  // if (!summary) return null;
 
   // Ambil data per jabatan sesuai urutan (flattened untuk baris tabel)
   const jabatanCols = JABATAN_GROUPS
     .flatMap(group => group.cols.map(col => ({
       ...col,
       groupLabel: group.label,
-      data: summary.jabatan?.[col.key] ?? null,
-    })))
-    .filter(col => col.data !== null);
+      data: summary?.jabatan?.[col.key] ?? null,
+    })));
 
   // Buat struktur grup dinamis berdasarkan kolom yang datanya tersedia
   const activeGroups = JABATAN_GROUPS.map(group => {
@@ -131,6 +130,7 @@ export default function SummarySK({ summary }) {
 
   // Tentukan baris statistik yang akan ditampilkan (sembunyikan yang bernilai 0 di semua kolom, kecuali beberapa field yang wajib)
   const visibleRows = ROW_DEFS.filter(({ key, field }) => {
+    if (!summary) return true; // Tampilkan semua baris saat loading
     if (key === 'formasi' || key === 'total' || key === 'tms' || key === 'aps') return true;
     const totalVal = field(summary);
     if (totalVal > 0) return true;

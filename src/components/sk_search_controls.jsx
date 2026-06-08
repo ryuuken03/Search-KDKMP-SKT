@@ -40,7 +40,7 @@ export default function SKSearchControls({
           </svg>
           Cari
         </button>
-        {loading && (
+        {loading && hasSearched && (
           <button type="button" className="secondary" onClick={cancelSearch}>
             Batal
           </button>
