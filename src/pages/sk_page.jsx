@@ -34,6 +34,12 @@ export default function SKPage() {
     setSelectedJabatan,
   } = useSKSearch()
 
+  const STATUS_LEGEND = [
+    { key: 'lulus', color: '#10b981', label: 'P/P1/P2/L = Lulus' },
+    { key: 'tl', color: '#f43f5e', label: 'TL = Tidak Lulus' },
+    { key: 'th', color: '#eab308', label: 'TH = Tidak Hadir' },
+    { key: 'lainnya', color: '#6b7280', label: 'TMS/APS = Lainnya' },
+  ];
   return (
     <div className="sk-page">
       {summary && (
@@ -41,11 +47,11 @@ export default function SKPage() {
       )}
 
       {/* Tampilkan filter jabatan di atas search bar saat belum search */}
-      {!hasSearched && summary && (
+      {!hasSearched && (
         <JabatanFilter
           selectedJabatan={selectedJabatan}
           setSelectedJabatan={setSelectedJabatan}
-          summaries={summary.jabatan}
+          summaries={summary?.jabatan || {}}
         />
       )}
 
@@ -58,6 +64,14 @@ export default function SKPage() {
         hasSearched={hasSearched}
         handleClear={handleClear}
       />
+      <div className="stat-legend" style={{ marginBottom: 10 }}>
+        {STATUS_LEGEND.map(({ key, color, label }) => (
+          <span key={key} className="stat-legend__item">
+            <span className="stat-legend__dot" style={{ backgroundColor: color }}></span>
+            {label}
+          </span>
+        ))}
+      </div>
 
       {/* Smart Fallback Hint */}
       {hasSearched && searchMode === 'Peringkat' && /^\d+$/.test(lastSearchedQuery) && (

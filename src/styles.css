@@ -768,16 +768,16 @@ body {
   .data-table tr {
     display: flex;
     flex-wrap: wrap;
+    position: relative;
     width: 100%;
     max-width: 100%;
     min-width: 0;
     margin-bottom: 12px;
     border: 1px solid hsl(var(--border));
     border-radius: var(--radius);
-    padding: 8px;
+    padding: 16px;
     background: hsl(var(--card));
     box-sizing: border-box;
-    overflow: hidden;
   }
 
   .data-table thead {
@@ -786,54 +786,111 @@ body {
 
   .data-table tbody td {
     display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    padding: 8px;
-    border-top: none;
-    width: 100%;
-  }
-
-  /* Value span: proper flex child so it can shrink + wrap */
-  .data-table tbody td span {
-    min-width: 0;
-    flex: 1;
-    text-align: right;
-    word-break: break-all;
-    overflow-wrap: anywhere;
-  }
-
-  /* Kognitif, Substansi, Status — share one row, stacked label+value */
-  .data-table tbody td:nth-child(4),
-  .data-table tbody td:nth-child(5),
-  .data-table tbody td:nth-child(6) {
-    width: 33.33%;
-    flex-direction: column;
-    justify-content: flex-start;
     align-items: center;
-    text-align: center;
-    padding: 6px 4px;
+    padding: 0;
+    border: none;
+    width: auto;
+    font-size: 13px;
+    color: hsl(var(--muted-foreground));
+    margin-right: 16px;
+    margin-bottom: 8px;
   }
 
   .data-table tbody td::before {
-    content: attr(data-label);
-    color: hsl(var(--muted-foreground));
-    margin-right: 8px;
-    font-size: 12px;
-    font-weight: 500;
-    flex-shrink: 0;
+    content: attr(data-label) ": ";
+    margin-right: 4px;
+    font-weight: 400;
   }
 
-  .data-table tbody td:nth-child(4)::before,
-  .data-table tbody td:nth-child(5)::before,
-  .data-table tbody td:nth-child(6)::before {
-    margin-right: 0;
-    margin-bottom: 2px;
-    font-size: 10px;
+  .data-table tbody td span {
+    color: hsl(var(--foreground));
+    text-align: left;
+    word-break: break-word;
+    overflow-wrap: anywhere;
+  }
+
+  /* 3 = Nama */
+  .data-table tbody td:nth-child(3) {
+    order: 1;
+    width: 100%;
+    font-size: 15px;
+    font-weight: 600;
+    margin-bottom: 4px;
+    margin-right: 100px; /* space for status pill */
+  }
+  .data-table tbody td:nth-child(3)::before { content: none; }
+  .data-table tbody td:nth-child(3) span { 
+    font-weight: 600; 
+    color: hsl(var(--foreground));
+  }
+
+  /* 6 = Status */
+  .data-table tbody td:nth-child(6) {
+    order: 2; /* doesn't really matter as it's absolute */
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    margin: 0;
+  }
+  .data-table tbody td:nth-child(6)::before { content: none; }
+
+  /* 2 = No Peserta */
+  .data-table tbody td:nth-child(2) {
+    order: 3;
+    width: 100%;
+    margin-bottom: 12px;
+  }
+  .data-table tbody td:nth-child(2)::before { content: none; }
+  .data-table tbody td:nth-child(2) span { color: hsl(var(--muted-foreground)); }
+
+  /* 7 = Jabatan (Formasi) */
+  .data-table tbody td:nth-child(7) {
+    order: 4;
+    width: 100%;
+    margin-bottom: 6px;
+    display: flex !important; /* ensure it's visible */
+  }
+  .data-table tbody td:nth-child(7)::before { content: "Formasi: "; }
+
+  /* 4 = Kognitif */
+  .data-table tbody td:nth-child(4) {
+    order: 5;
+  }
+  .data-table tbody td:nth-child(4) span {
+    color: #16a34a; /* green */
+    font-weight: 500;
+  }
+
+  /* 1 = Peringkat */
+  .data-table tbody td:nth-child(1) {
+    order: 6;
+  }
+  .data-table tbody td:nth-child(1)::before { content: "Peringkat Nasional: "; }
+  .data-table tbody td:nth-child(1) span::before { content: "#"; }
+
+  /* 5 = Substansi */
+  .data-table tbody td:nth-child(5) {
+    order: 7;
+    width: 100%;
+  }
+  .data-table tbody td:nth-child(5) span {
+    color: #16a34a;
+    font-weight: 500;
+  }
+
+  html.dark .data-table tbody td:nth-child(4) span,
+  html.dark .data-table tbody td:nth-child(5) span,
+  html[data-theme='dark'] .data-table tbody td:nth-child(4) span,
+  html[data-theme='dark'] .data-table tbody td:nth-child(5) span {
+    color: #22c55e;
   }
 
   .data-table tr.empty-row td {
     display: block;
     text-align: center;
+    width: 100%;
+    margin: 0;
+    padding: 24px;
   }
 
   .data-table tr.empty-row td::before {
@@ -1400,7 +1457,6 @@ body {
   border-radius: calc(var(--radius) + 2px);
   border: 1px solid hsl(var(--border));
   background: hsl(var(--muted) / 0.3);
-  animation: fadeInSlide 0.25s ease;
 }
 
 /* Compact mode: embed di dalam panel, tanpa border/bg */
