@@ -1,5 +1,5 @@
 import React from 'react'
-import { JABATAN_LABELS, getJabatanSlug } from '../hooks/useSKSearch'
+import { JABATAN_LABELS, getJabatanSlug } from '../utils/searchUtils'
 import { SEARCH_TEXT } from '../constants'
 
 /**

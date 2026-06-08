@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import Pagination from './pagination'
-import { getJabatanSlug } from '../hooks/useSKSearch'
+import { getJabatanSlug } from '../utils/searchUtils'
 import { TABLE_TEXT, APP_TEXT } from '../constants'
 
 export default function SKResultsTable({
