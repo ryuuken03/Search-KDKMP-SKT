@@ -58,43 +58,44 @@ const JABATAN_GROUPS = [
  */
 export default function SummarySK({ summary }) {
   const [isVisible, setIsVisible] = React.useState(false);
+  const summaryRef = React.useRef(null);
 
-  // Ambil data per jabatan sesuai urutan (flattened untuk baris tabel)
-  const jabatanCols = JABATAN_GROUPS
-    .flatMap(group => group.cols.map(col => ({
-      ...col,
-      groupLabel: group.label,
-      data: summary?.jabatan?.[col.key] ?? null,
-    })));
+  const { jabatanCols, activeGroups, visibleRows } = React.useMemo(() => {
+    // Ambil data per jabatan sesuai urutan (flattened untuk baris tabel)
+    const jCols = JABATAN_GROUPS
+      .flatMap(group => group.cols.map(col => ({
+        ...col,
+        groupLabel: group.label,
+        data: summary?.jabatan?.[col.key] ?? null,
+      })));
 
-  // Buat struktur grup dinamis berdasarkan kolom yang datanya tersedia
-  const activeGroups = JABATAN_GROUPS.map(group => {
-    const activeCols = group.cols.filter(col => jabatanCols.some(jc => jc.key === col.key));
-    return { ...group, cols: activeCols };
-  }).filter(group => group.cols.length > 0);
+    // Gunakan grup yang ada tanpa map/filter redundan
+    const aGroups = JABATAN_GROUPS;
 
-  // Tentukan baris statistik yang akan ditampilkan (sembunyikan yang bernilai 0 di semua kolom, kecuali beberapa field yang wajib)
-  const visibleRows = ROW_DEFS.filter(({ key, field }) => {
-    if (!summary) return true; // Tampilkan semua baris saat loading
-    if (key === 'formasi' || key === 'total' || key === 'tms' || key === 'aps') return true;
-    const totalVal = field(summary);
-    if (totalVal > 0) return true;
-    return jabatanCols.some(col => field(col.data) > 0);
-  });
+    // Tentukan baris statistik yang akan ditampilkan (sembunyikan yang bernilai 0 di semua kolom, kecuali beberapa field yang wajib)
+    const vRows = ROW_DEFS.filter(({ key, field }) => {
+      if (!summary) return true; // Tampilkan semua baris saat loading
+      if (key === 'formasi' || key === 'total' || key === 'tms' || key === 'aps') return true;
+      const totalVal = field(summary);
+      if (totalVal > 0) return true;
+      return jCols.some(col => field(col.data) > 0);
+    });
+
+    return { jabatanCols: jCols, activeGroups: aGroups, visibleRows: vRows };
+  }, [summary]);
 
   const closePanel = () => {
     setIsVisible(false);
     setTimeout(() => {
-      const target = document.querySelector('.stat-summary');
-      if (target) {
-        const y = target.getBoundingClientRect().top + window.scrollY - 80;
+      if (summaryRef.current) {
+        const y = summaryRef.current.getBoundingClientRect().top + window.scrollY - 80;
         window.scrollTo({ top: y, behavior: 'smooth' });
       }
     }, 50);
   };
 
   return (
-    <div className="stat-summary" style={{ marginBottom: 10 }}>
+    <div ref={summaryRef} className="stat-summary" style={{ marginBottom: 10 }}>
       {/* Tombol toggle (Atas) */}
       <StatToggleBtn
         isOpen={isVisible}
