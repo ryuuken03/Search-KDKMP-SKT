@@ -48,14 +48,29 @@ Pasang semua pustaka yang dibutuhkan:
 npm install
 ```
 
+
 ### 3. Letakkan Berkas PDF & Ekstrak Indeks JSON (Wajib)
 Jika ada pembaruan pada berkas PDF hasil seleksi:
-1. Simpan berkas PDF Anda dengan nama `source.pdf` di dalam folder `assets/kdkmp/sk/` (`assets/kdkmp/sk/source.pdf`).
+
+#### A. Seleksi Kompetensi (SK):
+1. Simpan berkas PDF SK Anda dengan nama `source.pdf` di dalam folder `assets/kdkmp/sk/` (`assets/kdkmp/sk/source.pdf`).
 2. Jalankan script pengekstraksi data untuk mengubah PDF menjadi indeks JSON terkompresi:
    ```bash
    node scripts/extract_kdkmp.mjs
    ```
    *(Script ini akan memproses dokumen secara lokal dan menghasilkan file `assets/kdkmp/sk/data.json` serta `assets/kdkmp/sk/summary.json` secara otomatis).*
+
+#### B. Seleksi Akhir (Kelulusan / SKT):
+1. Letakkan berkas PDF seleksi akhir atau berkas teks halaman hasil parsing.
+2. Ekstrak data dan buat chunks indeks akhir dengan menjalankan:
+   ```bash
+   node extract_all.mjs
+   node add_status_sk.js
+   node rename_keys.js
+   node build_akhir_chunks.mjs
+   ```
+
+---
 
 ### 4. Jalankan Aplikasi (Mode Development)
 Jalankan aplikasi di browser lokal:
@@ -76,4 +91,19 @@ Untuk mengompilasi aplikasi ke versi produksi yang siap di-deploy ke hosting:
 npm run build
 ```
 
-Perintah ini akan membuat folder `dist/` yang hanya berisi file static HTML/JS/CSS dan database JSON terkompresi. Berkas PDF asli (`assets/kdkmp/sk/source.pdf`) **sengaja dilewatkan** agar tidak melebihi kuota upload dan membebani server hosting Anda.
+Perintah ini akan membuat folder `dist/` yang hanya berisi file static HTML/JS/CSS dan database JSON terkompresi. 
+
+### ⚠️ Wajib Diperhatikan untuk Deploy Ke Vercel:
+1. **Lakukan Git Add untuk Indeks Chunks & Summary (Sangat Penting)**: 
+   Karena berkas PDF sumber (`source.pdf`) dan data base utuh (`data.json`) berukuran besar, mereka sengaja dilewatkan agar tidak membebani Vercel. Namun, **seluruh folder chunks dan file indeks terkompresi di folder `assets/combined/` wajib dicommit ke Git**. 
+   Pastikan Anda menjalankan perintah berikut sebelum melakukan push ke GitHub/Vercel:
+   ```bash
+   git add assets/combined/akhir/
+   git add assets/combined/sk/
+   git commit -m "chore: add search index chunks and summaries for deployment"
+   ```
+   *Jika folder-folder di atas tidak dimasukkan ke dalam Git history, build step Vercel tidak akan mendeteksi data pencarian, sehingga pencarian di website Vercel akan kosong.*
+
+2. **Pengaturan Routing**:
+   File `vercel.json` telah ditambahkan di root proyek untuk mengonfigurasi perutean agar semua assets di `/assets/` disajikan langsung oleh CDN Vercel.
+

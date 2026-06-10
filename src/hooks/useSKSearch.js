@@ -9,7 +9,7 @@ import {
   CHUNK_SIZE
 } from '../utils/searchUtils'
 
-export function useSKSearch() {
+export function useSKSearch(datasetPath = DATASET_PATH) {
   const [query, setQuery] = useState('')
   const [searchMode, setSearchMode] = useState('Nama')
   const [lastSearchedQuery, setLastSearchedQuery] = useState('')
@@ -35,7 +35,7 @@ export function useSKSearch() {
     let mounted = true
     ;(async () => {
       try {
-        const res = await fetch(`${DATASET_PATH}/summary.json`)
+        const res = await fetch(`${datasetPath}/summary.json`)
         if (res.ok && mounted) setSummary(await res.json())
       } catch (e) {
         console.error('Gagal fetch summary:', e)
@@ -97,7 +97,7 @@ export function useSKSearch() {
       setProgress('Mengunduh indeks peringkat...')
       let list = loadedPeringkat
       if (!list) {
-        const res = await fetch(`${DATASET_PATH}/peringkat.json`, { signal: controller.signal })
+        const res = await fetch(`${datasetPath}/peringkat.json`, { signal: controller.signal })
         if (!res.ok) throw new Error(`Gagal memuat indeks peringkat: ${res.status}`)
         list = await res.json()
         setLoadedPeringkat(list)
@@ -140,7 +140,7 @@ export function useSKSearch() {
       setProgress('Mengunduh indeks nomor peserta...')
       let list = loadedNoPeserta
       if (!list) {
-        const res = await fetch(`${DATASET_PATH}/no_peserta.json`, { signal: controller.signal })
+        const res = await fetch(`${datasetPath}/no_peserta.json`, { signal: controller.signal })
         if (!res.ok) throw new Error(`Gagal memuat indeks nomor peserta: ${res.status}`)
         list = await res.json()
         setLoadedNoPeserta(list)
@@ -204,7 +204,7 @@ export function useSKSearch() {
       setProgress(`Mengunduh indeks nama "${prefix.toUpperCase()}"...`)
       let rows = loadedPrefixes[cacheKey]
       if (!rows) {
-        const res = await fetch(`${DATASET_PATH}/names/${prefix}.json`, { signal: controller.signal })
+        const res = await fetch(`${datasetPath}/names/${prefix}.json`, { signal: controller.signal })
         if (res.status === 404) {
           rows = []
         } else if (!res.ok) {
@@ -228,7 +228,7 @@ export function useSKSearch() {
           allMatches.push({
             page: row[0],
             matchText: nama,
-            contextItems: [row[1], row[2], row[3], row[4], row[5], row[6]],
+            contextItems: [row[1], row[2], row[3], row[4], row[5], row[6], row[8] !== undefined ? row[8] : ''],
             firstCol: row[1],
             lastCol: row[6],
             jabatan: row[7] ?? null,
@@ -391,7 +391,7 @@ export function useSKSearch() {
           return {
             page: row[0],
             matchText: row[3],
-            contextItems: [row[1], row[2], row[3], row[4], row[5], row[6]],
+            contextItems: [row[1], row[2], row[3], row[4], row[5], row[6], row[8] !== undefined ? row[8] : ''],
             firstCol: row[1],
             lastCol: row[6],
             jabatan: row[7] ?? item.jabatan,
@@ -401,7 +401,7 @@ export function useSKSearch() {
         return {
           page: Math.ceil(rIdx / 50),
           matchText: '',
-          contextItems: [String(rIdx), item.noPeserta, 'Memuat...', '', '', ''],
+          contextItems: [String(rIdx), item.noPeserta, 'Memuat...', '', '', '', ''],
           firstCol: String(rIdx),
           lastCol: '',
           jabatan: item.jabatan,
@@ -419,7 +419,7 @@ export function useSKSearch() {
       return items.map(row => ({
           page: row[0],
           matchText: row[3],
-          contextItems: [row[1], row[2], row[3], row[4], row[5], row[6]],
+          contextItems: [row[1], row[2], row[3], row[4], row[5], row[6], row[8] !== undefined ? row[8] : ''],
           firstCol: row[1],
           lastCol: row[6],
           jabatan: row[7] ?? null,
@@ -448,7 +448,7 @@ export function useSKSearch() {
       try {
         const newChunks = {}
         for (const idx of keysToLoad) {
-          const res = await fetch(`${DATASET_PATH}/chunks/chunk_${idx}.json`)
+          const res = await fetch(`${datasetPath}/chunks/chunk_${idx}.json`)
           if (res.ok) {
             newChunks[`${CACHE_PREFIX}_${idx}`] = await res.json()
           }
@@ -498,7 +498,7 @@ export function useSKSearch() {
         await Promise.all(Array.from(neededChunks).map(async (cIdxStr) => {
           const cIdx = Number(cIdxStr)
           const cKey = `${CACHE_PREFIX}_${cIdx}`
-          const res = await fetch(`${DATASET_PATH}/chunks/chunk_${cIdx}.json`, { signal: controller.signal })
+          const res = await fetch(`${datasetPath}/chunks/chunk_${cIdx}.json`, { signal: controller.signal })
           if (!res.ok) throw new Error(`Gagal memuat chunk data: ${res.status}`)
           newChunks[cKey] = await res.json()
         }))

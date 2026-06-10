@@ -8,6 +8,12 @@ export const STATUS_LEGEND = [
   { key: 'aps', color: '#6b7280', label: 'APS = Pengunduran Atas Permintaan Sendiri' },
 ];
 
+export const STATUS_LEGEND_AKHIR = [
+  { key: 'l', color: '#10b981', label: 'L = Lulus Seleksi' },
+  { key: 'ms', color: '#3b82f6', label: 'MS = Memenuhi Syarat' },
+  { key: 'tms', color: '#f43f5e', label: 'TMS = Tidak Memenuhi Syarat' },
+];
+
 export const APP_TEXT = {
   TITLE: 'Hasil Seleksi KDKMP & KNMP',
   MODE_LIGHT: 'Mode terang',
@@ -30,8 +36,10 @@ export const TABLE_TEXT = {
     NAMA: 'Nama',
     KOGNITIF: 'Kognitif',
     SUBSTANSI: 'Substansi',
+    PENDIDIKAN: 'Pendidikan',
     STATUS: 'Status',
     JABATAN: 'Jabatan',
+    FORMASI: 'Formasi',
   },
   LOADING: 'Sedang mencari…',
   INITIAL_LOADING: 'Memuat data...',
