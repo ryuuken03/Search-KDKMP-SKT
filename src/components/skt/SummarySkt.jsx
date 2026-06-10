@@ -13,17 +13,27 @@ const ROW_DEFS = [
     icon: 'pelamar',
     colorClass: '',
     field: (s) => {
-      if (s?.source?.jumlahFormasi) return Number(s.source.jumlahFormasi);
+      if (s?.source?.jumlahFormasi) return Number(s.source.jumlahFormasi) || '-';
       if (s?.jabatan) {
-        return Object.values(s.jabatan).reduce((sum, j) => sum + (Number(j?.source?.jumlahFormasi) || 0), 0);
+        const sum = Object.values(s.jabatan).reduce((sum, j) => sum + (Number(j?.source?.jumlahFormasi) || 0), 0);
+        return sum || '-';
       }
-      return 0;
+      return '-';
     }
   },
-  { key: 'total', label: 'Total Peserta', icon: 'pelamar', colorClass: '', field: (s) => s?.totalRows || 0 },
-  { key: 'l', label: 'Lulus (L)', icon: 'lulus', colorClass: 'stat-table__row--lulus', field: (s) => Number(s?.statusCounts?.['L']) || 0 },
-  { key: 'ms', label: 'Memenuhi Syarat (MS)', icon: 'lulus', colorClass: 'stat-table__row--lulus', field: (s) => Number(s?.statusCounts?.['MS']) || 0 },
-  { key: 'tms', label: 'Tidak Memenuhi Syarat (TMS)', icon: 'tidakLulus', colorClass: 'stat-table__row--tms', field: (s) => Number(s?.statusCounts?.['TMS']) || 0 }
+  { key: 'total', label: 'Total Peserta', icon: 'pelamar', colorClass: '', field: (s) => s?.totalRows || '-' },
+  { key: 'l', label: 'Lulus (L)', icon: 'lulus', colorClass: 'stat-table__row--lulus', field: (s) => Number(s?.statusCounts?.['L']) || '-' },
+  { key: 'ms', label: 'Memenuhi Syarat (MS)', icon: 'peringatanBiru', colorClass: '', field: (s) => Number(s?.statusCounts?.['MS']) || '-' },
+  { key: 'tms', label: 'Tidak Memenuhi Syarat (TMS)', icon: 'tidakLulus', colorClass: 'stat-table__row--tms', field: (s) => Number(s?.statusCounts?.['TMS']) || '-' },
+  { key: 'pl_l', label: 'P/L jadi L', icon: 'lulus', colorClass: 'stat-table__row--lulus', field: (s) => Number(s?.statusChangeCounts?.['P/L_jadi_L']) || '-' },
+  { key: 'pl_ms', label: 'P/L jadi MS', icon: 'peringatanBiru', colorClass: '', field: (s) => Number(s?.statusChangeCounts?.['P/L_jadi_MS']) || '-' },
+  { key: 'pl_tms', label: 'P/L jadi TMS', icon: 'tidakLulus', colorClass: 'stat-table__row--tms', field: (s) => Number(s?.statusChangeCounts?.['P/L_jadi_TMS']) || '-' },
+  { key: 'p1l_l', label: 'P1/L jadi L', icon: 'lulus', colorClass: 'stat-table__row--lulus', field: (s) => Number(s?.statusChangeCounts?.['P1/L_jadi_L']) || '-' },
+  { key: 'p1l_ms', label: 'P1/L jadi MS', icon: 'peringatanBiru', colorClass: '', field: (s) => Number(s?.statusChangeCounts?.['P1/L_jadi_MS']) || '-' },
+  { key: 'p1l_tms', label: 'P1/L jadi TMS', icon: 'tidakLulus', colorClass: 'stat-table__row--tms', field: (s) => Number(s?.statusChangeCounts?.['P1/L_jadi_TMS']) || '-' },
+  { key: 'p2l_l', label: 'P2/L jadi L', icon: 'lulus', colorClass: 'stat-table__row--lulus', field: (s) => Number(s?.statusChangeCounts?.['P2/L_jadi_L']) || '-' },
+  { key: 'p2l_ms', label: 'P2/L jadi MS', icon: 'peringatanBiru', colorClass: '', field: (s) => Number(s?.statusChangeCounts?.['P2/L_jadi_MS']) || '-' },
+  { key: 'p2l_tms', label: 'P2/L jadi TMS', icon: 'tidakLulus', colorClass: 'stat-table__row--tms', field: (s) => Number(s?.statusChangeCounts?.['P2/L_jadi_TMS']) || '-' }
 ];
 
 const JABATAN_GROUPS = [
@@ -46,6 +56,7 @@ const JABATAN_GROUPS = [
 
 export default function SummarySkt({ summary }) {
   const [isVisible, setIsVisible] = React.useState(false);
+  const [showDetails, setShowDetails] = React.useState(false);
   const summaryRef = React.useRef(null);
 
   const { jabatanCols, activeGroups, visibleRows } = React.useMemo(() => {
@@ -59,15 +70,25 @@ export default function SummarySkt({ summary }) {
     const aGroups = JABATAN_GROUPS;
 
     const vRows = ROW_DEFS.filter(({ key, field }) => {
+      const detailKeys = ['pl_l', 'pl_ms', 'pl_tms', 'p1l_l', 'p1l_ms', 'p1l_tms', 'p2l_l', 'p2l_ms', 'p2l_tms'];
+      if (detailKeys.includes(key)) {
+        return showDetails; // Always show if showDetails is true, else hide
+      }
+
       if (!summary) return true;
       if (key === 'formasi' || key === 'total' || key === 'tms') return true;
+      
       const totalVal = field(summary);
-      if (totalVal > 0) return true;
-      return jCols.some(col => field(col.data) > 0);
+      if (totalVal !== '-' && totalVal > 0) return true;
+      
+      return jCols.some(col => {
+        const val = field(col.data);
+        return val !== '-' && val > 0;
+      });
     });
 
     return { jabatanCols: jCols, activeGroups: aGroups, visibleRows: vRows };
-  }, [summary]);
+  }, [summary, showDetails]);
 
   const closePanel = () => {
     setIsVisible(false);
@@ -119,6 +140,17 @@ export default function SummarySkt({ summary }) {
                 summaryText={SUMMARY_TEXT}
               />
             ))}
+          </div>
+
+          <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1rem', marginTop: '0.5rem' }}>
+            <button
+              type="button"
+              className="stat-summary__toggle-btn"
+              onClick={() => setShowDetails(v => !v)}
+              style={{ fontSize: '0.9rem', padding: '6px 12px' }}
+            >
+              {showDetails ? 'Sembunyikan Detail Perubahan' : 'Detail Selengkapnya'}
+            </button>
           </div>
 
           <StatLegend items={STATUS_LEGEND_AKHIR} />

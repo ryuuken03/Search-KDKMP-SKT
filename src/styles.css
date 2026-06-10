@@ -2295,6 +2295,10 @@ html.dark .jabatan-badge--kdkmp {
   color: #eab308;
 }
 
+.stat-table__row-icon--peringatan-biru {
+  color: #3b82f6;
+}
+
 @media (max-width: 540px) {
 
   .stat-table__th,

@@ -32,6 +32,17 @@
           "TMS": 30525
         },
         "totalRows": 82701
+      },
+      "statusChangeCounts": {
+        "P/L_jadi_L": 21705,
+        "P/L_jadi_MS": 0,
+        "P/L_jadi_TMS": 7871,
+        "P1/L_jadi_L": 8295,
+        "P1/L_jadi_MS": 14843,
+        "P1/L_jadi_TMS": 17414,
+        "P2/L_jadi_L": 0,
+        "P2/L_jadi_MS": 7333,
+        "P2/L_jadi_TMS": 5240
       }
     },
     "KNMP - Manajer Operasional": {
@@ -60,6 +71,17 @@
           "TMS": 1302
         },
         "totalRows": 3166
+      },
+      "statusChangeCounts": {
+        "P/L_jadi_L": 390,
+        "P/L_jadi_MS": 0,
+        "P/L_jadi_TMS": 152,
+        "P1/L_jadi_L": 501,
+        "P1/L_jadi_MS": 0,
+        "P1/L_jadi_TMS": 391,
+        "P2/L_jadi_L": 478,
+        "P2/L_jadi_MS": 495,
+        "P2/L_jadi_TMS": 759
       }
     },
     "KNMP - Kepala Produksi": {
@@ -88,6 +110,17 @@
           "TMS": 1093
         },
         "totalRows": 2777
+      },
+      "statusChangeCounts": {
+        "P/L_jadi_L": 303,
+        "P/L_jadi_MS": 0,
+        "P/L_jadi_TMS": 116,
+        "P1/L_jadi_L": 429,
+        "P1/L_jadi_MS": 0,
+        "P1/L_jadi_TMS": 306,
+        "P2/L_jadi_L": 637,
+        "P2/L_jadi_MS": 315,
+        "P2/L_jadi_TMS": 671
       }
     },
     "KNMP - Penjamin Mutu": {
@@ -116,6 +149,17 @@
           "TMS": 2292
         },
         "totalRows": 5484
+      },
+      "statusChangeCounts": {
+        "P/L_jadi_L": 708,
+        "P/L_jadi_MS": 0,
+        "P/L_jadi_TMS": 250,
+        "P1/L_jadi_L": 661,
+        "P1/L_jadi_MS": 204,
+        "P1/L_jadi_TMS": 703,
+        "P2/L_jadi_L": 0,
+        "P2/L_jadi_MS": 1619,
+        "P2/L_jadi_TMS": 1339
       }
     },
     "KNMP - Administrasi Keuangan": {
@@ -144,7 +188,29 @@
           "TMS": 3330
         },
         "totalRows": 7030
+      },
+      "statusChangeCounts": {
+        "P/L_jadi_L": 827,
+        "P/L_jadi_MS": 0,
+        "P/L_jadi_TMS": 382,
+        "P1/L_jadi_L": 542,
+        "P1/L_jadi_MS": 519,
+        "P1/L_jadi_TMS": 1035,
+        "P2/L_jadi_L": 0,
+        "P2/L_jadi_MS": 1812,
+        "P2/L_jadi_TMS": 1913
       }
     }
+  },
+  "statusChangeCounts": {
+    "P/L_jadi_L": 23933,
+    "P/L_jadi_MS": 0,
+    "P/L_jadi_TMS": 8771,
+    "P1/L_jadi_L": 10428,
+    "P1/L_jadi_MS": 15566,
+    "P1/L_jadi_TMS": 19849,
+    "P2/L_jadi_L": 1115,
+    "P2/L_jadi_MS": 11574,
+    "P2/L_jadi_TMS": 9922
   }
 }
