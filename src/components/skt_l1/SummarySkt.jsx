@@ -1,40 +1,10 @@
-import React from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { SUMMARY_TEXT, STATUS_LEGEND_AKHIR } from '../../config/constants';
 import { ROW_ICONS } from '../common/Icons';
 import StatCard from '../stats/StatCard';
 import StatTable from '../stats/StatTable';
 import StatToggleBtn from '../stats/StatToggleBtn';
 import StatLegend from '../stats/StatLegend';
-
-const ROW_DEFS = [
-  {
-    key: 'formasi',
-    label: 'Jumlah Formasi',
-    icon: 'pelamar',
-    colorClass: '',
-    field: (s) => {
-      if (s?.source?.jumlahFormasi) return Number(s.source.jumlahFormasi) || '-';
-      if (s?.jabatan) {
-        const sum = Object.values(s.jabatan).reduce((sum, j) => sum + (Number(j?.source?.jumlahFormasi) || 0), 0);
-        return sum || '-';
-      }
-      return '-';
-    }
-  },
-  { key: 'total', label: 'Total Peserta', icon: 'pelamar', colorClass: '', field: (s) => s?.totalRows || '-' },
-  { key: 'l', label: 'Lulus (L)', icon: 'lulus', colorClass: 'stat-table__row--lulus', field: (s) => Number(s?.statusCounts?.['L']) || '-' },
-  { key: 'ms', label: 'Memenuhi Syarat (MS)', icon: 'peringatanBiru', colorClass: '', field: (s) => Number(s?.statusCounts?.['MS']) || '-' },
-  { key: 'tms', label: 'Tidak Memenuhi Syarat (TMS)', icon: 'tidakLulus', colorClass: 'stat-table__row--tms', field: (s) => Number(s?.statusCounts?.['TMS']) || '-' },
-  { key: 'pl_l', label: 'P/L jadi L', icon: 'lulus', colorClass: 'stat-table__row--lulus', field: (s) => Number(s?.statusChangeCounts?.['P/L_jadi_L']) || '-' },
-  { key: 'pl_ms', label: 'P/L jadi MS', icon: 'peringatanBiru', colorClass: '', field: (s) => Number(s?.statusChangeCounts?.['P/L_jadi_MS']) || '-' },
-  { key: 'pl_tms', label: 'P/L jadi TMS', icon: 'tidakLulus', colorClass: 'stat-table__row--tms', field: (s) => Number(s?.statusChangeCounts?.['P/L_jadi_TMS']) || '-' },
-  { key: 'p1l_l', label: 'P1/L jadi L', icon: 'lulus', colorClass: 'stat-table__row--lulus', field: (s) => Number(s?.statusChangeCounts?.['P1/L_jadi_L']) || '-' },
-  { key: 'p1l_ms', label: 'P1/L jadi MS', icon: 'peringatanBiru', colorClass: '', field: (s) => Number(s?.statusChangeCounts?.['P1/L_jadi_MS']) || '-' },
-  { key: 'p1l_tms', label: 'P1/L jadi TMS', icon: 'tidakLulus', colorClass: 'stat-table__row--tms', field: (s) => Number(s?.statusChangeCounts?.['P1/L_jadi_TMS']) || '-' },
-  { key: 'p2l_l', label: 'P2/L jadi L', icon: 'lulus', colorClass: 'stat-table__row--lulus', field: (s) => Number(s?.statusChangeCounts?.['P2/L_jadi_L']) || '-' },
-  { key: 'p2l_ms', label: 'P2/L jadi MS', icon: 'peringatanBiru', colorClass: '', field: (s) => Number(s?.statusChangeCounts?.['P2/L_jadi_MS']) || '-' },
-  { key: 'p2l_tms', label: 'P2/L jadi TMS', icon: 'tidakLulus', colorClass: 'stat-table__row--tms', field: (s) => Number(s?.statusChangeCounts?.['P2/L_jadi_TMS']) || '-' }
-];
 
 const JABATAN_GROUPS = [
   {
@@ -55,11 +25,49 @@ const JABATAN_GROUPS = [
 ];
 
 export default function SummarySkt({ summary }) {
-  const [isVisible, setIsVisible] = React.useState(false);
-  const [showDetails, setShowDetails] = React.useState(false);
-  const summaryRef = React.useRef(null);
+  const [isVisible, setIsVisible] = useState(false);
+  const [showDetails, setShowDetails] = useState(false);
+  const [summaryPerubahanL1, setSummaryPerubahanL1] = useState(null);
+  const summaryRef = useRef(null);
 
-  const { jabatanCols, activeGroups, visibleRows } = React.useMemo(() => {
+  useEffect(() => {
+    fetch('/assets/combined/perbedaan/summary_perubahan_l1.json?t=' + Date.now())
+      .then(res => res.json())
+      .then(data => setSummaryPerubahanL1(data))
+      .catch(err => console.error("Failed to load summary L1:", err));
+  }, []);
+
+  const ROW_DEFS = useMemo(() => [
+    {
+      key: 'formasi',
+      label: 'Jumlah Formasi',
+      icon: 'pelamar',
+      colorClass: '',
+      field: (s) => {
+        if (s?.source?.jumlahFormasi) return Number(s.source.jumlahFormasi) || '-';
+        if (s?.jabatan) {
+          const sum = Object.values(s.jabatan).reduce((sum, j) => sum + (Number(j?.source?.jumlahFormasi) || 0), 0);
+          return sum || '-';
+        }
+        return '-';
+      }
+    },
+    { key: 'total', label: 'Total Peserta', icon: 'pelamar', colorClass: '', field: (s) => s?.totalRows || '-' },
+    { key: 'l', label: 'Lulus (L)', icon: 'lulus', colorClass: 'stat-table__row--lulus', field: (s) => Number(s?.statusCounts?.['L']) || '-' },
+    { key: 'ms', label: 'Memenuhi Syarat (MS)', icon: 'peringatanBiru', colorClass: '', field: (s) => Number(s?.statusCounts?.['MS']) || '-' },
+    { key: 'tms', label: 'Tidak Memenuhi Syarat (TMS)', icon: 'tidakLulus', colorClass: 'stat-table__row--tms', field: (s) => Number(s?.statusCounts?.['TMS']) || '-' },
+    { key: 'tetap_l', label: 'Tetap L', icon: 'lulus', colorClass: 'stat-table__row--lulus', field: (s) => (s === summary ? summaryPerubahanL1?.['tetap L'] : s?.statusChangeCounts?.['tetap L']) || '-' },
+    { key: 'tetap_ms', label: 'Tetap MS', icon: 'peringatanBiru', colorClass: '', field: (s) => (s === summary ? summaryPerubahanL1?.['tetap MS'] : s?.statusChangeCounts?.['tetap MS']) || '-' },
+    { key: 'tetap_tms', label: 'Tetap TMS', icon: 'tidakLulus', colorClass: 'stat-table__row--tms', field: (s) => (s === summary ? summaryPerubahanL1?.['tetap TMS'] : s?.statusChangeCounts?.['tetap TMS']) || '-' },
+    { key: 'l_jadi_ms', label: 'L jadi MS', icon: 'peringatanBiru', colorClass: '', field: (s) => (s === summary ? summaryPerubahanL1?.['L jadi MS'] : s?.statusChangeCounts?.['L jadi MS']) || '-' },
+    { key: 'l_jadi_tms', label: 'L jadi TMS', icon: 'tidakLulus', colorClass: 'stat-table__row--tms', field: (s) => (s === summary ? summaryPerubahanL1?.['L jadi TMS'] : s?.statusChangeCounts?.['L jadi TMS']) || '-' },
+    { key: 'ms_jadi_l', label: 'MS jadi L', icon: 'lulus', colorClass: 'stat-table__row--lulus', field: (s) => (s === summary ? summaryPerubahanL1?.['MS jadi L'] : s?.statusChangeCounts?.['MS jadi L']) || '-' },
+    { key: 'ms_jadi_tms', label: 'MS jadi TMS', icon: 'tidakLulus', colorClass: 'stat-table__row--tms', field: (s) => (s === summary ? summaryPerubahanL1?.['MS jadi TMS'] : s?.statusChangeCounts?.['MS jadi TMS']) || '-' },
+    { key: 'tms_jadi_l', label: 'TMS jadi L', icon: 'lulus', colorClass: 'stat-table__row--lulus', field: (s) => (s === summary ? summaryPerubahanL1?.['TMS jadi L'] : s?.statusChangeCounts?.['TMS jadi L']) || '-' },
+    { key: 'tms_jadi_ms', label: 'TMS jadi MS', icon: 'peringatanBiru', colorClass: '', field: (s) => (s === summary ? summaryPerubahanL1?.['TMS jadi MS'] : s?.statusChangeCounts?.['TMS jadi MS']) || '-' }
+  ], [summary, summaryPerubahanL1]);
+
+  const { jabatanCols, activeGroups, visibleRows } = useMemo(() => {
     const jCols = JABATAN_GROUPS
       .flatMap(group => group.cols.map(col => ({
         ...col,
@@ -70,7 +78,7 @@ export default function SummarySkt({ summary }) {
     const aGroups = JABATAN_GROUPS;
 
     const vRows = ROW_DEFS.filter(({ key, field }) => {
-      const detailKeys = ['pl_l', 'pl_ms', 'pl_tms', 'p1l_l', 'p1l_ms', 'p1l_tms', 'p2l_l', 'p2l_ms', 'p2l_tms'];
+      const detailKeys = ['tetap_l', 'tetap_ms', 'tetap_tms', 'l_jadi_ms', 'l_jadi_tms', 'ms_jadi_l', 'ms_jadi_tms', 'tms_jadi_l', 'tms_jadi_ms'];
       if (detailKeys.includes(key)) {
         return showDetails; // Always show if showDetails is true, else hide
       }

@@ -134,12 +134,12 @@ export default function SktResultsTable({
               <tr key={i}>
                 <td data-label="Peringkat">
                   <div>
+                    <span style={{ fontWeight: 'bold' }}>{noCol}</span>
                     {peringkat_sebelum_l1 && peringkat_sebelum_l1 !== '-' && (
                       <div style={{ fontSize: '11px', color: 'hsl(var(--muted-foreground))', marginTop: '2px' }}>
                         SKT: {peringkat_sebelum_l1}
                       </div>
                     )}
-                    <span style={{ fontWeight: 'bold' }}>{noCol}</span>
                     {peringkat_sk && peringkat_sk !== '-' && (
                       <div style={{ fontSize: '11px', color: 'hsl(var(--muted-foreground))', marginTop: '2px' }}>
                         SK: {peringkat_sk}
