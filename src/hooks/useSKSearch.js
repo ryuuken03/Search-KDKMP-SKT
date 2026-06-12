@@ -300,42 +300,30 @@ export function useSKSearch(datasetPath = DATASET_PATH) {
 
   // ── Sort ──────────────────────────────────────────────────────────────────
   const sortedResults = useMemo(() => {
-    return [...results].sort((a, b) => {
-      if (!sortConfig.key) return 0
+    if (!sortConfig.key) return results;
 
-      let valA, valB
-      if (sortConfig.key === 'peringkat') {
-        valA = a.rank || parseInt(a.contextItems?.[0] || '0', 10)
-        valB = b.rank || parseInt(b.contextItems?.[0] || '0', 10)
-        return sortConfig.direction === 'asc' ? valA - valB : valB - valA
-      } else if (sortConfig.key === 'noPeserta') {
-        valA = String(a.noPeserta || a.contextItems?.[1] || '')
-        valB = String(b.noPeserta || b.contextItems?.[1] || '')
-        return sortConfig.direction === 'asc'
-          ? valA.localeCompare(valB, undefined, { numeric: true, sensitivity: 'base' })
-          : valB.localeCompare(valA, undefined, { numeric: true, sensitivity: 'base' })
-      } else if (sortConfig.key === 'nama') {
-        const getNama = (item) => {
+    return [...results].sort((a, b) => {
+      const getVal = (item, key) => {
+        if (key === 'peringkat') return item.rank || parseInt(item.contextItems?.[0] || '0', 10)
+        if (key === 'noPeserta') return String(item.noPeserta || item.contextItems?.[1] || '')
+        if (key === 'nama') {
           if (item.contextItems) return item.contextItems[2] || ''
-          const rIdx = item.rank
-          const cIdx = Math.floor((rIdx - 1) / CHUNK_SIZE)
-          const relIdx = (rIdx - 1) % CHUNK_SIZE
-          const cKey = `${CACHE_PREFIX}_${cIdx}`
-          return loadedChunks[cKey]?.[relIdx]?.[3] || ''
+          const cIdx = Math.floor((item.rank - 1) / CHUNK_SIZE)
+          const relIdx = (item.rank - 1) % CHUNK_SIZE
+          return loadedChunks[`${CACHE_PREFIX}_${cIdx}`]?.[relIdx]?.[3] || ''
         }
-        valA = getNama(a)
-        valB = getNama(b)
-        return sortConfig.direction === 'asc'
-          ? valA.localeCompare(valB, undefined, { sensitivity: 'base' })
-          : valB.localeCompare(valA, undefined, { sensitivity: 'base' })
-      } else if (sortConfig.key === 'jabatan') {
-        valA = String(a.jabatan || '')
-        valB = String(b.jabatan || '')
-        return sortConfig.direction === 'asc'
-          ? valA.localeCompare(valB, undefined, { sensitivity: 'base' })
-          : valB.localeCompare(valA, undefined, { sensitivity: 'base' })
+        if (key === 'jabatan') return String(item.jabatan || '')
+        return ''
       }
-      return 0
+
+      const valA = getVal(a, sortConfig.key)
+      const valB = getVal(b, sortConfig.key)
+      const dirMult = sortConfig.direction === 'asc' ? 1 : -1
+
+      if (sortConfig.key === 'peringkat') {
+        return (valA - valB) * dirMult
+      }
+      return valA.localeCompare(valB, undefined, { numeric: true, sensitivity: 'base' }) * dirMult
     })
   }, [results, sortConfig, loadedChunks])
 
