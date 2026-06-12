@@ -26,6 +26,7 @@ const formatRowData = (r, i, indexOfFirstItem) => {
     pendidikan: vals[4] || '',     // now substansi
     status: vals[5] || r.lastCol || '',
     status_sk: vals[6] || '',      // now status_sk
+    peringkat_sk: vals[7] || '',   // now peringkat_sk
     jabatan: r.jabatan || '',
     error: r.error
   }
@@ -118,7 +119,7 @@ export default function SktResultsTable({
         </thead>
         <tbody>
           {displayItems.map((r, i) => {
-            const { error, noCol, peserta, nama, jabatanFormasi, pendidikan, status, status_sk, jabatan } = formatRowData(r, i, indexOfFirstItem)
+            const { error, noCol, peserta, nama, jabatanFormasi, pendidikan, status, status_sk, peringkat_sk, jabatan } = formatRowData(r, i, indexOfFirstItem)
 
             if (error) {
               return (
@@ -129,7 +130,16 @@ export default function SktResultsTable({
             }
             return (
               <tr key={i}>
-                <td data-label="Peringkat"><span>{noCol}</span></td>
+                <td data-label="Peringkat">
+                  <div>
+                    <span style={{ fontWeight: 'bold' }}>{noCol}</span>
+                    {peringkat_sk && peringkat_sk !== '-' && (
+                      <div style={{ fontSize: '11px', color: 'hsl(var(--muted-foreground))', marginTop: '2px' }}>
+                        SK: {peringkat_sk}
+                      </div>
+                    )}
+                  </div>
+                </td>
                 <td data-label="No Peserta"><span>{peserta}</span></td>
                 <td data-label="Nama"><span>{nama}</span></td>
                 <td data-label="Kognitif"><span>{jabatanFormasi}</span></td>

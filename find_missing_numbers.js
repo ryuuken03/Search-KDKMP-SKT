@@ -9,11 +9,11 @@ function findMissingNumbers() {
     const dataAkhir = JSON.parse(fs.readFileSync(akhirPath, 'utf8'));
     const dataSk = JSON.parse(fs.readFileSync(skPath, 'utf8'));
 
-    // Create a Set of 'nomor_peserta' from sk/data.json for faster lookup
-    const skNumbers = new Set(dataSk.rows.map(item => item.nomor_peserta));
+    // Create a Set of 'Nomor Kartu Ujian' from sk/data.json for faster lookup
+    const skNumbers = new Set(dataSk.rows.map(item => item[2])); // Index 2 is Nomor Kartu Ujian
 
-    // Find items in akhir/data.json that do not have their 'nomor_peserta' in the Set
-    const missing = dataAkhir.filter(item => !skNumbers.has(item.nomor_peserta));
+    // Find items in akhir/data.json that do not have their 'Nomor Kartu Ujian' in the Set
+    const missing = dataAkhir.filter(item => !skNumbers.has(item['Nomor Kartu Ujian']));
 
     const outputDir = path.dirname(outputPath);
     if (!fs.existsSync(outputDir)) {

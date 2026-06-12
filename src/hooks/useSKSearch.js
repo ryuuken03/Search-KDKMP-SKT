@@ -228,7 +228,7 @@ export function useSKSearch(datasetPath = DATASET_PATH) {
           allMatches.push({
             page: row[0],
             matchText: nama,
-            contextItems: [row[1], row[2], row[3], row[4], row[5], row[6], row[8] !== undefined ? row[8] : ''],
+            contextItems: [row[1], row[2], row[3], row[4], row[5], row[6], row[8] !== undefined ? row[8] : '', row[9] !== undefined ? row[9] : '', row[10] !== undefined ? row[10] : '', row[11] !== undefined ? row[11] : ''],
             firstCol: row[1],
             lastCol: row[6],
             jabatan: row[7] ?? null,
@@ -391,7 +391,7 @@ export function useSKSearch(datasetPath = DATASET_PATH) {
           return {
             page: row[0],
             matchText: row[3],
-            contextItems: [row[1], row[2], row[3], row[4], row[5], row[6], row[8] !== undefined ? row[8] : ''],
+            contextItems: [row[1], row[2], row[3], row[4], row[5], row[6], row[8] !== undefined ? row[8] : '', row[9] !== undefined ? row[9] : '', row[10] !== undefined ? row[10] : '', row[11] !== undefined ? row[11] : ''],
             firstCol: row[1],
             lastCol: row[6],
             jabatan: row[7] ?? item.jabatan,
@@ -401,7 +401,7 @@ export function useSKSearch(datasetPath = DATASET_PATH) {
         return {
           page: Math.ceil(rIdx / 50),
           matchText: '',
-          contextItems: [String(rIdx), item.noPeserta, 'Memuat...', '', '', '', ''],
+          contextItems: [String(rIdx), item.noPeserta, 'Memuat...', '', '', '', '', '', '', ''],
           firstCol: String(rIdx),
           lastCol: '',
           jabatan: item.jabatan,
@@ -419,7 +419,7 @@ export function useSKSearch(datasetPath = DATASET_PATH) {
       return items.map(row => ({
           page: row[0],
           matchText: row[3],
-          contextItems: [row[1], row[2], row[3], row[4], row[5], row[6], row[8] !== undefined ? row[8] : ''],
+          contextItems: [row[1], row[2], row[3], row[4], row[5], row[6], row[8] !== undefined ? row[8] : '', row[9] !== undefined ? row[9] : '', row[10] !== undefined ? row[10] : '', row[11] !== undefined ? row[11] : ''],
           firstCol: row[1],
           lastCol: row[6],
           jabatan: row[7] ?? null,

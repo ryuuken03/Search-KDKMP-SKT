@@ -10,7 +10,8 @@ for (let i = 0; i < skRows.length; i++) {
     const r = skRows[i];
     const noPeserta = r[2];
     const status = r[6];
-    skMap.set(noPeserta, status);
+    const peringkat_sk = r[1];
+    skMap.set(noPeserta, { status, peringkat_sk });
 }
 
 console.log("Loading Akhir data...");
@@ -24,12 +25,14 @@ for (let i = 0; i < akhirData.length; i++) {
     const row = akhirData[i];
     const noPeserta = row["Nomor Kartu Ujian"];
     
-    const skStatus = skMap.get(noPeserta);
-    if (skStatus) {
-        row["status_sk"] = skStatus;
+    const skInfo = skMap.get(noPeserta);
+    if (skInfo) {
+        row["status_sk"] = skInfo.status;
+        row["peringkat_sk"] = skInfo.peringkat_sk;
         updated++;
     } else {
         row["status_sk"] = "-";
+        row["peringkat_sk"] = "-";
         notFound++;
     }
 }

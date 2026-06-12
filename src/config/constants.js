@@ -18,7 +18,8 @@ export const APP_TEXT = {
   TITLE: 'Hasil Seleksi KDKMP & KNMP',
   MODE_LIGHT: 'Mode terang',
   MODE_DARK: 'Mode gelap',
-  TAB_SKT: 'Hasil Akhir',
+  TAB_SKT: 'Hasil SKT',
+  TAB_SKT_L1: 'Hasil Akhir',
   TAB_SK: 'Hasil SK',
   SCROLL_TOP: 'Kembali ke atas',
 };

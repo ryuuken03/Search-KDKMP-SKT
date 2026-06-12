@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { useTheme } from './hooks/useTheme'
 import SKPage from './pages/SkPage'
 import SktPage from './pages/SktPage'
+import SktL1Page from './pages/SktL1Page'
 import './styles.css'
 import logoKdkmp from '../assets/images/logo-kdkmp.jpg'
 import logoKnmp from '../assets/images/logo-knmp.jpg'
@@ -9,7 +10,7 @@ import { APP_TEXT } from './config/constants'
 import ThemeToggle from './components/common/ThemeToggle'
 
 export default function App() {
-  const [activeTab, setActiveTab] = useState('skt')
+  const [activeTab, setActiveTab] = useState('skt_l1')
   const { isDark, toggleTheme } = useTheme()
 
   return (
@@ -51,6 +52,18 @@ export default function App() {
       </div>
 
       <nav className="app-tabs" role="tablist" aria-label="Jenis hasil seleksi">
+
+        <button
+          type="button"
+          role="tab"
+          id="tab-skt-l1"
+          aria-selected={activeTab === 'skt_l1'}
+          aria-controls="panel-skt-l1"
+          className={`app-tabs__btn${activeTab === 'skt_l1' ? ' app-tabs__btn--active' : ''}`}
+          onClick={() => setActiveTab('skt_l1')}
+        >
+          {APP_TEXT.TAB_SKT_L1}
+        </button>
         <button
           type="button"
           role="tab"
@@ -77,11 +90,11 @@ export default function App() {
 
       <div
         role="tabpanel"
-        id={activeTab === 'sk' ? 'panel-sk' : 'panel-skt'}
-        aria-labelledby={activeTab === 'sk' ? 'tab-sk' : 'tab-skt'}
+        id={activeTab === 'sk' ? 'panel-sk' : activeTab === 'skt_l1' ? 'panel-skt-l1' : 'panel-skt'}
+        aria-labelledby={activeTab === 'sk' ? 'tab-sk' : activeTab === 'skt_l1' ? 'tab-skt-l1' : 'tab-skt'}
         className="app-tab-panel"
       >
-        {activeTab === 'sk' ? <SKPage /> : <SktPage />}
+        {activeTab === 'sk' ? <SKPage /> : activeTab === 'skt_l1' ? <SktL1Page /> : <SktPage />}
       </div>
 
       <footer className="app-footer" style={{

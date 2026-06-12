@@ -38,5 +38,6 @@ export function detectSearchMode(queryStr, totalRows) {
 
 export const DATASET_PATH = '/assets/combined/sk'
 export const DATASET_PATH_AKHIR = '/assets/combined/akhir'
+export const DATASET_PATH_AKHIR_L1 = '/assets/combined/akhir_layer_1'
 export const CACHE_PREFIX = 'combined'
 export const CHUNK_SIZE   = 5000

@@ -31,7 +31,8 @@ for (let i = 0; i < data.length; i++) {
         row.Substansi,
         row.Keterangan,
         row.Jabatan_Label,
-        row.status_sk || "-"
+        row.status_sk || "-",
+        row.peringkat_sk || "-"
     ];
     
     currentChunk.push(rowArray);
