@@ -145,39 +145,92 @@ body {
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
-.app-tabs {
-  display: flex;
-  gap: 8px;
+.app-tabs-dropdown {
+  position: relative;
   margin: 16px 0 20px;
-  padding: 4px;
   border-radius: calc(var(--radius) + 2px);
   border: 1px solid hsl(var(--border));
   background: hsl(var(--muted) / 0.4);
 }
 
-.app-tabs__btn {
+.app-tabs-dropdown__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4px;
+}
+
+.app-tabs-dropdown__active-label {
   flex: 1;
-  height: 40px;
   padding: 0 16px;
+  font-size: 14px;
+  font-weight: 600;
+  color: hsl(var(--foreground));
+}
+
+.app-tabs-dropdown__toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border: 0;
+  border-radius: var(--radius);
+  background: transparent;
+  color: hsl(var(--muted-foreground));
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+
+.app-tabs-dropdown__toggle:hover,
+.app-tabs-dropdown__toggle.active {
+  background: hsl(var(--accent) / 0.6);
+  color: hsl(var(--foreground));
+}
+
+.app-tabs-dropdown__menu {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: 8px;
+  min-width: 200px;
+  padding: 6px;
+  border-radius: calc(var(--radius) + 2px);
+  border: 1px solid hsl(var(--border));
+  background: hsl(var(--card));
+  box-shadow: 0 4px 12px rgb(0 0 0 / 0.15);
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.app-tabs-dropdown__item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 10px 12px;
   border: 0;
   border-radius: var(--radius);
   background: transparent;
   color: hsl(var(--muted-foreground));
   font-size: 14px;
-  font-weight: 600;
+  font-weight: 500;
+  text-align: left;
   cursor: pointer;
-  transition: background 0.15s, color 0.15s, box-shadow 0.15s;
+  transition: background 0.15s, color 0.15s;
 }
 
-.app-tabs__btn:hover {
-  color: hsl(var(--foreground));
+.app-tabs-dropdown__item:hover {
   background: hsl(var(--accent) / 0.6);
+  color: hsl(var(--foreground));
 }
 
-.app-tabs__btn--active {
-  background: hsl(var(--brand));
-  color: hsl(var(--btn-search-fg));
-  box-shadow: 0 2px 6px rgb(0 0 0 / 0.15);
+.app-tabs-dropdown__item.active {
+  background: hsl(var(--brand) / 0.15);
+  color: hsl(var(--brand));
+  font-weight: 600;
 }
 
 .app-tab-panel {

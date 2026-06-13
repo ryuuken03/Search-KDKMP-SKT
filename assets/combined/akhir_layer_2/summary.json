@@ -1,0 +1,205 @@
+{
+  "totalRows": 101158,
+  "statusCounts": {
+    "L": 35476,
+    "MS": 24168,
+    "TMS": 41514
+  },
+  "jabatan": {
+    "KDKMP - Manajer": {
+      "label": "KDKMP - Manajer",
+      "totalRows": 82701,
+      "statusCounts": {
+        "L": 30000,
+        "MS": 19712,
+        "TMS": 32989
+      },
+      "source": {
+        "jumlahFormasi": "30000",
+        "jumlahPeserta": "82701",
+        "kehadiran": {
+          "hadir": "82701",
+          "tidakHadir": "0"
+        },
+        "kelulusan": {
+          "jumlah": "30000",
+          "persen": "36.28"
+        },
+        "jabatan": "MANAJER - KDKMP",
+        "statusCounts": {
+          "L": 30000,
+          "MS": 19712,
+          "TMS": 32989
+        },
+        "totalRows": 82701
+      },
+      "statusChangeCounts": {
+        "tetap L": 29584,
+        "tetap MS": 19712,
+        "tetap TMS": 32573,
+        "L jadi MS": 0,
+        "L jadi TMS": 416,
+        "MS jadi L": 416,
+        "MS jadi TMS": 0,
+        "TMS jadi L": 0,
+        "TMS jadi MS": 0
+      }
+    },
+    "KNMP - Manajer Operasional": {
+      "label": "KNMP - Manajer Operasional",
+      "totalRows": 3166,
+      "statusCounts": {
+        "L": 1369,
+        "MS": 390,
+        "TMS": 1407
+      },
+      "source": {
+        "jumlahFormasi": "1369",
+        "jumlahPeserta": "3166",
+        "kehadiran": {
+          "hadir": "3166",
+          "tidakHadir": "0"
+        },
+        "kelulusan": {
+          "jumlah": "1369",
+          "persen": "43.24"
+        },
+        "jabatan": "MANAJER OPERASIONAL - KNMP",
+        "statusCounts": {
+          "L": 1369,
+          "MS": 390,
+          "TMS": 1407
+        },
+        "totalRows": 3166
+      },
+      "statusChangeCounts": {
+        "tetap L": 1352,
+        "tetap MS": 390,
+        "tetap TMS": 1390,
+        "L jadi MS": 0,
+        "L jadi TMS": 17,
+        "MS jadi L": 17,
+        "MS jadi TMS": 0,
+        "TMS jadi L": 0,
+        "TMS jadi MS": 0
+      }
+    },
+    "KNMP - Kepala Produksi": {
+      "label": "KNMP - Kepala Produksi",
+      "totalRows": 2777,
+      "statusCounts": {
+        "L": 1369,
+        "MS": 214,
+        "TMS": 1194
+      },
+      "source": {
+        "jumlahFormasi": "1369",
+        "jumlahPeserta": "2777",
+        "kehadiran": {
+          "hadir": "2777",
+          "tidakHadir": "0"
+        },
+        "kelulusan": {
+          "jumlah": "1369",
+          "persen": "49.30"
+        },
+        "jabatan": "KEPALA PRODUKSI",
+        "statusCounts": {
+          "L": 1369,
+          "MS": 214,
+          "TMS": 1194
+        },
+        "totalRows": 2777
+      },
+      "statusChangeCounts": {
+        "tetap L": 1350,
+        "tetap MS": 214,
+        "tetap TMS": 1175,
+        "L jadi MS": 0,
+        "L jadi TMS": 19,
+        "MS jadi L": 19,
+        "MS jadi TMS": 0,
+        "TMS jadi L": 0,
+        "TMS jadi MS": 0
+      }
+    },
+    "KNMP - Penjamin Mutu": {
+      "label": "KNMP - Penjamin Mutu",
+      "totalRows": 5484,
+      "statusCounts": {
+        "L": 1369,
+        "MS": 1687,
+        "TMS": 2428
+      },
+      "source": {
+        "jumlahFormasi": "1369",
+        "jumlahPeserta": "5484",
+        "kehadiran": {
+          "hadir": "5484",
+          "tidakHadir": "0"
+        },
+        "kelulusan": {
+          "jumlah": "1369",
+          "persen": "24.96"
+        },
+        "jabatan": "PENJAMIN MUTU",
+        "statusCounts": {
+          "L": 1369,
+          "MS": 1687,
+          "TMS": 2428
+        },
+        "totalRows": 5484
+      },
+      "statusChangeCounts": {
+        "tetap L": 1341,
+        "tetap MS": 1687,
+        "tetap TMS": 2400,
+        "L jadi MS": 0,
+        "L jadi TMS": 28,
+        "MS jadi L": 28,
+        "MS jadi TMS": 0,
+        "TMS jadi L": 0,
+        "TMS jadi MS": 0
+      }
+    },
+    "KNMP - Administrasi Keuangan": {
+      "label": "KNMP - Administrasi Keuangan",
+      "totalRows": 7030,
+      "statusCounts": {
+        "L": 1369,
+        "MS": 2165,
+        "TMS": 3496
+      },
+      "source": {
+        "jumlahFormasi": "1369",
+        "jumlahPeserta": "7030",
+        "kehadiran": {
+          "hadir": "7030",
+          "tidakHadir": "0"
+        },
+        "kelulusan": {
+          "jumlah": "1369",
+          "persen": "19.47"
+        },
+        "jabatan": "ADMINISTRASI KEUANGAN",
+        "statusCounts": {
+          "L": 1369,
+          "MS": 2165,
+          "TMS": 3496
+        },
+        "totalRows": 7030
+      },
+      "statusChangeCounts": {
+        "tetap L": 1334,
+        "tetap MS": 2165,
+        "tetap TMS": 3461,
+        "L jadi MS": 0,
+        "L jadi TMS": 35,
+        "MS jadi L": 35,
+        "MS jadi TMS": 0,
+        "TMS jadi L": 0,
+        "TMS jadi MS": 0
+      }
+    }
+  }
+}

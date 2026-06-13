@@ -19,6 +19,7 @@ export const APP_TEXT = {
   MODE_LIGHT: 'Mode terang',
   MODE_DARK: 'Mode gelap',
   TAB_SKT_L1: 'Pengganti Layer 1',
+  TAB_SKT_L2: 'Pengganti Layer 2',
   TAB_SKT: 'SKT',
   TAB_SK: 'SK',
   SCROLL_TOP: 'Kembali ke atas',

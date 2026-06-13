@@ -1,8 +1,9 @@
-import React, { useState } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import { useTheme } from './hooks/useTheme'
 import SKPage from './pages/SkPage'
 import SktPage from './pages/SktPage'
 import SktL1Page from './pages/SktL1Page'
+import SktL2Page from './pages/SktL2Page'
 import './styles.css'
 import logoKdkmp from '../assets/images/logo-kdkmp.jpg'
 import logoKnmp from '../assets/images/logo-knmp.jpg'
@@ -10,7 +11,28 @@ import { APP_TEXT } from './config/constants'
 import ThemeToggle from './components/common/ThemeToggle'
 
 export default function App() {
-  const [activeTab, setActiveTab] = useState('skt_l1')
+  const [activeTab, setActiveTab] = useState('skt_l2')
+  const [isTabMenuOpen, setIsTabMenuOpen] = useState(false)
+  const dropdownRef = useRef(null)
+
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsTabMenuOpen(false)
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside)
+    return () => document.removeEventListener("mousedown", handleClickOutside)
+  }, [])
+
+  const TABS = [
+    { id: 'skt_l2', label: APP_TEXT.TAB_SKT_L2 },
+    { id: 'skt_l1', label: APP_TEXT.TAB_SKT_L1 },
+    { id: 'skt', label: APP_TEXT.TAB_SKT },
+    { id: 'sk', label: APP_TEXT.TAB_SK }
+  ]
+  
+  const activeTabLabel = TABS.find(t => t.id === activeTab)?.label || 'Tab'
   const { isDark, toggleTheme } = useTheme()
 
   return (
@@ -51,50 +73,58 @@ export default function App() {
         </a>
       </div>
 
-      <nav className="app-tabs" role="tablist" aria-label="Jenis hasil seleksi">
+      <nav className="app-tabs-dropdown" ref={dropdownRef} role="tablist" aria-label="Jenis hasil seleksi">
+        <div className="app-tabs-dropdown__header">
+          <span className="app-tabs-dropdown__active-label">{activeTabLabel}</span>
+          <button 
+            className={`app-tabs-dropdown__toggle ${isTabMenuOpen ? 'active' : ''}`}
+            onClick={() => setIsTabMenuOpen(!isTabMenuOpen)}
+            aria-label="Pilih tab lainnya"
+            aria-expanded={isTabMenuOpen}
+          >
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="12" cy="12" r="1.5"></circle>
+              <circle cx="19" cy="12" r="1.5"></circle>
+              <circle cx="5" cy="12" r="1.5"></circle>
+            </svg>
+          </button>
+        </div>
 
-        <button
-          type="button"
-          role="tab"
-          id="tab-skt-l1"
-          aria-selected={activeTab === 'skt_l1'}
-          aria-controls="panel-skt-l1"
-          className={`app-tabs__btn${activeTab === 'skt_l1' ? ' app-tabs__btn--active' : ''}`}
-          onClick={() => setActiveTab('skt_l1')}
-        >
-          {APP_TEXT.TAB_SKT_L1}
-        </button>
-        <button
-          type="button"
-          role="tab"
-          id="tab-skt"
-          aria-selected={activeTab === 'skt'}
-          aria-controls="panel-skt"
-          className={`app-tabs__btn${activeTab === 'skt' ? ' app-tabs__btn--active' : ''}`}
-          onClick={() => setActiveTab('skt')}
-        >
-          {APP_TEXT.TAB_SKT}
-        </button>
-        <button
-          type="button"
-          role="tab"
-          id="tab-sk"
-          aria-selected={activeTab === 'sk'}
-          aria-controls="panel-sk"
-          className={`app-tabs__btn${activeTab === 'sk' ? ' app-tabs__btn--active' : ''}`}
-          onClick={() => setActiveTab('sk')}
-        >
-          {APP_TEXT.TAB_SK}
-        </button>
+        {isTabMenuOpen && (
+          <div className="app-tabs-dropdown__menu">
+            {TABS.map(tab => (
+              <button
+                key={tab.id}
+                type="button"
+                role="tab"
+                id={`tab-${tab.id.replace('_', '-')}`}
+                aria-selected={activeTab === tab.id}
+                aria-controls={`panel-${tab.id.replace('_', '-')}`}
+                className={`app-tabs-dropdown__item ${activeTab === tab.id ? 'active' : ''}`}
+                onClick={() => {
+                  setActiveTab(tab.id)
+                  setIsTabMenuOpen(false)
+                }}
+              >
+                {tab.label}
+                {activeTab === tab.id && (
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                    <polyline points="20 6 9 17 4 12"></polyline>
+                  </svg>
+                )}
+              </button>
+            ))}
+          </div>
+        )}
       </nav>
 
       <div
         role="tabpanel"
-        id={activeTab === 'sk' ? 'panel-sk' : activeTab === 'skt_l1' ? 'panel-skt-l1' : 'panel-skt'}
-        aria-labelledby={activeTab === 'sk' ? 'tab-sk' : activeTab === 'skt_l1' ? 'tab-skt-l1' : 'tab-skt'}
+        id={activeTab === 'sk' ? 'panel-sk' : activeTab === 'skt_l2' ? 'panel-skt-l2' : activeTab === 'skt_l1' ? 'panel-skt-l1' : 'panel-skt'}
+        aria-labelledby={activeTab === 'sk' ? 'tab-sk' : activeTab === 'skt_l2' ? 'tab-skt-l2' : activeTab === 'skt_l1' ? 'tab-skt-l1' : 'tab-skt'}
         className="app-tab-panel"
       >
-        {activeTab === 'sk' ? <SKPage /> : activeTab === 'skt_l1' ? <SktL1Page /> : <SktPage />}
+        {activeTab === 'sk' ? <SKPage /> : activeTab === 'skt_l2' ? <SktL2Page /> : activeTab === 'skt_l1' ? <SktL1Page /> : <SktPage />}
       </div>
 
       <footer className="app-footer" style={{
