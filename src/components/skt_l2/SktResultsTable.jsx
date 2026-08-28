@@ -15,7 +15,7 @@ const getStatusColor = (status) => {
 const formatRowData = (r, i, indexOfFirstItem) => {
   const raw = r.contextItems || []
   const vals = raw.map((v) => String(v || '').trim())
-  
+
   return {
     noCol: vals[0] || (indexOfFirstItem + i + 1),
     peserta: vals[1] || r.firstCol || '',
@@ -64,10 +64,10 @@ export default function SktResultsTable(props) {
             <span style={{ fontWeight: 'bold' }}>{noCol}</span>
             {peringkat_sebelum_l2 && peringkat_sebelum_l2 !== '-' && (
               <div style={{ fontSize: '11px', color: 'hsl(var(--muted-foreground))', marginTop: '2px' }}>
-                SKT L1: {peringkat_sebelum_l2}
+                Layer 1: {peringkat_sebelum_l2}
               </div>
             )}
-            {peringkat_sebelum_l1 && peringkat_sebelum_l1 !== '-' && (
+            {/* {peringkat_sebelum_l1 && peringkat_sebelum_l1 !== '-' && (
               <div style={{ fontSize: '11px', color: 'hsl(var(--muted-foreground))', marginTop: '2px' }}>
                 SKT Asli: {peringkat_sebelum_l1}
               </div>
@@ -76,7 +76,7 @@ export default function SktResultsTable(props) {
               <div style={{ fontSize: '11px', color: 'hsl(var(--muted-foreground))', marginTop: '2px' }}>
                 SK: {peringkat_sk}
               </div>
-            )}
+            )} */}
           </div>
         </td>
         <td data-label="No Peserta"><span>{peserta}</span></td>
@@ -90,10 +90,10 @@ export default function SktResultsTable(props) {
             </span>
             {status_sebelum_l2 && status_sebelum_l2 !== '-' && (
               <div style={{ fontSize: '11px', color: 'hsl(var(--muted-foreground))', marginTop: '2px' }}>
-                SKT L1: {status_sebelum_l2}
+                Layer 1: {status_sebelum_l2}
               </div>
             )}
-            {status_sebelum_l1 && status_sebelum_l1 !== '-' && (
+            {/* {status_sebelum_l1 && status_sebelum_l1 !== '-' && (
               <div style={{ fontSize: '11px', color: 'hsl(var(--muted-foreground))', marginTop: '2px' }}>
                 SKT Asli: {status_sebelum_l1}
               </div>
@@ -102,7 +102,7 @@ export default function SktResultsTable(props) {
               <div style={{ fontSize: '11px', color: 'hsl(var(--muted-foreground))', marginTop: '2px' }}>
                 SK: {status_sk}
               </div>
-            )}
+            )} */}
           </div>
         </td>
         <td data-label="SATDIK">

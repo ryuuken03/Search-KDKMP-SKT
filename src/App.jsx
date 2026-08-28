@@ -4,6 +4,7 @@ import SKPage from './pages/SkPage'
 import SktPage from './pages/SktPage'
 import SktL1Page from './pages/SktL1Page'
 import SktL2Page from './pages/SktL2Page'
+import SktL3Page from './pages/SktL3Page'
 import './styles.css'
 import logoKdkmp from '../assets/images/logo-kdkmp.jpg'
 import logoKnmp from '../assets/images/logo-knmp.jpg'
@@ -11,7 +12,7 @@ import { APP_TEXT } from './config/constants'
 import ThemeToggle from './components/common/ThemeToggle'
 
 export default function App() {
-  const [activeTab, setActiveTab] = useState('skt_l2')
+  const [activeTab, setActiveTab] = useState('skt_l3')
   const [isTabMenuOpen, setIsTabMenuOpen] = useState(false)
   const dropdownRef = useRef(null)
 
@@ -26,12 +27,13 @@ export default function App() {
   }, [])
 
   const TABS = [
+    { id: 'skt_l3', label: APP_TEXT.TAB_SKT_L3 },
     { id: 'skt_l2', label: APP_TEXT.TAB_SKT_L2 },
     { id: 'skt_l1', label: APP_TEXT.TAB_SKT_L1 },
     { id: 'skt', label: APP_TEXT.TAB_SKT },
     { id: 'sk', label: APP_TEXT.TAB_SK }
   ]
-  
+
   const activeTabLabel = TABS.find(t => t.id === activeTab)?.label || 'Tab'
   const { isDark, toggleTheme } = useTheme()
 
@@ -76,7 +78,7 @@ export default function App() {
       <nav className="app-tabs-dropdown" ref={dropdownRef} role="tablist" aria-label="Jenis hasil seleksi">
         <div className="app-tabs-dropdown__header">
           <span className="app-tabs-dropdown__active-label">{activeTabLabel}</span>
-          <button 
+          <button
             className={`app-tabs-dropdown__toggle ${isTabMenuOpen ? 'active' : ''}`}
             onClick={() => setIsTabMenuOpen(!isTabMenuOpen)}
             aria-label="Pilih tab lainnya"
@@ -120,11 +122,11 @@ export default function App() {
 
       <div
         role="tabpanel"
-        id={activeTab === 'sk' ? 'panel-sk' : activeTab === 'skt_l2' ? 'panel-skt-l2' : activeTab === 'skt_l1' ? 'panel-skt-l1' : 'panel-skt'}
-        aria-labelledby={activeTab === 'sk' ? 'tab-sk' : activeTab === 'skt_l2' ? 'tab-skt-l2' : activeTab === 'skt_l1' ? 'tab-skt-l1' : 'tab-skt'}
+        id={activeTab === 'sk' ? 'panel-sk' : activeTab === 'skt_l3' ? 'panel-skt-l3' : activeTab === 'skt_l2' ? 'panel-skt-l2' : activeTab === 'skt_l1' ? 'panel-skt-l1' : 'panel-skt'}
+        aria-labelledby={activeTab === 'sk' ? 'tab-sk' : activeTab === 'skt_l3' ? 'tab-skt-l3' : activeTab === 'skt_l2' ? 'tab-skt-l2' : activeTab === 'skt_l1' ? 'tab-skt-l1' : 'tab-skt'}
         className="app-tab-panel"
       >
-        {activeTab === 'sk' ? <SKPage /> : activeTab === 'skt_l2' ? <SktL2Page /> : activeTab === 'skt_l1' ? <SktL1Page /> : <SktPage />}
+        {activeTab === 'sk' ? <SKPage /> : activeTab === 'skt_l3' ? <SktL3Page /> : activeTab === 'skt_l2' ? <SktL2Page /> : activeTab === 'skt_l1' ? <SktL1Page /> : <SktPage />}
       </div>
 
       <footer className="app-footer" style={{
