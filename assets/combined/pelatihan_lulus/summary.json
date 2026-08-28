@@ -1,0 +1,43 @@
+{
+  "totalRows": 33773,
+  "statusCounts": {
+    "LULUS": 33773
+  },
+  "jabatan": {
+    "KDKMP - Manajer": {
+      "label": "KDKMP - Manajer",
+      "totalRows": 28614,
+      "statusCounts": {
+        "LULUS": 28614
+      }
+    },
+    "KNMP - Manajer Operasional": {
+      "label": "KNMP - Manajer Operasional",
+      "totalRows": 1308,
+      "statusCounts": {
+        "LULUS": 1308
+      }
+    },
+    "KNMP - Kepala Produksi": {
+      "label": "KNMP - Kepala Produksi",
+      "totalRows": 1296,
+      "statusCounts": {
+        "LULUS": 1296
+      }
+    },
+    "KNMP - Penjamin Mutu": {
+      "label": "KNMP - Penjamin Mutu",
+      "totalRows": 1288,
+      "statusCounts": {
+        "LULUS": 1288
+      }
+    },
+    "KNMP - Administrasi Keuangan": {
+      "label": "KNMP - Administrasi Keuangan",
+      "totalRows": 1267,
+      "statusCounts": {
+        "LULUS": 1267
+      }
+    }
+  }
+}
