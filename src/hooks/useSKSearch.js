@@ -386,6 +386,9 @@ export function useSKSearch(datasetPath = DATASET_PATH) {
 
     return [...rows].sort((a, b) => {
       const dirMult = sortConfig.direction === 'asc' ? 1 : -1
+      if (sortConfig.key === 'urut') {
+        return (parseInt(a[8] || '0', 10) - parseInt(b[8] || '0', 10)) * dirMult
+      }
       if (sortConfig.key === 'peringkat') {
         return (parseInt(a[1] || '0', 10) - parseInt(b[1] || '0', 10)) * dirMult
       }
@@ -408,6 +411,7 @@ export function useSKSearch(datasetPath = DATASET_PATH) {
 
     return [...results].sort((a, b) => {
       const getVal = (item, key) => {
+        if (key === 'urut') return parseInt(item.contextItems?.[6] || '0', 10)
         if (key === 'peringkat') return item.rank || parseInt(item.contextItems?.[0] || '0', 10)
         if (key === 'noPeserta') return String(item.noPeserta || item.contextItems?.[1] || '')
         if (key === 'nama') {
@@ -424,7 +428,7 @@ export function useSKSearch(datasetPath = DATASET_PATH) {
       const valB = getVal(b, sortConfig.key)
       const dirMult = sortConfig.direction === 'asc' ? 1 : -1
 
-      if (sortConfig.key === 'peringkat') {
+      if (sortConfig.key === 'urut' || sortConfig.key === 'peringkat') {
         return (valA - valB) * dirMult
       }
       return valA.localeCompare(valB, undefined, { numeric: true, sensitivity: 'base' }) * dirMult

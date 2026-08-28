@@ -10,9 +10,10 @@ import logoKdkmp from '../assets/images/logo-kdkmp.jpg'
 import logoKnmp from '../assets/images/logo-knmp.jpg'
 import { APP_TEXT } from './config/constants'
 import ThemeToggle from './components/common/ThemeToggle'
+import PelatihanLulus from './pages/PelatihanLulus'
 
 export default function App() {
-  const [activeTab, setActiveTab] = useState('skt_l3')
+  const [activeTab, setActiveTab] = useState('pelatihan_lulus')
   const [isTabMenuOpen, setIsTabMenuOpen] = useState(false)
   const dropdownRef = useRef(null)
 
@@ -27,6 +28,7 @@ export default function App() {
   }, [])
 
   const TABS = [
+    { id: 'pelatihan_lulus', label: APP_TEXT.TAB_PELATIHAN_LULUS },
     { id: 'skt_l3', label: APP_TEXT.TAB_SKT_L3 },
     { id: 'skt_l2', label: APP_TEXT.TAB_SKT_L2 },
     { id: 'skt_l1', label: APP_TEXT.TAB_SKT_L1 },
@@ -122,11 +124,23 @@ export default function App() {
 
       <div
         role="tabpanel"
-        id={activeTab === 'sk' ? 'panel-sk' : activeTab === 'skt_l3' ? 'panel-skt-l3' : activeTab === 'skt_l2' ? 'panel-skt-l2' : activeTab === 'skt_l1' ? 'panel-skt-l1' : 'panel-skt'}
-        aria-labelledby={activeTab === 'sk' ? 'tab-sk' : activeTab === 'skt_l3' ? 'tab-skt-l3' : activeTab === 'skt_l2' ? 'tab-skt-l2' : activeTab === 'skt_l1' ? 'tab-skt-l1' : 'tab-skt'}
+        id={`panel-${activeTab.replace(/_/g, '-')}`}
+        aria-labelledby={`tab-${activeTab.replace(/_/g, '-')}`}
         className="app-tab-panel"
       >
-        {activeTab === 'sk' ? <SKPage /> : activeTab === 'skt_l3' ? <SktL3Page /> : activeTab === 'skt_l2' ? <SktL2Page /> : activeTab === 'skt_l1' ? <SktL1Page /> : <SktPage />}
+        {activeTab === 'pelatihan_lulus' ? (
+          <PelatihanLulus />
+        ) : activeTab === 'sk' ? (
+          <SKPage />
+        ) : activeTab === 'skt_l3' ? (
+          <SktL3Page />
+        ) : activeTab === 'skt_l2' ? (
+          <SktL2Page />
+        ) : activeTab === 'skt_l1' ? (
+          <SktL1Page />
+        ) : (
+          <SktPage />
+        )}
       </div>
 
       <footer className="app-footer" style={{

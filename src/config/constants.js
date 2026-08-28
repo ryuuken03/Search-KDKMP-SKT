@@ -21,6 +21,7 @@ export const APP_TEXT = {
   TAB_SKT_L1: 'Hasil Pengganti Layer 1',
   TAB_SKT_L2: 'Hasil Pengganti Layer 2',
   TAB_SKT_L3: 'Hasil Pengganti Layer 3',
+  TAB_PELATIHAN_LULUS: 'Hasil Pelatihan Batch 1',
   TAB_SKT: 'Hasil SKT',
   TAB_SK: 'Hasil SK',
   SCROLL_TOP: 'Kembali ke atas',
@@ -34,6 +35,7 @@ export const SEARCH_TEXT = {
 
 export const TABLE_TEXT = {
   HEADERS: {
+    URUT: 'No',
     PERINGKAT: 'Peringkat',
     NO_PESERTA: 'No Peserta',
     NAMA: 'Nama',

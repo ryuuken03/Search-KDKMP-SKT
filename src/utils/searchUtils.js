@@ -41,5 +41,6 @@ export const DATASET_PATH_AKHIR = '/assets/combined/akhir'
 export const DATASET_PATH_AKHIR_L1 = '/assets/combined/akhir_layer_1'
 export const DATASET_PATH_AKHIR_L2 = '/assets/combined/akhir_layer_2'
 export const DATASET_PATH_AKHIR_L3 = '/assets/combined/akhir_layer_3'
+export const DATASET_PATH_PELATIHAN_LULUS = '/assets/combined/pelatihan_lulus'
 export const CACHE_PREFIX = 'combined'
 export const CHUNK_SIZE   = 5000
