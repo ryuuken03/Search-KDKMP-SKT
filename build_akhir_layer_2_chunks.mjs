@@ -34,7 +34,8 @@ for (let i = 0; i < data.length; i++) {
         row.status_sebelum_l1 || "-",
         row.peringkat_sebelum_l1 || "-",
         row.status_sebelum_l2 || "-",
-        row.peringkat_sebelum_l2 || "-"
+        row.peringkat_sebelum_l2 || "-",
+        row.satdik || "-"
     ];
     
     currentChunk.push(rowArray);

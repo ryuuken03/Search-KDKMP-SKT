@@ -5,6 +5,7 @@ import { DATASET_PATH_AKHIR_L2 } from '../utils/searchUtils'
 import SkSearchControls from '../components/sk/SkSearchControls'
 import SktResultsTable from '../components/skt_l2/SktResultsTable'
 import JabatanFilter from '../components/sk/KnmpJabatanFilter'
+import SatdikFilter from '../components/skt_l2/SatdikFilter'
 import SmartFallbackHint from '../components/common/SmartFallbackHint'
 import SktLegendSection from '../components/skt_l2/SktLegendSection'
 import { SUMMARY_TEXT } from '../config/constants'
@@ -36,19 +37,29 @@ export default function SktL2Page() {
     displayItems,
     selectedJabatan,
     setSelectedJabatan,
+    selectedSatdik,
+    setSelectedSatdik,
+    satdikList,
   } = useSKSearch(DATASET_PATH_AKHIR_L2)
 
   return (
     <div className="skt-page sk-page">
       <SummarySkt summary={summary} />
 
-      {!hasSearched && (
+      {!hasSearched && !selectedSatdik && (
         <JabatanFilter
           selectedJabatan={selectedJabatan}
           setSelectedJabatan={setSelectedJabatan}
           summaries={summary?.jabatan || {}}
         />
       )}
+
+      <SatdikFilter
+        selectedSatdik={selectedSatdik}
+        setSelectedSatdik={setSelectedSatdik}
+        satdikList={satdikList}
+        loading={loading}
+      />
 
       <SkSearchControls
         query={query}

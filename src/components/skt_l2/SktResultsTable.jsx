@@ -29,6 +29,7 @@ const formatRowData = (r, i, indexOfFirstItem) => {
     peringkat_sebelum_l1: vals[9] || '',
     status_sebelum_l2: vals[10] || '',
     peringkat_sebelum_l2: vals[11] || '',
+    satdik: vals[12] || '',
     jabatan: r.jabatan || '',
     error: r.error
   }
@@ -41,17 +42,18 @@ const columns = [
   { key: 'kognitif', label: TABLE_TEXT.HEADERS.KOGNITIF, sortable: false },
   { key: 'substansi', label: TABLE_TEXT.HEADERS.SUBSTANSI, sortable: false },
   { key: 'status', label: TABLE_TEXT.HEADERS.STATUS, sortable: false },
+  { key: 'satdik', label: 'SATDIK', sortable: false },
   { key: 'jabatan', label: TABLE_TEXT.HEADERS.JABATAN, sortable: true },
 ]
 
 export default function SktResultsTable(props) {
   const renderRow = (r, i, indexOfFirstItem) => {
-    const { error, noCol, peserta, nama, jabatanFormasi, pendidikan, status, status_sk, peringkat_sk, status_sebelum_l1, peringkat_sebelum_l1, status_sebelum_l2, peringkat_sebelum_l2, jabatan } = formatRowData(r, i, indexOfFirstItem)
+    const { error, noCol, peserta, nama, jabatanFormasi, pendidikan, status, status_sk, peringkat_sk, status_sebelum_l1, peringkat_sebelum_l1, status_sebelum_l2, peringkat_sebelum_l2, satdik, jabatan } = formatRowData(r, i, indexOfFirstItem)
 
     if (error) {
       return (
         <tr key={i} className="empty-row">
-          <td colSpan={7}>{error}</td>
+          <td colSpan={8}>{error}</td>
         </tr>
       )
     }
@@ -103,6 +105,9 @@ export default function SktResultsTable(props) {
             )}
           </div>
         </td>
+        <td data-label="SATDIK">
+          <span>{satdik && satdik !== '-' ? satdik : '-'}</span>
+        </td>
         <td data-label="Jabatan">
           <span className={`jabatan-badge jabatan-badge--${getJabatanSlug(jabatan)}`}>
             {jabatan}
@@ -116,7 +121,7 @@ export default function SktResultsTable(props) {
     <BaseResultsTable
       columns={columns}
       renderRow={renderRow}
-      colSpan={7}
+      colSpan={8}
       {...props}
     />
   )

@@ -63,6 +63,7 @@ for (let i = 0; i < pages.length; i++) {
                 "Nomor Kartu Ujian": match[2],
                 "Nama Peserta": match[3].trim(),
                 "Keterangan": match[5].trim(),
+                "satdik": match[6].trim(),
                 "Jabatan_Label": currentJabatan.label
             });
         }
@@ -93,6 +94,7 @@ jabatans.forEach(j => {
             "Nama Peserta": row["Nama Peserta"],
             "Keterangan": row.Keterangan,
             "Jabatan_Label": row.Jabatan_Label,
+            "satdik": row.satdik || "",
             "Kognitif": oldRow.Kognitif || "",
             "Substansi": oldRow.Substansi || "",
             "status_sk": oldRow.status_sk || "",

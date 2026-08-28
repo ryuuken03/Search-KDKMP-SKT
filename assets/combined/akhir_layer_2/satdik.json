@@ -1,0 +1,337 @@
+[
+  {
+    "id": 0,
+    "nama": "AAL",
+    "jumlah": 507
+  },
+  {
+    "id": 1,
+    "nama": "AAU",
+    "jumlah": 500
+  },
+  {
+    "id": 2,
+    "nama": "AKADEMI TNI",
+    "jumlah": 160
+  },
+  {
+    "id": 3,
+    "nama": "BRIGIF 1 MAR",
+    "jumlah": 700
+  },
+  {
+    "id": 4,
+    "nama": "BRIGIF 2 MAR",
+    "jumlah": 480
+  },
+  {
+    "id": 5,
+    "nama": "BRIGIF 4 MAR LAMPUNG",
+    "jumlah": 200
+  },
+  {
+    "id": 6,
+    "nama": "DBN RINDAM V/BRW",
+    "jumlah": 700
+  },
+  {
+    "id": 7,
+    "nama": "DBN RINDAM XII/TPR",
+    "jumlah": 700
+  },
+  {
+    "id": 8,
+    "nama": "DBN RINDAM XXII/TB",
+    "jumlah": 1000
+  },
+  {
+    "id": 9,
+    "nama": "DODIK BN RINDAM III/SLW",
+    "jumlah": 787
+  },
+  {
+    "id": 10,
+    "nama": "DODIKJUR RINDAM VI/MLW",
+    "jumlah": 700
+  },
+  {
+    "id": 11,
+    "nama": "DODIKLATPUR RINDAM V/BRW",
+    "jumlah": 1200
+  },
+  {
+    "id": 12,
+    "nama": "KODIKDUKKUM KODIKLATAL",
+    "jumlah": 684
+  },
+  {
+    "id": 13,
+    "nama": "KODIKMAR",
+    "jumlah": 898
+  },
+  {
+    "id": 14,
+    "nama": "KOLAT KOARMADA I",
+    "jumlah": 450
+  },
+  {
+    "id": 15,
+    "nama": "MENART 1 MAR",
+    "jumlah": 927
+  },
+  {
+    "id": 16,
+    "nama": "MENBANPUR 2 MAR",
+    "jumlah": 400
+  },
+  {
+    "id": 17,
+    "nama": "PLP 3 GRATI",
+    "jumlah": 177
+  },
+  {
+    "id": 18,
+    "nama": "PLP 4 PURBOYO",
+    "jumlah": 450
+  },
+  {
+    "id": 19,
+    "nama": "PLP 5 BALURAN",
+    "jumlah": 381
+  },
+  {
+    "id": 20,
+    "nama": "PMPP TNI",
+    "jumlah": 700
+  },
+  {
+    "id": 21,
+    "nama": "PUS KOMPETENSI BN",
+    "jumlah": 850
+  },
+  {
+    "id": 22,
+    "nama": "PUSBAHASA AU (304)",
+    "jumlah": 750
+  },
+  {
+    "id": 23,
+    "nama": "PUSDIK INTELAD",
+    "jumlah": 250
+  },
+  {
+    "id": 24,
+    "nama": "PUSDIK KOWAD KODIKLATAD",
+    "jumlah": 400
+  },
+  {
+    "id": 25,
+    "nama": "PUSDIK PENERBAD PUSPENERBAD",
+    "jumlah": 330
+  },
+  {
+    "id": 26,
+    "nama": "PUSDIK PENGMILUM",
+    "jumlah": 250
+  },
+  {
+    "id": 27,
+    "nama": "PUSDIKAJEN DITAJENAD",
+    "jumlah": 600
+  },
+  {
+    "id": 28,
+    "nama": "PUSDIKARHANUD PUSSENARHANUD",
+    "jumlah": 700
+  },
+  {
+    "id": 29,
+    "nama": "PUSDIKARMED PUSSENARMED",
+    "jumlah": 1100
+  },
+  {
+    "id": 30,
+    "nama": "PUSDIKBEKANG PUSBEKANGAD",
+    "jumlah": 820
+  },
+  {
+    "id": 31,
+    "nama": "PUSDIKIF PUSSENIF",
+    "jumlah": 368
+  },
+  {
+    "id": 32,
+    "nama": "PUSDIKJAS DISJASAD",
+    "jumlah": 600
+  },
+  {
+    "id": 33,
+    "nama": "PUSDIKKAV PUSSENKAV",
+    "jumlah": 500
+  },
+  {
+    "id": 34,
+    "nama": "PUSDIKKES PUSKESAD",
+    "jumlah": 236
+  },
+  {
+    "id": 35,
+    "nama": "PUSDIKKUM DITKUMAD",
+    "jumlah": 200
+  },
+  {
+    "id": 36,
+    "nama": "PUSDIKPAL PUSPALAD",
+    "jumlah": 200
+  },
+  {
+    "id": 37,
+    "nama": "PUSDIKPOM PUSPOMAD",
+    "jumlah": 550
+  },
+  {
+    "id": 38,
+    "nama": "PUSDIKTER PUSTERAD",
+    "jumlah": 500
+  },
+  {
+    "id": 39,
+    "nama": "PUSDIKTOP (SATDIK BA/TA)",
+    "jumlah": 200
+  },
+  {
+    "id": 40,
+    "nama": "PUSDIKTOP DITOPAD (SATDIKPA)",
+    "jumlah": 250
+  },
+  {
+    "id": 41,
+    "nama": "PUSDIKU DITKUAD",
+    "jumlah": 678
+  },
+  {
+    "id": 42,
+    "nama": "PUSLATDIKSARMIL KODIKLATAL",
+    "jumlah": 1160
+  },
+  {
+    "id": 43,
+    "nama": "PUSLATPUR KODIKLATAD",
+    "jumlah": 950
+  },
+  {
+    "id": 44,
+    "nama": "RINDAM I/BB",
+    "jumlah": 1000
+  },
+  {
+    "id": 45,
+    "nama": "RINDAM II/SWJ",
+    "jumlah": 488
+  },
+  {
+    "id": 46,
+    "nama": "RINDAM IM",
+    "jumlah": 1200
+  },
+  {
+    "id": 47,
+    "nama": "RINDAM IV/DIP",
+    "jumlah": 560
+  },
+  {
+    "id": 48,
+    "nama": "RINDAM IX/UDY",
+    "jumlah": 770
+  },
+  {
+    "id": 49,
+    "nama": "RINDAM JAYA",
+    "jumlah": 500
+  },
+  {
+    "id": 50,
+    "nama": "RINDAM XIII/MDK",
+    "jumlah": 332
+  },
+  {
+    "id": 51,
+    "nama": "RINDAM XIV/HSN",
+    "jumlah": 617
+  },
+  {
+    "id": 52,
+    "nama": "RINDAM XV/PTM",
+    "jumlah": 431
+  },
+  {
+    "id": 53,
+    "nama": "RINDAM XVII/CEN",
+    "jumlah": 388
+  },
+  {
+    "id": 54,
+    "nama": "SATDIK 1 KODIKLATAL TG.UBAN",
+    "jumlah": 200
+  },
+  {
+    "id": 55,
+    "nama": "SATDIK 2 KODIKLATAL MAKASSAR",
+    "jumlah": 200
+  },
+  {
+    "id": 56,
+    "nama": "SATDIK 4 KODIKLATAL MANADO",
+    "jumlah": 246
+  },
+  {
+    "id": 57,
+    "nama": "SECAPA AD",
+    "jumlah": 250
+  },
+  {
+    "id": 58,
+    "nama": "SESKOAD",
+    "jumlah": 201
+  },
+  {
+    "id": 59,
+    "nama": "SKADIK 201/WING 200",
+    "jumlah": 300
+  },
+  {
+    "id": 60,
+    "nama": "SKADIK 303/WING 300",
+    "jumlah": 200
+  },
+  {
+    "id": 61,
+    "nama": "SKADIK 402/WING 400",
+    "jumlah": 300
+  },
+  {
+    "id": 62,
+    "nama": "SKADIK 502/WING 500",
+    "jumlah": 200
+  },
+  {
+    "id": 63,
+    "nama": "SKADIK 804/WING 800",
+    "jumlah": 400
+  },
+  {
+    "id": 64,
+    "nama": "WINGDIK 500 (501,504)",
+    "jumlah": 350
+  },
+  {
+    "id": 65,
+    "nama": "YON PARAKO 461",
+    "jumlah": 600
+  },
+  {
+    "id": 66,
+    "nama": "YON PARAKO 465",
+    "jumlah": 600
+  }
+]

@@ -26,11 +26,14 @@ export function useSKSearch(datasetPath = DATASET_PATH) {
   const [hasSearched, setHasSearched] = useState(false)
   const [currentPage, setCurrentPage] = useState(1)
   const [selectedJabatan, setSelectedJabatan] = useState('KDKMP - Manajer')
+  const [selectedSatdik, setSelectedSatdik] = useState(null)
+  const [satdikList, setSatdikList] = useState([])
+  const [loadedSatdiks, setLoadedSatdiks] = useState({})
 
   const ITEMS_PER_PAGE = useItemsPerPage()
   const debouncedQuery = useDebounce(query, 500)
 
-  // ── Fetch summary.json ────────────────────────────────────────────────────
+  // ── Fetch summary.json & satdik.json ──────────────────────────────────────
   useEffect(() => {
     let mounted = true
     ;(async () => {
@@ -40,11 +43,55 @@ export function useSKSearch(datasetPath = DATASET_PATH) {
       } catch (e) {
         console.error('Gagal fetch summary:', e)
       }
+
+      try {
+        const resSatdik = await fetch(`${datasetPath}/satdik.json`)
+        if (resSatdik.ok && mounted) {
+          const list = await resSatdik.json()
+          if (Array.isArray(list)) setSatdikList(list)
+        }
+      } catch (e) {
+        // Optional dataset without satdik
+      }
     })()
     return () => { mounted = false }
-  }, [])
+  }, [datasetPath])
 
   const totalRows = summary?.totalRows || 483648
+
+  // ── Fetch SATDIK partition on demand ──────────────────────────────────────
+  useEffect(() => {
+    if (!selectedSatdik) return
+    if (loadedSatdiks[selectedSatdik]) return
+
+    const item = satdikList.find(s => s.nama === selectedSatdik)
+    if (!item || item.id === undefined) return
+
+    let mounted = true
+    setLoading(true)
+    setProgress(`Memuat data SATDIK "${selectedSatdik}"...`)
+
+    ;(async () => {
+      try {
+        const res = await fetch(`${datasetPath}/satdik_data/${item.id}.json`)
+        if (res.ok) {
+          const rows = await res.json()
+          if (mounted) {
+            setLoadedSatdiks(prev => ({ ...prev, [selectedSatdik]: rows }))
+            setProgress('')
+          }
+        } else {
+          if (mounted) setProgress('Gagal memuat data SATDIK.')
+        }
+      } catch (e) {
+        if (mounted) setProgress('Error memuat berkas SATDIK.')
+      } finally {
+        if (mounted) setLoading(false)
+      }
+    })()
+
+    return () => { mounted = false }
+  }, [selectedSatdik, satdikList, loadedSatdiks, datasetPath])
 
   // ── Hitung offsets jabatan untuk browse mode ──────────────────────────────
   const jabatanOffsets = useMemo(() => {
@@ -61,7 +108,7 @@ export function useSKSearch(datasetPath = DATASET_PATH) {
   // Reset page when filter changes
   useEffect(() => {
     setCurrentPage(1)
-  }, [selectedJabatan])
+  }, [selectedJabatan, selectedSatdik])
 
   function cancelSearch() {
     if (abortController) {
@@ -228,7 +275,7 @@ export function useSKSearch(datasetPath = DATASET_PATH) {
           allMatches.push({
             page: row[0],
             matchText: nama,
-            contextItems: [row[1], row[2], row[3], row[4], row[5], row[6], row[8] !== undefined ? row[8] : '', row[9] !== undefined ? row[9] : '', row[10] !== undefined ? row[10] : '', row[11] !== undefined ? row[11] : '', row[12] !== undefined ? row[12] : '', row[13] !== undefined ? row[13] : ''],
+            contextItems: [row[1], row[2], row[3], row[4], row[5], row[6], row[8] !== undefined ? row[8] : '', row[9] !== undefined ? row[9] : '', row[10] !== undefined ? row[10] : '', row[11] !== undefined ? row[11] : '', row[12] !== undefined ? row[12] : '', row[13] !== undefined ? row[13] : '', row[14] !== undefined ? row[14] : ''],
             firstCol: row[1],
             lastCol: row[6],
             jabatan: row[7] ?? null,
@@ -261,10 +308,18 @@ export function useSKSearch(datasetPath = DATASET_PATH) {
     setSearchMode(mode)
     setLastSearchedQuery(queryToUse)
     setHasSearched(true)
-    setLoading(true)
-    setResults([])
     setCurrentPage(1)
     setSortConfig({ key: null, direction: 'asc' })
+
+    if (selectedSatdik) {
+      // In-memory instant search for selected Satdik
+      setLoading(false)
+      setProgress(`Mencari dalam SATDIK "${selectedSatdik}"...`)
+      return
+    }
+
+    setLoading(true)
+    setResults([])
 
     const controller = new AbortController()
     setAbortController(controller)
@@ -298,7 +353,56 @@ export function useSKSearch(datasetPath = DATASET_PATH) {
   }, [debouncedQuery])
 
 
-  // ── Sort ──────────────────────────────────────────────────────────────────
+  // ── SATDIK Filtered & Sorted Rows ─────────────────────────────────────────
+  const isFilteringSatdik = selectedSatdik !== null
+
+  const filteredSatdikRows = useMemo(() => {
+    if (!selectedSatdik) return []
+    const rows = loadedSatdiks[selectedSatdik] || []
+    if (!hasSearched || !lastSearchedQuery) return rows
+
+    const q = lastSearchedQuery.toLowerCase().trim()
+    const qWords = q.split(/[^a-z0-9]+/).filter(Boolean)
+
+    return rows.filter(row => {
+      const noPeserta = String(row[2] || '').toLowerCase()
+      const nama = String(row[3] || '').toLowerCase()
+      const rank = String(row[1] || '').toLowerCase()
+
+      if (searchMode === 'Nomor Peserta') {
+        return noPeserta.includes(q)
+      } else if (searchMode === 'Peringkat') {
+        return rank === q
+      } else {
+        return qWords.every(w => nama.includes(w))
+      }
+    })
+  }, [selectedSatdik, loadedSatdiks, hasSearched, lastSearchedQuery, searchMode])
+
+  const sortedSatdikRows = useMemo(() => {
+    if (!selectedSatdik) return []
+    const rows = hasSearched ? filteredSatdikRows : (loadedSatdiks[selectedSatdik] || [])
+    if (!sortConfig.key) return rows
+
+    return [...rows].sort((a, b) => {
+      const dirMult = sortConfig.direction === 'asc' ? 1 : -1
+      if (sortConfig.key === 'peringkat') {
+        return (parseInt(a[1] || '0', 10) - parseInt(b[1] || '0', 10)) * dirMult
+      }
+      if (sortConfig.key === 'noPeserta') {
+        return String(a[2] || '').localeCompare(String(b[2] || '')) * dirMult
+      }
+      if (sortConfig.key === 'nama') {
+        return String(a[3] || '').localeCompare(String(b[3] || '')) * dirMult
+      }
+      if (sortConfig.key === 'jabatan') {
+        return String(a[7] || '').localeCompare(String(b[7] || '')) * dirMult
+      }
+      return 0
+    })
+  }, [selectedSatdik, hasSearched, filteredSatdikRows, loadedSatdiks, sortConfig])
+
+  // ── Global Sort ───────────────────────────────────────────────────────────
   const sortedResults = useMemo(() => {
     if (!sortConfig.key) return results;
 
@@ -328,11 +432,13 @@ export function useSKSearch(datasetPath = DATASET_PATH) {
   }, [results, sortConfig, loadedChunks])
 
   // ── Pagination ────────────────────────────────────────────────────────────
-  const isFilteringJabatan = !hasSearched && selectedJabatan !== null
+  const isFilteringJabatan = !hasSearched && !isFilteringSatdik && selectedJabatan !== null
 
-  const totalItems = hasSearched 
-    ? sortedResults.length 
-    : (isFilteringJabatan ? (summary?.jabatan?.[selectedJabatan]?.totalRows || 0) : totalRows)
+  const totalItems = isFilteringSatdik
+    ? (hasSearched ? sortedSatdikRows.length : (sortedSatdikRows.length || satdikList.find(s => s.nama === selectedSatdik)?.jumlah || 0))
+    : (hasSearched 
+        ? sortedResults.length 
+        : (isFilteringJabatan ? (summary?.jabatan?.[selectedJabatan]?.totalRows || 0) : totalRows))
 
   const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE)
   
@@ -349,7 +455,7 @@ export function useSKSearch(datasetPath = DATASET_PATH) {
   let chunkIdx = 0
   let relativeStart = 0
 
-  if (!hasSearched) {
+  if (!hasSearched && !isFilteringSatdik) {
     const globalStartIndex = isFilteringJabatan ? (jabatanOffsets[selectedJabatan] || 0) : 0
     const globalFirstItemIndex = globalStartIndex + indexOfFirstItem
     
@@ -366,6 +472,33 @@ export function useSKSearch(datasetPath = DATASET_PATH) {
 
   // ── displayItems ──────────────────────────────────────────────────────────
   const displayItems = useMemo(() => {
+    if (isFilteringSatdik) {
+      const rows = sortedSatdikRows.slice(indexOfFirstItem, indexOfLastItem)
+      return rows.map(row => ({
+        page: row[0],
+        matchText: row[3],
+        contextItems: [
+          row[1],
+          row[2],
+          row[3],
+          row[4],
+          row[5],
+          row[6],
+          row[8] !== undefined ? row[8] : '',
+          row[9] !== undefined ? row[9] : '',
+          row[10] !== undefined ? row[10] : '',
+          row[11] !== undefined ? row[11] : '',
+          row[12] !== undefined ? row[12] : '',
+          row[13] !== undefined ? row[13] : '',
+          row[14] !== undefined ? row[14] : ''
+        ],
+        firstCol: row[1],
+        lastCol: row[6],
+        jabatan: row[7] ?? null,
+        jabatanSlug: null,
+      }))
+    }
+
     if (hasSearched) {
       return sortedResults.slice(indexOfFirstItem, indexOfLastItem).map(item => {
         if (item.contextItems) return item
@@ -379,7 +512,7 @@ export function useSKSearch(datasetPath = DATASET_PATH) {
           return {
             page: row[0],
             matchText: row[3],
-            contextItems: [row[1], row[2], row[3], row[4], row[5], row[6], row[8] !== undefined ? row[8] : '', row[9] !== undefined ? row[9] : '', row[10] !== undefined ? row[10] : '', row[11] !== undefined ? row[11] : '', row[12] !== undefined ? row[12] : '', row[13] !== undefined ? row[13] : ''],
+            contextItems: [row[1], row[2], row[3], row[4], row[5], row[6], row[8] !== undefined ? row[8] : '', row[9] !== undefined ? row[9] : '', row[10] !== undefined ? row[10] : '', row[11] !== undefined ? row[11] : '', row[12] !== undefined ? row[12] : '', row[13] !== undefined ? row[13] : '', row[14] !== undefined ? row[14] : ''],
             firstCol: row[1],
             lastCol: row[6],
             jabatan: row[7] ?? item.jabatan,
@@ -389,7 +522,7 @@ export function useSKSearch(datasetPath = DATASET_PATH) {
         return {
           page: Math.ceil(rIdx / 50),
           matchText: '',
-          contextItems: [String(rIdx), item.noPeserta, 'Memuat...', '', '', '', '', '', '', '', '', ''],
+          contextItems: [String(rIdx), item.noPeserta, 'Memuat...', '', '', '', '', '', '', '', '', '', ''],
           firstCol: String(rIdx),
           lastCol: '',
           jabatan: item.jabatan,
@@ -407,18 +540,18 @@ export function useSKSearch(datasetPath = DATASET_PATH) {
       return items.map(row => ({
           page: row[0],
           matchText: row[3],
-          contextItems: [row[1], row[2], row[3], row[4], row[5], row[6], row[8] !== undefined ? row[8] : '', row[9] !== undefined ? row[9] : '', row[10] !== undefined ? row[10] : '', row[11] !== undefined ? row[11] : '', row[12] !== undefined ? row[12] : '', row[13] !== undefined ? row[13] : ''],
+          contextItems: [row[1], row[2], row[3], row[4], row[5], row[6], row[8] !== undefined ? row[8] : '', row[9] !== undefined ? row[9] : '', row[10] !== undefined ? row[10] : '', row[11] !== undefined ? row[11] : '', row[12] !== undefined ? row[12] : '', row[13] !== undefined ? row[13] : '', row[14] !== undefined ? row[14] : ''],
           firstCol: row[1],
           lastCol: row[6],
           jabatan: row[7] ?? null,
           jabatanSlug: null,
       }))
     }
-  }, [hasSearched, sortedResults, indexOfFirstItem, indexOfLastItem, loadedChunks, currentChunk, nextChunk, ITEMS_PER_PAGE, totalItems, relativeStart])
+  }, [isFilteringSatdik, sortedSatdikRows, hasSearched, sortedResults, indexOfFirstItem, indexOfLastItem, loadedChunks, currentChunk, nextChunk, ITEMS_PER_PAGE, totalItems, relativeStart])
 
   // ── Load chunk untuk browse mode ──────────────────────────────────────────
   useEffect(() => {
-    if (hasSearched) return
+    if (hasSearched || isFilteringSatdik) return
     const keysToLoad = []
     if (!loadedChunks[cacheKeyChunk]) keysToLoad.push(chunkIdx)
     if (relativeStart + ITEMS_PER_PAGE > CHUNK_SIZE && !loadedChunks[cacheKeyNextChunk]) {
@@ -453,11 +586,11 @@ export function useSKSearch(datasetPath = DATASET_PATH) {
     })()
 
     return () => { mounted = false }
-  }, [currentPage, hasSearched, loadedChunks, selectedJabatan, chunkIdx, nextChunkIdx, relativeStart, ITEMS_PER_PAGE, cacheKeyChunk, cacheKeyNextChunk])
+  }, [currentPage, hasSearched, isFilteringSatdik, loadedChunks, selectedJabatan, chunkIdx, nextChunkIdx, relativeStart, ITEMS_PER_PAGE, cacheKeyChunk, cacheKeyNextChunk, datasetPath])
 
   // ── Lazy-load chunks untuk Nomor Peserta results ───────────────────────────
   useEffect(() => {
-    if (!hasSearched) return
+    if (!hasSearched || isFilteringSatdik) return
     let mounted = true
 
     const neededChunks = new Set()
@@ -505,7 +638,7 @@ export function useSKSearch(datasetPath = DATASET_PATH) {
       mounted = false
       controller.abort()
     }
-  }, [displayItems, hasSearched, loadedChunks])
+  }, [displayItems, hasSearched, isFilteringSatdik, loadedChunks, datasetPath])
 
   const requestSort = (key) => {
     let direction = 'asc'
@@ -545,5 +678,8 @@ export function useSKSearch(datasetPath = DATASET_PATH) {
     displayItems,
     selectedJabatan,
     setSelectedJabatan,
+    selectedSatdik,
+    setSelectedSatdik,
+    satdikList,
   }
 }
