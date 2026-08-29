@@ -1,277 +1,337 @@
 [
   {
     "id": 0,
-    "nama": "BRIGIF 1 MARINIR/KOLATIIIJAKARTA",
+    "nama": "BRIGIF 1 MARINIR/KOLAT III JAKARTA",
     "jumlah": 673
   },
   {
     "id": 1,
-    "nama": "MENART 1 MARINIR/KOLATIIIJAKARTA",
+    "nama": "MENART 1 MARINIR/KOLAT III JAKARTA",
     "jumlah": 859
   },
   {
     "id": 2,
-    "nama": "PLP 5 BALURAN/KOLAT IXSIDOARJO",
+    "nama": "PLP 5 BALURAN/KOLAT IX SIDOARJO",
     "jumlah": 373
   },
   {
     "id": 3,
-    "nama": "PMPP TNI/KOLAT IIIJAKARTA",
+    "nama": "PMPP TNI/KOLAT III JAKARTA",
     "jumlah": 672
   },
   {
     "id": 4,
-    "nama": "PUSDIKINTELAD/KOLAT IIIJAKARTA",
-    "jumlah": 462
+    "nama": "PUSDIKINTELAD/KOLAT III JAKARTA",
+    "jumlah": 235
   },
   {
     "id": 5,
-    "nama": "SATDIK 1 KODIKLATALTANJUNGUBAN/KOLAT II SUMBAGSEL",
-    "jumlah": 193
+    "nama": "PUSDIKKES PUSKESAD/KOLAT III JAKARTA",
+    "jumlah": 227
   },
   {
     "id": 6,
-    "nama": "SATDIK 2 KODIKLATALMAKASSAR/KOLAT XIII SULAWESI",
-    "jumlah": 189
+    "nama": "SATDIK 1 KODIKLATAL TANJUNG UBAN/KOLAT II SUMBAGSEL",
+    "jumlah": 193
   },
   {
     "id": 7,
-    "nama": "SATDIK 4 KODIKLATALMANADO/KOLAT XIII SULAWESI",
-    "jumlah": 231
+    "nama": "SATDIK 2 KODIKLATAL MAKASSAR/KOLAT XIII SULAWESI",
+    "jumlah": 189
   },
   {
     "id": 8,
-    "nama": "SATDIK AAL/KOLAT XSURABAYA",
-    "jumlah": 481
+    "nama": "SATDIK 4 KODIKLATAL MANADO/KOLAT XIII SULAWESI",
+    "jumlah": 231
   },
   {
     "id": 9,
-    "nama": "SATDIK AAU/KOLAT VIIJATENGDAN DIY",
-    "jumlah": 478
+    "nama": "SATDIK AAL/KOLAT X SURABAYA",
+    "jumlah": 481
   },
   {
     "id": 10,
-    "nama": "SATDIK AKADEMI TNI/KOLATIIIJAKARTA",
-    "jumlah": 152
+    "nama": "SATDIK AAU/KOLAT VII JATENG DAN DIY",
+    "jumlah": 478
   },
   {
     "id": 11,
-    "nama": "SATDIK BRIGIF 2MAR/KOLATIXSIDOARJO",
-    "jumlah": 455
+    "nama": "SATDIK AKADEMI TNI/KOLAT III JAKARTA",
+    "jumlah": 152
   },
   {
     "id": 12,
-    "nama": "SATDIK BRIGIF 4BS/KOLATIISUMBAGSEL",
-    "jumlah": 194
+    "nama": "SATDIK BRIGIF 2 MAR/KOLAT IX SIDOARJO",
+    "jumlah": 455
   },
   {
     "id": 13,
-    "nama": "SATDIK DODIK BNRINDAMIIISLW/KOLAT V BANDUNG",
-    "jumlah": 750
+    "nama": "SATDIK BRIGIF 4 BS/KOLAT II SUMBAGSEL",
+    "jumlah": 194
   },
   {
     "id": 14,
-    "nama": "SATDIK DODIK BNRINDAMVBRW/KOLAT VIII MALANG",
-    "jumlah": 1336
+    "nama": "SATDIK DODIK BN RINDAM III SLW/KOLAT V BANDUNG",
+    "jumlah": 750
   },
   {
     "id": 15,
-    "nama": "SATDIK DODIK BNRINDAMXIITPR/KOLAT XII KALIMANTAN",
-    "jumlah": 650
+    "nama": "SATDIK DODIK BN RINDAM V BRW/KOLAT VIII MALANG",
+    "jumlah": 669
   },
   {
     "id": 16,
-    "nama": "SATDIK DODIK BNRINDAMXXIITB/KOLAT XII KALIMANTAN",
-    "jumlah": 934
-  },
-  {
-    "id": 17,
-    "nama": "SATDIK DODIKJUR RINDAMVIMLW/KOLAT XII KALIMANTAN",
+    "nama": "SATDIK DODIK BN RINDAM XII TPR/KOLAT XII KALIMANTAN",
     "jumlah": 650
   },
   {
+    "id": 17,
+    "nama": "SATDIK DODIK BN RINDAM XXII TB/KOLAT XII KALIMANTAN",
+    "jumlah": 934
+  },
+  {
     "id": 18,
-    "nama": "SATDIK DODIKLATPUR RINDAMVBRW/KOLAT VIII MALANG",
-    "jumlah": 1151
+    "nama": "SATDIK DODIKJUR RINDAM VI MLW/KOLAT XII KALIMANTAN",
+    "jumlah": 650
   },
   {
     "id": 19,
+    "nama": "SATDIK DODIKLATPUR RINDAM V BRW/KOLAT VIII MALANG",
+    "jumlah": 1151
+  },
+  {
+    "id": 20,
     "nama": "SATDIK KODIKDUKKUM KODIKLATAL/KOLAT X SURABAYA",
     "jumlah": 659
   },
   {
-    "id": 20,
-    "nama": "SATDIK KODIKMAR/KOLAT XSURABAYA",
+    "id": 21,
+    "nama": "SATDIK KODIKMAR/KOLAT X SURABAYA",
     "jumlah": 841
   },
   {
-    "id": 21,
-    "nama": "SATDIK KOLAT KOARMADA1/KOLAT III JAKARTA",
+    "id": 22,
+    "nama": "SATDIK KOLAT KOARMADA 1/KOLAT III JAKARTA",
     "jumlah": 404
   },
   {
-    "id": 22,
-    "nama": "SATDIK MENBANPUR 2MAR/KOLAT IX SIDOARJO",
+    "id": 23,
+    "nama": "SATDIK MENBANPUR 2 MAR/KOLAT IX SIDOARJO",
     "jumlah": 384
   },
   {
-    "id": 23,
-    "nama": "SATDIK PENGMILUM/KOLAT IVCIMAHI",
-    "jumlah": 3104
-  },
-  {
     "id": 24,
-    "nama": "SATDIK PLP 3GRATI/KOLATIXSIDOARJO",
-    "jumlah": 172
+    "nama": "SATDIK PENGMILUM/KOLAT IV CIMAHI",
+    "jumlah": 239
   },
   {
     "id": 25,
-    "nama": "SATDIK PLP 4 PURBOYO/KOLATIXSIDOARJO",
-    "jumlah": 426
+    "nama": "SATDIK PLP 3 GRATI/KOLAT IX SIDOARJO",
+    "jumlah": 172
   },
   {
     "id": 26,
-    "nama": "SATDIK PUSBAHASA AU(304)/KOLAT III JAKARTA",
-    "jumlah": 725
+    "nama": "SATDIK PLP 4 PURBOYO/KOLAT IX SIDOARJO",
+    "jumlah": 426
   },
   {
     "id": 27,
-    "nama": "SATDIK PUSDIK KOWADKODIKLATAD/KOLAT V BANDUNG",
-    "jumlah": 372
+    "nama": "SATDIK PUSBAHASA AU (304)/KOLAT III JAKARTA",
+    "jumlah": 725
   },
   {
     "id": 28,
+    "nama": "SATDIK PUSDIK KOWAD KODIKLATAD/KOLAT V BANDUNG",
+    "jumlah": 372
+  },
+  {
+    "id": 29,
+    "nama": "SATDIK PUSDIK PENERBAD PUSPENERBAD/KOLAT VII JATENG DAN DIY",
+    "jumlah": 310
+  },
+  {
+    "id": 30,
     "nama": "SATDIK PUSDIKAJEN DITAJENAD/KOLAT V BANDUNG",
     "jumlah": 579
   },
   {
-    "id": 29,
+    "id": 31,
+    "nama": "SATDIK PUSDIKARHANUD PUSSENARHANUD/KOLAT VIII MALANG",
+    "jumlah": 667
+  },
+  {
+    "id": 32,
+    "nama": "SATDIK PUSDIKARMED PUSSENARMED/KOLAT IV CIMAHI",
+    "jumlah": 1023
+  },
+  {
+    "id": 33,
+    "nama": "SATDIK PUSDIKBEKANG PUSBEKANGAD/KOLAT IV CIMAHI",
+    "jumlah": 809
+  },
+  {
+    "id": 34,
+    "nama": "SATDIK PUSDIKIF PUSSENIF/KOLAT IV CIMAHI",
+    "jumlah": 345
+  },
+  {
+    "id": 35,
     "nama": "SATDIK PUSDIKJAS DISJASAD/KOLAT IV CIMAHI",
     "jumlah": 583
   },
   {
-    "id": 30,
+    "id": 36,
+    "nama": "SATDIK PUSDIKKAV PUSSENKAV/KOLAT IV CIMAHI",
+    "jumlah": 489
+  },
+  {
+    "id": 37,
     "nama": "SATDIK PUSDIKKU DITKUAD/KOLAT V BANDUNG",
     "jumlah": 636
   },
   {
-    "id": 31,
+    "id": 38,
     "nama": "SATDIK PUSDIKKUM DITKUMAD/KOLAT V BANDUNG",
     "jumlah": 199
   },
   {
-    "id": 32,
-    "nama": "SATDIK PUSDIKTOP (SATDIKBA/TA)/KOLAT VII JATENG DAN DIY",
+    "id": 39,
+    "nama": "SATDIK PUSDIKPAL PUSPALAD/KOLAT IV CIMAHI",
     "jumlah": 193
   },
   {
-    "id": 33,
-    "nama": "SATDIK PUSDIKTOP DITOPAD(SATDIKPA)/KOLAT V BANDUNG",
+    "id": 40,
+    "nama": "SATDIK PUSDIKPOM PUSPOMAD/KOLAT IV CIMAHI",
+    "jumlah": 539
+  },
+  {
+    "id": 41,
+    "nama": "SATDIK PUSDIKTER PUSTERAD/KOLAT IV CIMAHI",
+    "jumlah": 490
+  },
+  {
+    "id": 42,
+    "nama": "SATDIK PUSDIKTOP (SATDIK BA/TA)/KOLAT VII JATENG DAN DIY",
+    "jumlah": 193
+  },
+  {
+    "id": 43,
+    "nama": "SATDIK PUSDIKTOP DITOPAD (SATDIKPA)/KOLAT V BANDUNG",
     "jumlah": 242
   },
   {
-    "id": 34,
-    "nama": "SATDIK PUSKOM BELNEGBPSDMHAN/KOLAT III JAKARTA",
+    "id": 44,
+    "nama": "SATDIK PUSKOM BELNEG BPSDM HAN/KOLAT III JAKARTA",
     "jumlah": 825
   },
   {
-    "id": 35,
+    "id": 45,
     "nama": "SATDIK PUSLATDIKSARMIL KODIKLATAL/KOLAT X SURABAYA",
     "jumlah": 1099
   },
   {
-    "id": 36,
+    "id": 46,
     "nama": "SATDIK PUSLATPUR KODIKLATAD/KOLAT II SUMBAGSEL",
     "jumlah": 913
   },
   {
-    "id": 37,
-    "nama": "SATDIK RINDAM IBB/KOLATISUMBAGUT",
+    "id": 47,
+    "nama": "SATDIK RINDAM I BB/KOLAT I SUMBAGUT",
     "jumlah": 976
   },
   {
-    "id": 38,
-    "nama": "SATDIK RINDAM IISWJ/KOLATIISUMBAGSEL",
+    "id": 48,
+    "nama": "SATDIK RINDAM II SWJ/KOLAT II SUMBAGSEL",
     "jumlah": 475
   },
   {
-    "id": 39,
+    "id": 49,
     "nama": "SATDIK RINDAM IM/KOLAT I SUMBAGUT",
     "jumlah": 1162
   },
   {
-    "id": 40,
-    "nama": "SATDIK RINDAM IVDIP/KOLATVIIJATENG DAN DIY",
-    "jumlah": 831
+    "id": 50,
+    "nama": "SATDIK RINDAM IV DIP/KOLAT VII JATENG DAN DIY",
+    "jumlah": 521
   },
   {
-    "id": 41,
-    "nama": "SATDIK RINDAM IXUDY/KOLATXIBALI",
+    "id": 51,
+    "nama": "SATDIK RINDAM IX UDY/KOLAT XI BALI",
     "jumlah": 745
   },
   {
-    "id": 42,
-    "nama": "SATDIK RINDAM JAYA/KOLATIIIJAKARTA",
+    "id": 52,
+    "nama": "SATDIK RINDAM JAYA/KOLAT III JAKARTA",
     "jumlah": 463
   },
   {
-    "id": 43,
-    "nama": "SATDIK RINDAM XIIIMDK/KOLATXIII SULAWESI",
+    "id": 53,
+    "nama": "SATDIK RINDAM XIII MDK/KOLAT XIII SULAWESI",
     "jumlah": 316
   },
   {
-    "id": 44,
-    "nama": "SATDIK RINDAM XIV HSN/KOLATXIII SULAWESI",
+    "id": 54,
+    "nama": "SATDIK RINDAM XIV HSN/KOLAT XIII SULAWESI",
     "jumlah": 595
   },
   {
-    "id": 45,
+    "id": 55,
+    "nama": "SATDIK RINDAM XV PTM/KOLAT XIV AMBON",
+    "jumlah": 399
+  },
+  {
+    "id": 56,
     "nama": "SATDIK RINDAM XVII CEN/KOLAT XV PAPUA",
     "jumlah": 336
   },
   {
-    "id": 46,
-    "nama": "SATDIK RINDAM XVPTM/KOLATXIV AMBON",
-    "jumlah": 399
-  },
-  {
-    "id": 47,
-    "nama": "SATDIK SECAPA AD/KOLATVBANDUNG",
+    "id": 57,
+    "nama": "SATDIK SECAPA AD/KOLAT V BANDUNG",
     "jumlah": 241
   },
   {
-    "id": 48,
-    "nama": "SATDIK SESKOAD/KOLAT VBANDUNG",
+    "id": 58,
+    "nama": "SATDIK SESKOAD/KOLAT V BANDUNG",
     "jumlah": 188
   },
   {
-    "id": 49,
-    "nama": "SATDIK SKADIK 201WINGDIK200/KOLAT VI SULAIMAN BANDUNG",
+    "id": 59,
+    "nama": "SATDIK SKADIK 201 WINGDIK 200/KOLAT VI SULAIMAN BANDUNG",
     "jumlah": 285
   },
   {
-    "id": 50,
-    "nama": "SATDIK SKADIK 303WINGDIK300/KOLAT VI SULAIMAN BANDUNG",
+    "id": 60,
+    "nama": "SATDIK SKADIK 303 WINGDIK 300/KOLAT VI SULAIMAN BANDUNG",
     "jumlah": 188
   },
   {
-    "id": 51,
-    "nama": "SATDIK SKADIK 402WINGDIK400/KOLAT VII JATENG DAN DIY",
+    "id": 61,
+    "nama": "SATDIK SKADIK 402 WINGDIK 400/KOLAT VII JATENG DAN DIY",
     "jumlah": 288
   },
   {
-    "id": 52,
-    "nama": "SATDIK SKADIK 502WINGDIK500/KOLAT VI SULAIMAN BANDUNG",
+    "id": 62,
+    "nama": "SATDIK SKADIK 502 WINGDIK 500/KOLAT VI SULAIMAN BANDUNG",
     "jumlah": 196
   },
   {
-    "id": 53,
-    "nama": "SATDIK SKADIK 804WINGDIK800/KOLAT VI SULAIMAN BANDUNG",
+    "id": 63,
+    "nama": "SATDIK SKADIK 804 WINGDIK 800/KOLAT VI SULAIMAN BANDUNG",
     "jumlah": 383
   },
   {
-    "id": 54,
-    "nama": "SATDIK WINGDIK 500(501DAN504)/KOLAT III JAKARTA",
-    "jumlah": 2467
+    "id": 64,
+    "nama": "SATDIK WINGDIK 500 (501 DAN 504)/KOLAT III JAKARTA",
+    "jumlah": 340
+  },
+  {
+    "id": 65,
+    "nama": "SATDIK YON PARAKO 461/KOLAT III JAKARTA",
+    "jumlah": 532
+  },
+  {
+    "id": 66,
+    "nama": "SATDIK YON PARAKO 465/KOLAT III JAKARTA",
+    "jumlah": 572
   }
 ]
