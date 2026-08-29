@@ -16,12 +16,14 @@ const formatRowData = (r, i, indexOfFirstItem) => {
   const vals = raw.map((v) => String(v || '').trim())
 
   // contextItems dari hook (melewati row[0]=Page dan row[7]=Jabatan_Label):
-  //   [0]=No  [1]=NKU  [2]=Nama  [3]=''  [4]=''  [5]=Keterangan
+  //   [0]=No  [1]=NKU  [2]=Nama  [3]=Kognitif  [4]=Substansi  [5]=Keterangan
   //   [6]=peringkat_sebelum_l3  [7]=status_sebelum_l3  [12]=satdik
   return {
     noCol: vals[0] || (indexOfFirstItem + i + 1),
     peserta: vals[1] || r.firstCol || '',
     nama: vals[2] || r.matchText || '',
+    kognitif: vals[3] || '',
+    substansi: vals[4] || '',
     status: vals[5] || r.lastCol || '',
     jabatan: r.jabatan || '',
     satdik: vals[12] || '',
@@ -35,6 +37,8 @@ const columns = [
   { key: 'peringkat', label: TABLE_TEXT.HEADERS.PERINGKAT, sortable: true },
   { key: 'noPeserta', label: TABLE_TEXT.HEADERS.NO_PESERTA, sortable: true },
   { key: 'nama', label: TABLE_TEXT.HEADERS.NAMA, sortable: true },
+  { key: 'kognitif', label: TABLE_TEXT.HEADERS.KOGNITIF, sortable: false },
+  { key: 'substansi', label: TABLE_TEXT.HEADERS.SUBSTANSI, sortable: false },
   { key: 'status', label: TABLE_TEXT.HEADERS.STATUS, sortable: false },
   { key: 'satdik', label: 'SATDIK', sortable: false },
   { key: 'jabatan', label: TABLE_TEXT.HEADERS.JABATAN, sortable: true },
@@ -42,13 +46,13 @@ const columns = [
 
 export default function SktL3ResultsTable(props) {
   const renderRow = (r, i, indexOfFirstItem) => {
-    const { error, noCol, peserta, nama, status, jabatan, satdik, peringkat_sebelum_l3, status_sebelum_l3 } =
+    const { error, noCol, peserta, nama, kognitif, substansi, status, jabatan, satdik, peringkat_sebelum_l3, status_sebelum_l3 } =
       formatRowData(r, i, indexOfFirstItem)
 
     if (error) {
       return (
         <tr key={i} className="empty-row">
-          <td colSpan={6}>{error}</td>
+          <td colSpan={8}>{error}</td>
         </tr>
       )
     }
@@ -66,6 +70,8 @@ export default function SktL3ResultsTable(props) {
         </td>
         <td data-label="No Peserta"><span>{peserta}</span></td>
         <td data-label="Nama"><span>{nama}</span></td>
+        <td data-label="Kognitif"><span>{kognitif}</span></td>
+        <td data-label="Substansi"><span>{substansi}</span></td>
         <td data-label="Status">
           <div>
             <span style={{ fontWeight: 'bold', color: getStatusColor(status) }}>
@@ -94,7 +100,7 @@ export default function SktL3ResultsTable(props) {
     <BaseResultsTable
       columns={columns}
       renderRow={renderRow}
-      colSpan={6}
+      colSpan={8}
       {...props}
     />
   )

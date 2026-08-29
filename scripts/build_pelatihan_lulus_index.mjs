@@ -77,8 +77,8 @@ const allRows = sortedData.map((d, i) => [
   String(d['peringkat'] || (i + 1)),                       // 1: No / Peringkat
   d['nomor_peserta'] || d['Nomor Kartu Ujian'] || '',      // 2: NKU
   d['nama'] || d['Nama Peserta'] || '',                    // 3: Nama
-  d['Keterangan'] || '',                                   // 4: Keterangan (KDKMP / Nilai)
-  '',                                                      // 5: Substansi
+  d['Kognitif'] || d['kognitif'] || '',                    // 4: Kognitif
+  d['Substansi'] || d['substansi'] || '',                  // 5: Substansi
   d['hasil'] || d['Keterangan'] || d['status_setelah_l3'] || 'LULUS', // 6: Hasil/Status
   d['jabatan_label'] || d['Jabatan_Label'] || '',          // 7: Jabatan
   String(d['no'] || (i + 1)),                              // 8: No urut Satdik

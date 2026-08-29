@@ -45,8 +45,8 @@ data.forEach((d) => {
       d['No'] || '',                  // 1: No
       d['Nomor Kartu Ujian'] || '',   // 2: NKU
       d['Nama Peserta'] || '',        // 3: Nama
-      '',                             // 4: Kognitif (kosong)
-      '',                             // 5: Substansi (kosong)
+      d['Kognitif'] || '',            // 4: Kognitif
+      d['Substansi'] || '',           // 5: Substansi
       d['Keterangan'] || '',          // 6: Status / Keterangan
       d['Jabatan_Label'] || '',       // 7: Jabatan_Label
       d['peringkat_sebelum_l3'] || '',// 8: peringkat_sebelum_l3

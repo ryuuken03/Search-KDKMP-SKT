@@ -19,7 +19,7 @@ const formatRowData = (r, i, indexOfFirstItem) => {
   //   vals[0]  = Peringkat (row[1])
   //   vals[1]  = Nomor Peserta / NKU (row[2])
   //   vals[2]  = Nama Peserta (row[3])
-  //   vals[3]  = Keterangan (row[4])
+  //   vals[3]  = Kognitif (row[4])
   //   vals[4]  = Substansi (row[5])
   //   vals[5]  = Status / Hasil Pelatihan (row[6])
   //   vals[6]  = No urut Satdik (row[8])
@@ -30,6 +30,8 @@ const formatRowData = (r, i, indexOfFirstItem) => {
     peringkat: vals[0] || '',
     peserta: vals[1] || r.firstCol || '',
     nama: vals[2] || r.matchText || '',
+    kognitif: vals[3] || '',
+    substansi: vals[4] || '',
     status: vals[5] || '',
     satdik: vals[12] || '',
     jabatan: r.jabatan || '',
@@ -39,10 +41,12 @@ const formatRowData = (r, i, indexOfFirstItem) => {
 }
 
 const columns = [
-  { key: 'urut', label: TABLE_TEXT.HEADERS.URUT, sortable: true },
+  // { key: 'urut', label: TABLE_TEXT.HEADERS.URUT, sortable: true },
   { key: 'peringkat', label: TABLE_TEXT.HEADERS.PERINGKAT, sortable: true },
   { key: 'noPeserta', label: TABLE_TEXT.HEADERS.NO_PESERTA, sortable: true },
   { key: 'nama', label: TABLE_TEXT.HEADERS.NAMA, sortable: true },
+  { key: 'kognitif', label: TABLE_TEXT.HEADERS.KOGNITIF, sortable: false },
+  { key: 'substansi', label: TABLE_TEXT.HEADERS.SUBSTANSI, sortable: false },
   { key: 'status', label: TABLE_TEXT.HEADERS.STATUS, sortable: false },
   { key: 'satdik', label: 'SATDIK', sortable: false },
   { key: 'jabatan', label: TABLE_TEXT.HEADERS.JABATAN, sortable: true },
@@ -56,6 +60,8 @@ export default function PelatihanLulusResultsTable(props) {
       peringkat,
       peserta,
       nama,
+      kognitif,
+      substansi,
       status,
       satdik,
       jabatan,
@@ -65,16 +71,16 @@ export default function PelatihanLulusResultsTable(props) {
     if (error) {
       return (
         <tr key={i} className="empty-row">
-          <td colSpan={7}>{error}</td>
+          <td colSpan={8}>{error}</td>
         </tr>
       )
     }
 
     return (
       <tr key={i}>
-        <td data-label="No">
+        {/* <td data-label="No Urut Satdik">
           <span style={{ fontWeight: 'bold' }}>{noCol}</span>
-        </td>
+        </td> */}
         <td data-label="Peringkat">
           <span style={{ fontWeight: 'bold' }}>{peringkat}</span>
         </td>
@@ -83,6 +89,12 @@ export default function PelatihanLulusResultsTable(props) {
         </td>
         <td data-label="Nama">
           <span>{nama}</span>
+        </td>
+        <td data-label="Kognitif">
+          <span>{kognitif}</span>
+        </td>
+        <td data-label="Substansi">
+          <span>{substansi}</span>
         </td>
         <td data-label="Status">
           <div>
@@ -112,7 +124,7 @@ export default function PelatihanLulusResultsTable(props) {
     <BaseResultsTable
       columns={columns}
       renderRow={renderRow}
-      colSpan={7}
+      colSpan={8}
       {...props}
     />
   )
