@@ -1,20 +1,20 @@
 {
-  "totalRows": 33773,
+  "totalRows": 33785,
   "statusCounts": {
-    "LULUS": 33773
+    "LULUS": 33785
   },
   "jabatan": {
     "KDKMP - Manajer": {
       "label": "KDKMP - Manajer",
-      "totalRows": 28614,
+      "totalRows": 28626,
       "statusCounts": {
-        "LULUS": 28614
+        "LULUS": 28626
       },
       "statusChangeCounts": {
-        "tetap L": 28513,
-        "L jadi LULUS": 28513,
-        "TMS jadi L": 101,
-        "TMS jadi LULUS": 101
+        "tetap L": 28523,
+        "L jadi LULUS": 28523,
+        "TMS jadi L": 103,
+        "TMS jadi LULUS": 103
       }
     },
     "KNMP - Manajer Operasional": {
