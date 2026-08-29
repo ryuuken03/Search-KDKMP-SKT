@@ -29,6 +29,7 @@ export default function BaseSummary({
   rowDefs,
   detailKeys = [],
   legendItems,
+  showButton = true,
 }) {
   const [isVisible, setIsVisible] = useState(false);
   const [showDetails, setShowDetails] = useState(false);
@@ -51,10 +52,10 @@ export default function BaseSummary({
 
       if (!summary) return true;
       if (alwaysShow) return true;
-      
+
       const totalVal = field(summary);
       if (totalVal !== '-' && totalVal > 0) return true;
-      
+
       return jCols.some(col => {
         const val = field(col.data);
         return val !== '-' && val > 0;
@@ -116,7 +117,7 @@ export default function BaseSummary({
             ))}
           </div>
 
-          {detailKeys.length > 0 && (
+          {(showButton && detailKeys.length > 0) && (
             <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1rem', marginTop: '0.5rem' }}>
               <button
                 type="button"

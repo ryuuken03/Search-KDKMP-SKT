@@ -9,6 +9,12 @@
       "totalRows": 28614,
       "statusCounts": {
         "LULUS": 28614
+      },
+      "statusChangeCounts": {
+        "tetap L": 28513,
+        "L jadi LULUS": 28513,
+        "TMS jadi L": 101,
+        "TMS jadi LULUS": 101
       }
     },
     "KNMP - Manajer Operasional": {
@@ -16,6 +22,12 @@
       "totalRows": 1308,
       "statusCounts": {
         "LULUS": 1308
+      },
+      "statusChangeCounts": {
+        "tetap L": 1301,
+        "L jadi LULUS": 1301,
+        "TMS jadi L": 7,
+        "TMS jadi LULUS": 7
       }
     },
     "KNMP - Kepala Produksi": {
@@ -23,6 +35,12 @@
       "totalRows": 1296,
       "statusCounts": {
         "LULUS": 1296
+      },
+      "statusChangeCounts": {
+        "tetap L": 1293,
+        "L jadi LULUS": 1293,
+        "TMS jadi L": 3,
+        "TMS jadi LULUS": 3
       }
     },
     "KNMP - Penjamin Mutu": {
@@ -30,6 +48,12 @@
       "totalRows": 1288,
       "statusCounts": {
         "LULUS": 1288
+      },
+      "statusChangeCounts": {
+        "tetap L": 1286,
+        "L jadi LULUS": 1286,
+        "TMS jadi L": 2,
+        "TMS jadi LULUS": 2
       }
     },
     "KNMP - Administrasi Keuangan": {
@@ -37,6 +61,12 @@
       "totalRows": 1267,
       "statusCounts": {
         "LULUS": 1267
+      },
+      "statusChangeCounts": {
+        "tetap L": 1264,
+        "L jadi LULUS": 1264,
+        "TMS jadi L": 3,
+        "TMS jadi LULUS": 3
       }
     }
   }

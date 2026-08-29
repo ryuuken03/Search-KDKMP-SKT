@@ -16,10 +16,10 @@
       },
       "statusChangeCounts": {
         "tetap L": 29834,
+        "MS jadi L": 166,
         "tetap MS": 19546,
         "tetap TMS": 32989,
-        "L jadi TMS": 166,
-        "MS jadi L": 166
+        "L jadi TMS": 166
       }
     },
     "KNMP - Manajer Operasional": {
@@ -32,10 +32,10 @@
       },
       "statusChangeCounts": {
         "tetap L": 1360,
+        "MS jadi L": 9,
         "tetap MS": 381,
         "tetap TMS": 1407,
-        "L jadi TMS": 9,
-        "MS jadi L": 9
+        "L jadi TMS": 9
       }
     },
     "KNMP - Kepala Produksi": {
@@ -48,10 +48,10 @@
       },
       "statusChangeCounts": {
         "tetap L": 1363,
+        "MS jadi L": 6,
         "tetap MS": 208,
         "tetap TMS": 1194,
-        "L jadi TMS": 6,
-        "MS jadi L": 6
+        "L jadi TMS": 6
       }
     },
     "KNMP - Penjamin Mutu": {
@@ -64,10 +64,10 @@
       },
       "statusChangeCounts": {
         "tetap L": 1359,
+        "MS jadi L": 10,
         "tetap MS": 1677,
         "tetap TMS": 2428,
-        "L jadi TMS": 10,
-        "MS jadi L": 10
+        "L jadi TMS": 10
       }
     },
     "KNMP - Administrasi Keuangan": {
@@ -80,10 +80,10 @@
       },
       "statusChangeCounts": {
         "tetap L": 1357,
+        "MS jadi L": 12,
         "tetap MS": 2153,
         "tetap TMS": 3496,
-        "L jadi TMS": 12,
-        "MS jadi L": 12
+        "L jadi TMS": 12
       }
     }
   }

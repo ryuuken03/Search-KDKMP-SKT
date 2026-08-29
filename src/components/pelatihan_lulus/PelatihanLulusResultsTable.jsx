@@ -101,11 +101,11 @@ export default function PelatihanLulusResultsTable(props) {
             <span style={{ fontWeight: 'bold', color: getStatusColor(status) }}>
               {status}
             </span>
-            {status_setelah_l3 && status_setelah_l3 !== '-' && (
+            {/* {status_setelah_l3 && status_setelah_l3 !== '-' && (
               <div style={{ fontSize: '11px', color: 'hsl(var(--muted-foreground))', marginTop: '2px' }}>
                 Layer 3: {status_setelah_l3}
               </div>
-            )}
+            )} */}
           </div>
         </td>
         <td data-label="SATDIK">

@@ -2,8 +2,9 @@ import fs from 'fs';
 import path from 'path';
 
 const CHUNK_SIZE = 5000;
-const DATA_PATH = './assets/combined/pelatihan_lulus/data.json';
-const OUT_DIR = './assets/combined/pelatihan_lulus';
+const DATA_PATH = './assets/combined/akhir_layer_3/data.json';
+const OUT_DIR = './assets/combined/akhir_layer_3';
+const PERBEDAAN_DIR = './assets/combined/perbedaan';
 
 function ensureDir(p) {
   if (!fs.existsSync(p)) {
@@ -27,7 +28,7 @@ function clearDir(p) {
   }
 }
 
-console.log('Loading pelatihan_lulus/data.json...');
+console.log('Loading akhir_layer_3/data.json...');
 const rawData = JSON.parse(fs.readFileSync(DATA_PATH, 'utf-8'));
 const data = Array.isArray(rawData) ? rawData : (rawData.rows || rawData);
 console.log(`Loaded ${data.length} entries`);
@@ -40,56 +41,57 @@ const JABATAN_ORDER = [
   'KNMP - Administrasi Keuangan',
 ];
 
-// Sort data agar berurutan per jabatan sesuai JABATAN_ORDER (dibutuhkan oleh offset paging useSKSearch)
+// Sort data per jabatan sesuai JABATAN_ORDER lalu No (rank)
 const sortedData = [...data].sort((a, b) => {
-  const jabA = a['jabatan_label'] || a['Jabatan_Label'] || '';
-  const jabB = b['jabatan_label'] || b['Jabatan_Label'] || '';
+  const jabA = a['Jabatan_Label'] || a['jabatan_label'] || '';
+  const jabB = b['Jabatan_Label'] || b['jabatan_label'] || '';
   const idxA = JABATAN_ORDER.indexOf(jabA);
   const idxB = JABATAN_ORDER.indexOf(jabB);
   const posA = idxA === -1 ? 999 : idxA;
   const posB = idxB === -1 ? 999 : idxB;
   if (posA !== posB) return posA - posB;
 
-  const rankA = parseInt(a['peringkat'] || a['no'] || '0', 10);
-  const rankB = parseInt(b['peringkat'] || b['no'] || '0', 10);
+  const rankA = parseInt(a['No'] || a['peringkat'] || '0', 10);
+  const rankB = parseInt(b['No'] || b['peringkat'] || '0', 10);
   return rankA - rankB;
 });
 
-// Konversi object → compact array row (15 elemen) kompatibel dengan hook useSKSearch & PelatihanLulusResultsTable
-// Format row:
-// [0] Page (0)
-// [1] Peringkat (string, e.g. "13706")
-// [2] NKU / nomor_peserta (string, e.g. "P2640758110187943")
-// [3] Nama (string)
-// [4] Keterangan / Kognitif (string, e.g. "KDKMP")
-// [5] Substansi ('')
-// [6] Status/Hasil (string, e.g. "LULUS" atau "L")
-// [7] Jabatan_Label (string, e.g. "KDKMP - Manajer")
-// [8] No urut Satdik / Peringkat asal (string, e.g. "1")
-// [9] status_setelah_l3 (string, e.g. "L")
-// [10] ''
-// [11] ''
-// [12] ''
-// [13] ''
-// [14] Satdik (string, e.g. "SATDIK RINDAM IM/KOLAT I SUMBAGUT")
+// Format row compact array (17 elemen):
+// [0] Page (int)
+// [1] No / Peringkat (string)
+// [2] Nomor Kartu Ujian (string)
+// [3] Nama Peserta (string)
+// [4] Kognitif (string)
+// [5] Substansi (string)
+// [6] Keterangan / Status Layer 3 (string)
+// [7] Jabatan_Label (string)
+// [8] peringkat_sebelum_l3 (string)
+// [9] status_sebelum_l3 (string)
+// [10] status_sk (string)
+// [11] peringkat_sk (string)
+// [12] status_sebelum_l1 (string)
+// [13] peringkat_sebelum_l1 (string)
+// [14] satdik (string)
+// [15] status_sebelum_l2 (string)
+// [16] peringkat_sebelum_l2 (string)
 const allRows = sortedData.map((d, i) => [
-  d['Page'] || 0,                                          // 0: Page
-  String(d['peringkat'] || (i + 1)),                       // 1: No / Peringkat
-  d['nomor_peserta'] || d['Nomor Kartu Ujian'] || '',      // 2: NKU
-  d['nama'] || d['Nama Peserta'] || '',                    // 3: Nama
-  String(d['Kognitif'] ?? ''),                             // 4: Kognitif
-  String(d['Substansi'] ?? ''),                            // 5: Substansi
-  d['hasil'] || d['Keterangan'] || d['status_setelah_l3'] || 'LULUS', // 6: Hasil/Status
-  d['jabatan_label'] || d['Jabatan_Label'] || '',          // 7: Jabatan
-  String(d['no'] || (i + 1)),                              // 8: No urut Satdik
-  d['status_setelah_l3'] || 'L',                           // 9: status_setelah_l3
-  d['status_sk'] || '',                                    // 10: status_sk
-  String(d['peringkat_sk'] ?? ''),                         // 11: peringkat_sk
-  d['status_sebelum_l1'] || '',                            // 12: status_sebelum_l1
-  String(d['peringkat_sebelum_l1'] ?? ''),                 // 13: peringkat_sebelum_l1
-  d['Satdik'] || d['satdik'] || '',                        // 14: Satdik
-  d['status_sebelum_l3'] || '',                            // 15: status_sebelum_l3
-  String(d['peringkat_sebelum_l3'] ?? '')                  // 16: peringkat_sebelum_l3
+  d['Page'] || 0,                                      // 0: Page
+  String(d['No'] || (i + 1)),                          // 1: No
+  d['Nomor Kartu Ujian'] || '',                        // 2: NKU
+  d['Nama Peserta'] || '',                             // 3: Nama
+  String(d['Kognitif'] ?? ''),                         // 4: Kognitif
+  String(d['Substansi'] ?? ''),                        // 5: Substansi
+  d['Keterangan'] || '',                               // 6: Status
+  d['Jabatan_Label'] || '',                            // 7: Jabatan_Label
+  String(d['peringkat_sebelum_l3'] ?? ''),             // 8: peringkat_sebelum_l3
+  d['status_sebelum_l3'] || '',                        // 9: status_sebelum_l3
+  d['status_sk'] || '',                                // 10: status_sk
+  String(d['peringkat_sk'] ?? ''),                     // 11: peringkat_sk
+  d['status_sebelum_l1'] || '',                        // 12: status_sebelum_l1
+  String(d['peringkat_sebelum_l1'] ?? ''),             // 13: peringkat_sebelum_l1
+  d['satdik'] || '',                                   // 14: satdik
+  d['status_sebelum_l2'] || '',                        // 15: status_sebelum_l2
+  String(d['peringkat_sebelum_l2'] ?? '')              // 16: peringkat_sebelum_l2
 ]);
 
 // ── 1. no_peserta.json ─────────────────────────────────────────────────────────
@@ -178,12 +180,11 @@ for (const pref of prefixes) {
 }
 console.log(`✓ Saved ${prefixes.length} prefix index files in names/`);
 
-// ── 6. summary.json & summary_perubahan_pelatihan_lulus.json ─────────────────
-console.log('\n=== Membangun summary.json & summary_perubahan_pelatihan_lulus.json ===');
+// ── 6. summary.json & summary_perubahan_l3.json ────────────────────────────────
+console.log('\n=== Membangun summary.json & summary_perubahan_l3.json ===');
 const totalStatusCounts = {};
 const totalChangeCounts = {};
 const jabatanMap = {};
-const PERBEDAAN_DIR = './assets/combined/perbedaan';
 
 for (const jab of JABATAN_ORDER) {
   jabatanMap[jab] = {
@@ -195,17 +196,20 @@ for (const jab of JABATAN_ORDER) {
 }
 
 for (const d of sortedData) {
-  const hasil = d['hasil'] || 'LULUS';
-  const jab = d['jabatan_label'] || d['Jabatan_Label'] || 'Lainnya';
-  const statusL3 = d['status_setelah_l3'] || '';
+  const statusL3 = d['Keterangan'] || '';
+  const statusL2 = d['status_sebelum_l3'] || '';
+  const jab = d['Jabatan_Label'] || 'Lainnya';
 
-  totalStatusCounts[hasil] = (totalStatusCounts[hasil] || 0) + 1;
+  totalStatusCounts[statusL3] = (totalStatusCounts[statusL3] || 0) + 1;
 
-  const key = (statusL3 === 'L') ? 'tetap L' : 'TMS jadi L';
-  const keyDetail = (statusL3 === 'L') ? 'L jadi LULUS' : 'TMS jadi LULUS';
+  let changeKey = '';
+  if (statusL2 === statusL3) {
+    changeKey = 'tetap ' + statusL3;
+  } else {
+    changeKey = statusL2 + ' jadi ' + statusL3;
+  }
 
-  totalChangeCounts[key] = (totalChangeCounts[key] || 0) + 1;
-  totalChangeCounts[keyDetail] = (totalChangeCounts[keyDetail] || 0) + 1;
+  totalChangeCounts[changeKey] = (totalChangeCounts[changeKey] || 0) + 1;
 
   if (!jabatanMap[jab]) {
     jabatanMap[jab] = {
@@ -217,9 +221,8 @@ for (const d of sortedData) {
   }
   const j = jabatanMap[jab];
   j.totalRows++;
-  j.statusCounts[hasil] = (j.statusCounts[hasil] || 0) + 1;
-  j.statusChangeCounts[key] = (j.statusChangeCounts[key] || 0) + 1;
-  j.statusChangeCounts[keyDetail] = (j.statusChangeCounts[keyDetail] || 0) + 1;
+  j.statusCounts[statusL3] = (j.statusCounts[statusL3] || 0) + 1;
+  j.statusChangeCounts[changeKey] = (j.statusChangeCounts[changeKey] || 0) + 1;
 }
 
 const summary = {
@@ -231,10 +234,9 @@ fs.writeFileSync(path.join(OUT_DIR, 'summary.json'), JSON.stringify(summary, nul
 console.log(`✓ Saved summary.json (${Object.keys(jabatanMap).length} jabatan)`);
 
 ensureDir(PERBEDAAN_DIR);
-fs.writeFileSync(path.join(PERBEDAAN_DIR, 'summary_perubahan_pelatihan_lulus.json'), JSON.stringify(totalChangeCounts, null, 2));
-console.log('✓ Saved summary_perubahan_pelatihan_lulus.json');
+fs.writeFileSync(path.join(PERBEDAAN_DIR, 'summary_perubahan_l3.json'), JSON.stringify(totalChangeCounts, null, 2));
+console.log('✓ Saved summary_perubahan_l3.json');
 
 console.log('\n========================================');
-console.log('✓ SEMUA BERKAS BERHASIL DIBUAT!');
+console.log('✓ SEMUA BERKAS TURUNAN AKHIR LAYER 3 BERHASIL DISINKRONKAN!');
 console.log('========================================');
-
