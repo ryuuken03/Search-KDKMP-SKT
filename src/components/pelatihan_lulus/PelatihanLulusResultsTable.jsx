@@ -41,9 +41,7 @@ const formatRowData = (r, i, indexOfFirstItem) => {
 }
 
 const columns = [
-  // { key: 'urut', label: TABLE_TEXT.HEADERS.URUT, sortable: true },
   { key: 'peringkat', label: TABLE_TEXT.HEADERS.PERINGKAT, sortable: true },
-  { key: 'noPeserta', label: TABLE_TEXT.HEADERS.NO_PESERTA, sortable: true },
   { key: 'nama', label: TABLE_TEXT.HEADERS.NAMA, sortable: true },
   { key: 'kognitif', label: TABLE_TEXT.HEADERS.KOGNITIF, sortable: false },
   { key: 'substansi', label: TABLE_TEXT.HEADERS.SUBSTANSI, sortable: false },
@@ -56,39 +54,30 @@ export default function PelatihanLulusResultsTable(props) {
   const renderRow = (r, i, indexOfFirstItem) => {
     const {
       error,
-      noCol,
       peringkat,
-      peserta,
       nama,
       kognitif,
       substansi,
       status,
       satdik,
-      jabatan,
-      status_setelah_l3
+      jabatan
     } = formatRowData(r, i, indexOfFirstItem)
 
     if (error) {
       return (
         <tr key={i} className="empty-row">
-          <td colSpan={8}>{error}</td>
+          <td colSpan={7}>{error}</td>
         </tr>
       )
     }
 
     return (
       <tr key={i}>
-        {/* <td data-label="No Urut Satdik">
-          <span style={{ fontWeight: 'bold' }}>{noCol}</span>
-        </td> */}
         <td data-label="Peringkat">
           <span style={{ fontWeight: 'bold' }}>{peringkat}</span>
         </td>
-        <td data-label="No Peserta">
-          <span>{peserta}</span>
-        </td>
         <td data-label="Nama">
-          <span>{nama}</span>
+          <span style={{ fontWeight: '500' }}>{nama}</span>
         </td>
         <td data-label="Kognitif">
           <span>{kognitif}</span>
@@ -101,11 +90,6 @@ export default function PelatihanLulusResultsTable(props) {
             <span style={{ fontWeight: 'bold', color: getStatusColor(status) }}>
               {status}
             </span>
-            {/* {status_setelah_l3 && status_setelah_l3 !== '-' && (
-              <div style={{ fontSize: '11px', color: 'hsl(var(--muted-foreground))', marginTop: '2px' }}>
-                Layer 3: {status_setelah_l3}
-              </div>
-            )} */}
           </div>
         </td>
         <td data-label="SATDIK">
@@ -124,7 +108,7 @@ export default function PelatihanLulusResultsTable(props) {
     <BaseResultsTable
       columns={columns}
       renderRow={renderRow}
-      colSpan={8}
+      colSpan={7}
       {...props}
     />
   )

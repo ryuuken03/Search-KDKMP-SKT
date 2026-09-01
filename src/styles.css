@@ -703,10 +703,15 @@ body {
 }
 
 /* Allow text wrap/break for Peringkat & No Peserta if too wide */
-.data-table tbody td:nth-child(1) span,
-.data-table tbody td:nth-child(2) span {
+.data-table tbody td[data-label="No Peserta"] span,
+.data-table tbody td[data-label="Peringkat"] span {
   word-break: break-all;
   overflow-wrap: anywhere;
+}
+
+.data-table tbody td[data-label="Nama"] span {
+  word-break: normal;
+  overflow-wrap: break-word;
 }
 
 
@@ -879,67 +884,64 @@ body {
     overflow-wrap: anywhere;
   }
 
-  /* 3 = Nama */
-  .data-table tbody td:nth-child(3) {
+  /* Nama */
+  .data-table tbody td[data-label="Nama"] {
     order: 1;
     width: 100%;
     font-size: 15px;
     font-weight: 600;
     margin-bottom: 4px;
-    margin-right: 100px;
-    /* space for status pill */
+    padding-right: 90px;
+    box-sizing: border-box;
   }
 
-  .data-table tbody td:nth-child(3)::before {
+  .data-table tbody td[data-label="Nama"]::before {
     content: none;
   }
 
-  .data-table tbody td:nth-child(3) span {
+  .data-table tbody td[data-label="Nama"] span {
     font-weight: 600;
     color: hsl(var(--foreground));
   }
 
-  /* 6 = Status */
-  .data-table tbody td:nth-child(6) {
+  /* Status */
+  .data-table tbody td[data-label="Status"] {
     order: 2;
-    /* doesn't really matter as it's absolute */
     position: absolute;
     top: 14px;
     right: 14px;
     margin: 0;
   }
 
-  .data-table tbody td:nth-child(6)::before {
+  .data-table tbody td[data-label="Status"]::before {
     content: none;
   }
 
-  /* 2 = No Peserta */
-  .data-table tbody td:nth-child(2) {
+  /* No Peserta (jika ada pada tabel tertentu) */
+  .data-table tbody td[data-label="No Peserta"] {
     order: 3;
     width: 100%;
-    margin-bottom: 12px;
+    margin-bottom: 8px;
   }
 
-  .data-table tbody td:nth-child(2)::before {
+  .data-table tbody td[data-label="No Peserta"]::before {
     content: none;
   }
 
-  .data-table tbody td:nth-child(2) span {
+  .data-table tbody td[data-label="No Peserta"] span {
     color: hsl(var(--muted-foreground));
+    font-size: 12px;
   }
 
-  /* 7 = Jabatan (Formasi) / SATDIK */
-  .data-table tbody td[data-label="Jabatan"],
-  .data-table tbody td:nth-child(7):not([data-label="SATDIK"]) {
+  /* Jabatan (Formasi) / SATDIK */
+  .data-table tbody td[data-label="Jabatan"] {
     order: 4;
     width: 100%;
     margin-bottom: 6px;
     display: flex !important;
-    /* ensure it's visible */
   }
 
-  .data-table tbody td[data-label="Jabatan"]::before,
-  .data-table tbody td:nth-child(7):not([data-label="SATDIK"])::before {
+  .data-table tbody td[data-label="Jabatan"]::before {
     content: "Formasi: ";
   }
 
@@ -955,45 +957,46 @@ body {
     content: "SATDIK: ";
   }
 
-  /* 4 = Kognitif */
-  .data-table tbody td:nth-child(4) {
+  /* Kognitif */
+  .data-table tbody td[data-label="Kognitif"] {
     order: 5;
+    margin-right: 16px;
   }
 
-  .data-table tbody td:nth-child(4) span {
+  .data-table tbody td[data-label="Kognitif"] span {
     color: #16a34a;
-    /* green */
     font-weight: 500;
   }
 
-  /* 1 = Peringkat */
-  .data-table tbody td:nth-child(1) {
+  /* Substansi */
+  .data-table tbody td[data-label="Substansi"] {
     order: 6;
+    margin-right: 16px;
   }
 
-  .data-table tbody td:nth-child(1)::before {
-    content: "Peringkat Nasional: ";
+  .data-table tbody td[data-label="Substansi"] span {
+    color: #16a34a;
+    font-weight: 500;
   }
 
-  .data-table tbody td:nth-child(1) span::before {
+  /* Peringkat */
+  .data-table tbody td[data-label="Peringkat"] {
+    order: 7;
+    margin-right: 16px;
+  }
+
+  .data-table tbody td[data-label="Peringkat"]::before {
+    content: "Peringkat: ";
+  }
+
+  .data-table tbody td[data-label="Peringkat"] span::before {
     content: "#";
   }
 
-  /* 5 = Substansi */
-  .data-table tbody td:nth-child(5) {
-    order: 7;
-    width: 100%;
-  }
-
-  .data-table tbody td:nth-child(5) span {
-    color: #16a34a;
-    font-weight: 500;
-  }
-
-  html.dark .data-table tbody td:nth-child(4) span,
-  html.dark .data-table tbody td:nth-child(5) span,
-  html[data-theme='dark'] .data-table tbody td:nth-child(4) span,
-  html[data-theme='dark'] .data-table tbody td:nth-child(5) span {
+  html.dark .data-table tbody td[data-label="Kognitif"] span,
+  html.dark .data-table tbody td[data-label="Substansi"] span,
+  html[data-theme='dark'] .data-table tbody td[data-label="Kognitif"] span,
+  html[data-theme='dark'] .data-table tbody td[data-label="Substansi"] span {
     color: #22c55e;
   }
 
