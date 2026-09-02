@@ -35,7 +35,6 @@ const formatRowData = (r, i, indexOfFirstItem) => {
 
 const columns = [
   { key: 'peringkat', label: TABLE_TEXT.HEADERS.PERINGKAT, sortable: true },
-  { key: 'noPeserta', label: TABLE_TEXT.HEADERS.NO_PESERTA, sortable: true },
   { key: 'nama', label: TABLE_TEXT.HEADERS.NAMA, sortable: true },
   { key: 'kognitif', label: TABLE_TEXT.HEADERS.KOGNITIF, sortable: false },
   { key: 'substansi', label: TABLE_TEXT.HEADERS.SUBSTANSI, sortable: false },
@@ -46,13 +45,13 @@ const columns = [
 
 export default function SktL3ResultsTable(props) {
   const renderRow = (r, i, indexOfFirstItem) => {
-    const { error, noCol, peserta, nama, kognitif, substansi, status, jabatan, satdik, peringkat_sebelum_l3, status_sebelum_l3 } =
+    const { error, noCol, nama, kognitif, substansi, status, jabatan, satdik, peringkat_sebelum_l3, status_sebelum_l3 } =
       formatRowData(r, i, indexOfFirstItem)
 
     if (error) {
       return (
         <tr key={i} className="empty-row">
-          <td colSpan={8}>{error}</td>
+          <td colSpan={7}>{error}</td>
         </tr>
       )
     }
@@ -68,7 +67,6 @@ export default function SktL3ResultsTable(props) {
             )}
           </div>
         </td>
-        <td data-label="No Peserta"><span>{peserta}</span></td>
         <td data-label="Nama"><span>{nama}</span></td>
         <td data-label="Kognitif"><span>{kognitif}</span></td>
         <td data-label="Substansi"><span>{substansi}</span></td>
@@ -100,7 +98,7 @@ export default function SktL3ResultsTable(props) {
     <BaseResultsTable
       columns={columns}
       renderRow={renderRow}
-      colSpan={8}
+      colSpan={7}
       {...props}
     />
   )
